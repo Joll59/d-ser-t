@@ -1,0 +1,6 @@
+node_modules/
+coverage/
+lib/
+.vscode
+.env
+test_results.json

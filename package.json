@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "types": [
+      "node"
+    ],
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "dependencies": {
+    "colors": "^1.3.3",
+    "diff": "^4.0.1",
+    "isomorphic-fetch": "^2.2.1",
+    "microsoft-cognitiveservices-speech-sdk": "^1.5.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.1",
+    "word-error-rate": "0.0.6",
+    "yargs": "^13.2.4"
+  },
+  "devDependencies": {
+    "@types/async": "^2.4.2",
+    "@types/diff": "^4.0.2",
+    "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.0",
+    "@types/yargs": "^13.0.0",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.1.0"
+  },
+  "name": "speech-recognition-testing",
+  "version": "1.0.0",
+  "main": "lib/main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "test": "jest --colors --config jest.json"
+  },
+  "author": "@jolly59",
+  "license": "ISC",
+  "description": ""
+}
