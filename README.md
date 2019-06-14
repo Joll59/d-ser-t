@@ -1,8 +1,3 @@
-
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](code-of-conduct.md)
-
-
-
 # Speech Recognition Testing
 This project tests speech recognition . It takes sample audio and expected transcriptions, and tests whether or not there is proper transcription of the audio file in real time. 
 
@@ -11,28 +6,29 @@ This project tests speech recognition . It takes sample audio and expected trans
 This project requires Microsoft speech service, audio files and a corresponding transcriptions.txt file.
 
 ## Values needed to run test harness.
-    - AUDIO_FOLDER_PATH
-    - TRANSCRIPTION_FILE_PATH
-    - SPEECH_SUBSCRIPTION_KEY OR 
-        - CUSTOM_SPEECH_SUBSCRIPTION_KEY (You'll need to supply SPEECH_ENDPOINT_ID) 
-    - SERVICE_REGION (e.g: westus,westus2)
-_*Optional*_.  
-```
-    - SPEECH_ENDPOINT_ID (necesarry if using CUSTOM_SPEECH)  
-    - FAILED_TESTS_JSON_LOCATION
-```
-examine: `.env.sample`
+- Microsoft speech subscription key.
+- Speech service region
+    Optional Parameters
+    - endpoint-id; necessary to use custom speech service
+    - Concurrent calls; generally < 20.
+    - audio-directory
+    - transcription-file
+    - output-file
+    - audio-file
 
-if you have all the above, you can proceed to...
+## Running this test Harness
 
-```npm install```
+### First Build
 
-Finally, run the test harness:
+Compile the project:
 
-```node lib/cli.js``` : runs the cli.
+```npm run build```
 
-### Maximum Calls for the service is currently at 20 calls.
- <!--i need more information here -->
+### Run CLI with FLAGS.
+
+Run the test harness:
+
+```node lib/main.js``` : runs the cli, don't forget your flags.
 
 ## Flags needed to run CLI. <Pass these Flags in> 
 | flag  | alias  | value  |
@@ -46,15 +42,22 @@ Finally, run the test harness:
 | -o | out-file [ optional ] | test output file: saves JSON Array [ defaults to `./test_results.json` ] |
 | -c | concurrent-calls | concurrent service calls[defaults to 1] |
 | Conflicts --> -f : (-d & -t) |   | Providing a singular file to transcribe, results in console log of transcription from service |
+```
+example:
 
+node lib/main.js -s "<subscription key>" -r "westus" -e "<CRIS endpoint ID >" -d "<audio directory with wav files>" -t "<transcription.txt file path>"
 
+```
 
-## Note if Transcription Text File is edited in VSCODE, VSCODE Adds a New Line to end of all Files, This will affect how tests are ran. Turn off that feature before saving.
+### Calls to the Custom speech service is limited to 20 Maximum calls.
+ <!--We need more information here -->
+
+### Note: if transcription Text File is edited in VSCODE, VSCODE adds a new line to end of all files, this will affect how tests are ran. Turn off that feature before saving.
 
 ## Creating your Audio Data/Files
 
 First, we must create the audio files that we wish to test, along with their expected transcriptions.
-Audio must be `.wav` files sampled at `16kHz`. My recommended approach for generating test audio is using Audacity to record `wav` files and to down sample them to `16kHz`.
+Audio must be `.wav` files sampled at `16kHz`. My recommended approach for generating test audio is using Audacity to record `wav` files.
 
 ## Using [audacity](https://www.audacityteam.org/), to create audio files for transcription.
 
@@ -62,7 +65,7 @@ Audio must be `.wav` files sampled at `16kHz`. My recommended approach for gener
 2. Set your recording settings
    * Correct mic selected (in toolbar near top)
    * Mono selected (in toolbar near top)
-   * Project rate is 44100 Hz (bottom left) default, Speech Service Accepts 16000 Hz, Change this setting to match.
+   * Project rate is 44100 Hz (bottom left) default, Speech Service Accepts 16000 Hz, change this setting to match.
 3. Record all the samples
    * Hit record and speak all of your samples, back-to-back, with 1 - 1.5 sec of silence in between (try to be consistent). When finished, press stop
    * Try not to pause for more than 1 sec within a single sample (such as for commas or periods)
@@ -99,27 +102,11 @@ As you create your audio files, keep track of the expected transcriptions in a t
 
 Important: TXT files should be encoded as UTF-8 BOM and not contain any UTF-8 characters above U+00A1 in the Unicode characters table. Typically –, ‘, ‚, “ etc. This harness tries to address this by cleaning your data. 
 
-
-## Running this test Harness
-
-### First Build
-
-Compile the project:
-
-```npm run build```
-
-### Run CLI with FLAGS.
-
-Compile the project & Run the test harness:
-
-```node lib/main.js``` : runs the cli, don't forget your flags.
-
-```
-example:
-
-node lib/main.js -s "<subscription key>" -r "westus" -e "<CRIS endpoint ID >" -d "<audio directory with wav files>" -t "<transcription.txt file path>"
-
-```
-
-### Results stored in JSON format, tracking WER. 
+### Results stored in JSON format. 
 Testing stores test results in JSON format which is stored in `./test_results.json` by default, can be changed with a flag 
+
+
+## Version Support
+
+* Node.js [LTS](https://github.com/nodejs/LTS#lts-schedule) `>= 10`
+* git `>= 2`
