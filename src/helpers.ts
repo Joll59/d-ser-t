@@ -48,7 +48,7 @@ export const parseTextFileContent = (content: string, folderpath:string) => {
         .split(/\r?\n/)
         .map((item) => {
             let split = item.split('\t');
-            return { recording: `${folderpath}\\${split[0]}`, transcription: split[1] };
+            return { recording: path.join(folderpath, split[0]), transcription: split[1] };
         })
 }
 
