@@ -4,3 +4,5 @@ lib/
 .vscode
 .env
 test_results.json
+
+\.DS_Store
