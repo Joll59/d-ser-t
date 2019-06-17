@@ -61,7 +61,7 @@ export const start = async () => {
                 // Seconds and milliseconds of the recognition process runtime.
                 const end = process.hrtime(start);
 
-                const results: any = service.resultArray.map(
+                const results = service.resultArray.map(
                     (item, index) => {
                         console.log(`Handling result ${index + 1}/${service.resultArray.length} . . .`);
                         return handleResponse(item.transcription, JSON.parse(item.data.json));
@@ -73,7 +73,7 @@ export const start = async () => {
                 const sentenceErrorRate = calculateSER(results);
                 console.log(`Sentence Error Rate: ${sentenceErrorRate}`);
 
-                const averageWordErrorRate = ((results.map((item: any, index: number) =>
+                const averageWordErrorRate = ((results.map((item, index: number) =>
                     item.wordErrorRate && item.wordErrorRate > 0 ? item.wordErrorRate : 0)
                     .reduce(reducer) / results.length) as number);
                 console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
