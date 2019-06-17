@@ -3,6 +3,8 @@ import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/dis
 import * as path from 'path';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
+import { UnhandledCharacter, UnhandledWord } from './types';
+
 export interface ITestDatum {
     recording: string;
     transcription: string;
@@ -16,8 +18,7 @@ export interface ITestResult {
     wordErrorRate: number;
 };
 
-
-const validateFile = (filepath: string) =>{
+const validateFile = (filepath: string) => {
     if (filepath === undefined) {
         throw Error('Audio Folder Path or Transcription File Path not provided');
     }
@@ -40,10 +41,10 @@ const validateFolder = (folderpath: string) => {
 }
 
 const retrieveFileContent = (filepath: string) => {
-    return  fs.readFileSync(filepath, 'utf8');
+    return fs.readFileSync(filepath, 'utf8');
 }
 
-export const parseTextFileContent = (content: string, folderpath:string) => {
+export const parseTextFileContent = (content: string, folderpath: string) => {
     return content
         .split(/\r?\n/)
         .map((item) => {
@@ -84,6 +85,8 @@ export const validateExpectedTranscription = (expectedTranscription: string) => 
  *
  * Some other oddities as we find them:
  *    `okay` is transcribed as `OK`.
+ *    `you` is sometimes transcribed as `ya`.
+ *    Apostrophes mid-word are sometimes preceded by a space.
  */
 export const cleanExpectedTranscription = (expectedTranscription: string): string => {
     return expectedTranscription
@@ -122,7 +125,11 @@ export const writeDataToFile = (filePath: string, data: Object | Array<Object>) 
  */
 export const handleResponse = (expectedTranscription: string, response: DetailedSpeechPhrase) => {
     try {
-        const actualTranscription = response.NBest[0].Lexical;
+        // const actualTranscription = response.NBest[0].Lexical.toLowerCase();
+
+        const actualTranscription = `here is so_me output that we might get with-weird characters®`;
+        analyzeActualTranscription(actualTranscription);
+
         const wordErrorRate = calculateWER(actualTranscription, expectedTranscription);
 
         console.log(`Actual Response: "${actualTranscription}"`);
@@ -133,6 +140,48 @@ export const handleResponse = (expectedTranscription: string, response: Detailed
     } catch (error) {
         throw Error(error);
     }
+}
+
+/**
+ * The STT service occasionally has unexpected behavior. For example:
+ *    Spoken `okay` is sometimes transcribed as `OK`.
+ *
+ * Any STT output that contains unexpected characters will be logged in
+ * `unhandledSTTOutput.json`.
+ *
+ * NOTE: All expected and actual transcriptions will be lower case.
+ */
+const analyzeActualTranscription = (actual: string): void => {
+    // This line isn't necessary, but is fast for clean actual transcriptions.
+    if (/[^A-Za-z0-9\s-']/g.test(actual)) {
+        const words = actual.split(' ');
+        for (const word of words) {
+            const matches = word.match(/[^A-Za-z0-9\s-']/g)
+            if (matches) {
+                for (const match of matches) {
+                    pushUnhandledOutput(word, match, actual);
+                }
+            }
+        }
+    }
+}
+
+const pushUnhandledOutput = (word: string, match: string, actual: string) => {
+    let data = fs.readFileSync('./unhandledSTTOutput.json', 'utf8');
+
+    const unhandledChars: UnhandledCharacter[] = JSON.parse(data);
+
+    if (!unhandledChars.hasOwnProperty(match)) {
+        const source: UnhandledWord = {
+            word,
+            transcriptions: [actual],
+
+        }
+    }
+    for (const unhandledChar of unhandledChars) {
+        console.log(unhandledChar);
+    }
+    data = JSON.stringify(unhandledChars);
 }
 
 /**
