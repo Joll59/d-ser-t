@@ -3,17 +3,17 @@ import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/dis
 import * as path from 'path';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
-export interface TestDatum {
+export interface ITestDatum {
     recording: string;
     transcription: string;
 }
 
-export type TestData = TestDatum[];
+export type TestData = ITestDatum[];
 
-export interface TestResults {
-    actual: string;
-    errorRate: number;
-    expected: string;
+export interface ITestResult {
+    actualTranscription: string;
+    expectedTranscription: string;
+    wordErrorRate: number;
 };
 
 
@@ -48,7 +48,7 @@ export const parseTextFileContent = (content: string, folderpath:string) => {
         .split(/\r?\n/)
         .map((item) => {
             let split = item.split('\t');
-            return { recording: `${folderpath}\\${split[0]}`, transcription: split[1] };
+            return { recording: path.join(folderpath, split[0]), transcription: split[1] };
         })
 }
 
@@ -93,12 +93,19 @@ export const cleanExpectedTranscription = (expectedTranscription: string): strin
 };
 
 /**
-* @param filePath path to save file.
-* @param data data to be written to file.
-*/
+ * Writes given data to file, a path without a provided extension is converted to .json.
+ * @param filePath path to save file.
+ * @param data data to be written to file.
+ * 
+ */
 export const writeDataToFile = (filePath: string, data: Object | Array<Object>) => {
     try {
-        !!path.extname(filePath).substr(1) ? filePath = path.normalize(filePath) : filePath.concat('.json');
+        // if file path has an extension normalize it otherwise add .json, then normalize
+        if(!!path.extname(filePath).substr(1)){
+            filePath = path.normalize(filePath) 
+        } else {
+            filePath = path.normalize(filePath.concat('.json'));
+        }
         fs.writeFileSync(filePath, JSON.stringify(data, null, '\t'), 'utf8');
         console.info(`Writing to ${filePath} File`);
     } catch (error) {
@@ -122,7 +129,7 @@ export const handleResponse = (expectedTranscription: string, response: Detailed
         console.log(`Expected Response: "${expectedTranscription}"`);
         console.log(`Word Error Rate: ${wordErrorRate}\n`);
 
-        return { actualTranscription, wordErrorRate }
+        return { actualTranscription, expectedTranscription, wordErrorRate }
     } catch (error) {
         throw Error(error);
     }
@@ -133,7 +140,7 @@ export const handleResponse = (expectedTranscription: string, response: Detailed
  * and 1. An SER of 0 would mean every recording was transcribed perfectly, and
  * an SER of 1 would mean no recordings were transcribed perfectly.
  */
-export const calculateSER = (results: any) => {
+export const calculateSER = (results: ITestResult[]) => {
     const totalTranscriptions = results.length;
     let incorrectTranscriptions = 0;
 
