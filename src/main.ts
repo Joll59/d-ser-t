@@ -1,9 +1,18 @@
 import cli from './cli'
-import { ResponseAnalyzer } from './ResponseAnalyzer';
-import { TranscriptionAnalyzer } from './TranscriptionAnalyzer';
-import { TranscriptionFileService } from './TranscriptionFileService';
-import { TranscriptionService } from './TranscriptionService';
-import { TestData, TranscriptionServiceConfig } from './types';
+import {
+    calculateSER,
+    cleanExpectedTranscription,
+    createTestData,
+    handleResponse,
+    TestData,
+    validateExpectedTranscription,
+    writeDataToFile
+} from './helpers';
+import {
+    TranscriptionService,
+    TranscriptionServiceConfig
+} from './TranscriptionService';
+import path from 'path';
 
 export const start = async () => {
     const yargsArgs = cli();
@@ -11,7 +20,7 @@ export const start = async () => {
     const audioDirectory = yargsArgs.audioDirectory as string;
     let concurrency = yargsArgs.concurrentCalls as string;
     const crisEndpointId = yargsArgs.endpointId as string;
-    const outFile = yargsArgs.outFile as string || '.\\test_results.json';
+    const outFile = yargsArgs.outFile as string || path.join('.','test_results.json');
     const serviceRegion = yargsArgs.serviceRegion as string;
     const singleFile = yargsArgs.audioFile as string;
     const subscriptionKey = yargsArgs.subscriptionKey as string;
