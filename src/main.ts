@@ -12,6 +12,7 @@ import {
     TranscriptionService,
     TranscriptionServiceConfig
 } from './TranscriptionService';
+import path from 'path';
 
 export const start = async () => {
     const yargsArgs = cli();
@@ -19,7 +20,7 @@ export const start = async () => {
     const audioDirectory = yargsArgs.audioDirectory as string;
     let concurrency = yargsArgs.concurrentCalls as string;
     const crisEndpointId = yargsArgs.endpointId as string;
-    const outFile = yargsArgs.outFile as string || '.\\test_results.json';
+    const outFile = yargsArgs.outFile as string || path.join('.','test_results.json');
     const serviceRegion = yargsArgs.serviceRegion as string;
     const singleFile = yargsArgs.audioFile as string;
     const subscriptionKey = yargsArgs.subscriptionKey as string;
