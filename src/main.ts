@@ -6,7 +6,7 @@ import {
     handleResponse,
     TestData,
     validateExpectedTranscription,
-    writeDataToFile
+    writeToTextFile
 } from './helpers';
 import {
     TranscriptionService,
@@ -86,7 +86,7 @@ export const start = async () => {
                     totalTestingTime: testingTime,
                 }
 
-                outFile ? writeDataToFile(outFile, { results, metaData }) : null;
+                outFile ? writeToTextFile(outFile, { results, metaData }) : null;
                 console.log(`Runtime: ${testingTime}`);
             })
             .catch((error: Error) => {
