@@ -4,20 +4,20 @@ import {
     parseTextFileContent, 
     cleanExpectedTranscription,
     ITestResult,
-    calculateSER } from '../src/helpers';
+    calculateSER
+} from '../src/helpers';
 import * as path from 'path';
 
-const sampleFileContent = 'sample.wav\tthis is only a sample';
+const fakeFileContent = 'sample.wav\tthis is only a sample';
 const fakeAudioFolder = './audio-recording-info'
-const fakeItemInResult = {recording:path.join(fakeAudioFolder, sampleFileContent.split('\t')[0]), transcription:'this is only a sample'}
-const testData = parseTextFileContent(sampleFileContent, fakeAudioFolder)
+const fakeItemInResult = { recording: path.join(fakeAudioFolder, fakeFileContent.split('\t')[0]), transcription: fakeFileContent.split('\t')[1]}
+const testData = parseTextFileContent(fakeFileContent, fakeAudioFolder)
 const TestResultsMock = jest.fn<ITestResult, any[]>(()=> ({
     actualTranscription:'this is only a sample',
     expectedTranscription: 'this is only a sample',
     wordErrorRate: .023
 }));
 const calculateSERMock = jest.fn<string, any[]>(calculateSER);
-
 
 describe('validateExpectedTranscription', () => {
     it('Throws an error when transcription is invalid', () => {
@@ -68,27 +68,10 @@ describe('createTestData', ()=>{
     });
 });
 
-describe('ITestResults', () => {
-    it('should track expectedTranscription', () => {
-        expect(TestResultsMock()).toHaveProperty('expectedTranscription')
-    });
-
-    it('should track actualTranscription', () => {
-        expect(TestResultsMock()).toHaveProperty('actualTranscription')
-    });
-
-    it('should track wordErrorRate', () => {
-        expect(TestResultsMock()).toHaveProperty('wordErrorRate')
-    });
-});
-
 describe('calculateSER', () => {
     
     const ser = calculateSERMock([TestResultsMock()])
-    it('Accept an array of ITestResult Objects',()=>{
-        expect(calculateSERMock).toBeCalled()
-    })
-    it('Calculates Sentence Error Rate', () => {
+    it('Calculates & Returns Sentence Error Rate', () => {
         expect(ser).toEqual("1.00");
     });
 
