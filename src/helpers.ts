@@ -3,7 +3,7 @@ import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/dis
 import * as path from 'path';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
-import { UnhandledCharacter, UnhandledWord } from './types';
+// import { UnhandledCharacter, UnhandledWord } from './types';
 
 export interface TestDatum {
     recording: string;
@@ -99,7 +99,21 @@ export const cleanExpectedTranscription = (expectedTranscription: string): strin
 * @param filePath path to save file.
 * @param data data to be written to file.
 */
-export const writeDataToFile = (filePath: string, data: Object | Array<Object>) => {
+export const writeToTextFile = (filePath: string, data: Object | Array<Object>) => {
+    try {
+        !!path.extname(filePath).substr(1) ? filePath = path.normalize(filePath) : filePath.concat('.json');
+        fs.writeFileSync(filePath, JSON.stringify(data, null, '\t'), 'utf8');
+        console.info(`Writing to ${filePath} File`);
+    } catch (error) {
+        throw Error(error);
+    }
+}
+
+/**
+* @param filePath path to save file.
+* @param data data to be written to file.
+*/
+export const writeToJSONFile = (filePath: string, data: Object | Array<Object>) => {
     try {
         !!path.extname(filePath).substr(1) ? filePath = path.normalize(filePath) : filePath.concat('.json');
         fs.writeFileSync(filePath, JSON.stringify(data, null, '\t'), 'utf8');
@@ -146,10 +160,10 @@ export const handleResponse = (expectedTranscription: string, response: Detailed
  */
 const analyzeActualTranscription = (actual: string): void => {
     // This line isn't necessary, but is fast for clean actual transcriptions.
-    if (/[^A-Za-z0-9\s-']/g.test(actual)) {
+    if (/[^A-Za-z0-9\s']/g.test(actual)) {
         const words = actual.split(' ');
         for (const word of words) {
-            const matches = word.match(/[^A-Za-z0-9\s-']/g)
+            const matches = word.match(/[^A-Za-z0-9\s']/g)
             if (matches) {
                 for (const match of matches) {
                     pushUnhandledOutput(word, match, actual);
@@ -159,33 +173,47 @@ const analyzeActualTranscription = (actual: string): void => {
     }
 }
 
+/**
+ * Reads a JSON file and returns the data as a JSON object. If no file has been
+ * created, an empty JSON object is returned instead.
+ *
+ * @param filePath the relative path from the `lib/` folder to some JSON file.
+ */
+const readJSONFileSync = (filePath: string): object => {
+    let json: object = {};
+    try {
+        const data = fs.readFileSync(path.resolve(__dirname, filePath), 'utf8');
+        json = JSON.parse(data);
+        console.log(json);
+    } catch {
+        console.log(`Creating a file to store unhandled output from the STT service . . .`);
+    }
+    return json;
+}
+
+/**
+ * Overwrite the contents of some JSON file, or add content to a new JSON file.
+ *
+ * @param filePath the relative path from the `lib/` folder to some JSON file.
+ * @param json some JSON object to write to the file.
+ */
+const writeJSONFileSync = (filePath: string, json: object) => {
+    fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(json));
+}
+
 const pushUnhandledOutput = (word: string, match: string, actual: string) => {
-    let data = fs.readFileSync('./unhandledSTTOutput.json', 'utf8');
+    const filePath = `../unhandledSTTOutput.json`;
 
-    const unhandledChars: UnhandledCharacter[] = JSON.parse(data);
+    let data: object = readJSONFileSync(filePath);
 
-    if (!unhandledChars.hasOwnProperty(match)) {
-        const source: UnhandledWord = {
-            sourceTranscriptions: [...unhandledChars.sourceTranscriptions, actual],
+    // Modify the data, don't overwrite it.
+    data = {
+        b: 6
+    };
 
-        }
-        const unhandledChar: UnhandledCharacter = {
-            match: source
-        }
-        unhandledChars.push(unhandledChar);
-    } else {
-        const foo = {
-            match: []
-        }
-        unhandledChars[match] = {
-            sourceWord: "hi",
-
-        }
-    }
-    for (const unhandledChar of unhandledChars) {
-        console.log(unhandledChar);
-    }
-    data = JSON.stringify(unhandledChars);
+    // Overwrite the contents of the file.
+    writeJSONFileSync(filePath, data);
+    console.log(data);
 }
 
 /**
