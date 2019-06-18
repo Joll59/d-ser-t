@@ -1,106 +1,125 @@
-import cli from './cli'
+import cli from '../../cris-test-harness-cli/src/cli'
 import {
-    calculateSER,
-    cleanExpectedTranscription,
-    createTestData,
-    handleResponse,
-    TestData,
-    validateExpectedTranscription,
-    writeDataToFile
+  calculateSER,
+  cleanExpectedTranscription,
+  createTestData,
+  handleResponse,
+  sumFunc,
+  TestData,
+  validateExpectedTranscription,
+  writeDataToFile
 } from './helpers';
 import {
-    TranscriptionService,
-    TranscriptionServiceConfig
+  TranscriptionService,
+  TranscriptionServiceConfig
 } from './TranscriptionService';
 import path from 'path';
 
-export const start = async () => {
-    const yargsArgs = cli();
+interface HarnessConfig {
+  audioDirectory: string;
+  audioFile: string;
+  concurrentCalls: string;
+  endpointId: string | undefined;
+  outFile: string;
+  serviceRegion: string;
+  subscriptionKey: string;
+  transcriptionFile: string;
+}
 
-    const audioDirectory = yargsArgs.audioDirectory as string;
-    let concurrency = yargsArgs.concurrentCalls as string;
-    const crisEndpointId = yargsArgs.endpointId as string;
-    const outFile = yargsArgs.outFile as string || path.join('.','test_results.json');
-    const serviceRegion = yargsArgs.serviceRegion as string;
-    const singleFile = yargsArgs.audioFile as string;
-    const subscriptionKey = yargsArgs.subscriptionKey as string;
-    const transcriptionFile = yargsArgs.transcriptionFile as string;
+export class CustomSpeechTestHarness {
+  private audioDirectory: string;
+  private concurrency: string;
+  private crisEndpointId: string;
+  private outFile: string;
+  private serviceRegion: string;
+  private singleFile: string;
+  private subscriptionKey: string;
+  private transcriptionFile: string;
+  private transcriptionService: TranscriptionService | undefined;
 
-    // Create the speech service.
-    const transcriptionService: TranscriptionServiceConfig = {
-        subscriptionKey: subscriptionKey,
-        serviceRegion: serviceRegion,
-        endpointID: crisEndpointId
+  public constructor(harnessConfig: HarnessConfig) {
+    this.audioDirectory = harnessConfig.audioDirectory as string;
+    this.concurrency = harnessConfig.concurrentCalls as string;
+    this.crisEndpointId = harnessConfig.endpointId as string;
+    this.outFile = harnessConfig.outFile as string || path.join('.','test_results.json');
+    this.serviceRegion = harnessConfig.serviceRegion as string;
+    this.singleFile = harnessConfig.audioFile as string;
+    this.subscriptionKey = harnessConfig.subscriptionKey as string;
+    this.transcriptionFile = harnessConfig.transcriptionFile as string;
+
+    this.setTranscriptionService();
+  }
+
+  public setTranscriptionService() {
+    const config: TranscriptionServiceConfig = {
+      subscriptionKey: this.subscriptionKey,
+      serviceRegion: this.serviceRegion,
+      endpointID: this.crisEndpointId
+    };
+
+    this.transcriptionService = new TranscriptionService(config);
+  }
+
+  public async singleFileTranscription() {
+    this.setTranscriptionService();
+    if (this.transcriptionService) {
+      await this.transcriptionService.singleFileTranscribe(this.singleFile)
+        .then(resp => console.log(resp.text))
+        .catch(err => console.warn(err))
+        .finally(() => process.exit(1));
     }
-    const service = new TranscriptionService(transcriptionService);
+  }
 
-    if (singleFile) {
-        await service.singleFiletranscribe(singleFile)
-            .then(resp =>
-                console.log(resp.text)
-            ).catch(error =>
-                console.warn(error)
-            ).finally(() =>
-                process.exit(1));
-    } else {
-        const start = process.hrtime();
+  public checkConcurrency() {
+    if (!!this.concurrency === false) {
+      this.concurrency = '1';
+      const warnMsg = `\nSetting concurrent calls to 1, you can set concurrent calls to service with "-c".\n`
+      console.warn(warnMsg);
+    }
+  }
 
-        if (!!concurrency === false) {
-            concurrency = '1';
-            console.warn(`\nSetting concurrent calls to 1, you can set concurrent calls to service with "-c".\n`);
-        }
+  public validateAndCleanTranscription(parsedData: TestData) {
+    for (const testDatum of parsedData) {
+      validateExpectedTranscription(testDatum.transcription);
+      testDatum.transcription = cleanExpectedTranscription(testDatum.transcription);
+    }
+  }
 
-        const parsedData: TestData = createTestData(transcriptionFile, audioDirectory);
+  public async multipleFileTranscription() {
+    this.setTranscriptionService();
+    if (this.transcriptionService) {
+      const startTime = process.hrtime();
+      this.checkConcurrency();
 
-        for (const testDatum of parsedData) {
-            validateExpectedTranscription(testDatum.transcription);
-            testDatum.transcription = cleanExpectedTranscription(testDatum.transcription);
-        }
+      const parsedData: TestData = createTestData(this.transcriptionFile, this.audioDirectory);
+      this.validateAndCleanTranscription(parsedData);
 
-        await service.batchTranscribe(parsedData, Number.parseInt(concurrency))
-            .then(() => {
-                // Seconds and milliseconds of the recognition process runtime.
-                const end = process.hrtime(start);
-
-                const results: any = service.resultArray.map(
-                    (item, index) => {
-                        console.log(`Handling result ${index + 1}/${service.resultArray.length} . . .`);
-                        return handleResponse(item.transcription, JSON.parse(item.data.json));
-                    });
-
-                const reducer = (accumulator: number, currentValue: number) =>
-                    accumulator + currentValue;
-
-                const sentenceErrorRate = calculateSER(results);
-                console.log(`Sentence Error Rate: ${sentenceErrorRate}`);
-
-                const averageWordErrorRate = ((results.map((item: any, index: number) =>
-                    item.wordErrorRate && item.wordErrorRate > 0 ? item.wordErrorRate : 0)
-                    .reduce(reducer) / results.length) as number);
-                console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
-
-                const testingTime = `${end[0]} seconds, ${end[1]} nanoseconds`;
-
-                const metaData = {
-                    sentenceErrorRate: sentenceErrorRate,
-                    averageWordErrorRate: averageWordErrorRate,
-                    totalTestingTime: testingTime,
-                }
-
-                outFile ? writeDataToFile(outFile, { results, metaData }) : null;
-                console.log(`Runtime: ${testingTime}`);
-            })
-            .catch((error: Error) => {
-                console.error(`#### ENCOUNTERED AN ERROR ####:\n`, error);
-            })
-            .finally(() => {
-                process.exit(1);
+      await this.transcriptionService.batchTranscribe(parsedData, parseInt(this.concurrency))
+        .then(() => {
+          const endTime = process.hrtime(startTime);
+          const results: any = this.transcriptionService!.resultArray.map((item, idx) => {
+              console.log(`Handling result ${idx + 1}/${this.transcriptionService!.resultArray.length} . . .`);
+              return handleResponse(item.transcription, JSON.parse(item.data.json));
             });
-    }
-};
 
-try {
-    start();
-} catch (error) {
-    console.error(error);
+          const sentenceErrorRate = calculateSER(results);
+          console.log(`Sentence Error Rate: ${ sentenceErrorRate }`);
+
+          const averageWordErrorRate = ((results.map((item: any, idx: number) => {
+            item.wordErrorRate && item.wordErrorRate > 0 ? item.wordErrorRate : 0
+          })
+            .reduce(sumFunc) / results.length) as number);
+
+          const testingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
+          const metaData = {
+            sentenceErrorRate, averageWordErrorRate, totalTestingTime: testingTime
+          };
+
+          this.outFile ? writeDataToFile(this.outFile, { results, metaData }) : null;
+          console.log(`Runtime: ${ testingTime }`);
+        })
+        .catch((error: Error) => console.error(`#### ENCOUNTERED AN ERROR ####:\n`, error))
+        .finally(() => process.exit(1));
+    }
+  }
 }

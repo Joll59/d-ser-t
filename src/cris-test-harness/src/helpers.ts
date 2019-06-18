@@ -145,3 +145,5 @@ export const calculateSER = (results: any) => {
 
     return (incorrectTranscriptions / totalTranscriptions).toPrecision(3);
 }
+
+export const sumFunc = (total: number, currentNum: number) => total + currentNum;
