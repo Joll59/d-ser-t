@@ -1,13 +1,13 @@
 import * as path from 'path';
 
 import { ResponseAnalyzer } from '../src/ResponseAnalyzer';
-import { TestResult } from '../src/types';
 
 import {
     TranscriptionAnalyzer
 } from '../src/TranscriptionAnalyzer';
 
 import { TranscriptionFileService } from '../src/TranscriptionFileService';
+import { TestResult } from '../src/types';
 
 const fakeFileContent = 'sample.wav\tthis is only a sample';
 const fakeAudioFolder = './audio-recording-info'

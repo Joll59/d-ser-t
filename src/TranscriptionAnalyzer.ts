@@ -18,7 +18,7 @@ interface ITranscriptionAnalyzer {
 export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
     private data: UnhandledCharacters;
     private readonly filePath = `../unhandledSTTOutput.json`;
-    private readonly transcriptRegEx: RegExp = /[^A-Za-z0-9\s']/g;
+    private readonly expectedRegEx: RegExp = /[^A-Za-z0-9\s']/g;
 
     constructor() {
         this.data = this.readJSONFileSync();
@@ -30,7 +30,7 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      * We prefer to throw rather than making a best guess at resolving typos.
      */
     public validateExpectedTranscription = (expectedTranscription: string): void => {
-        if (this.transcriptRegEx.test(expectedTranscription)) {
+        if (this.expectedRegEx.test(expectedTranscription)) {
             console.log(colors.red(
                 `Error on expected transcription: "${expectedTranscription}"\n`));
 
@@ -66,10 +66,10 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
     public analyzeActualTranscription = (actualTranscription: string): void => {
         // This condition isn't necessary, but is fast for actual transcriptions
         // that are passed in clean.
-        if (this.transcriptRegEx.test(actualTranscription)) {
+        if (this.expectedRegEx.test(actualTranscription)) {
             const words = actualTranscription.split(' ');
             for (const word of words) {
-                const matches = word.match(this.transcriptRegEx);
+                const matches = word.match(this.expectedRegEx);
                 if (matches) {
                     for (const match of matches) {
                         this.pushUnhandledOutput(match, word, actualTranscription);

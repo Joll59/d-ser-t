@@ -1,9 +1,9 @@
 import cli from './cli'
 import { ResponseAnalyzer } from './ResponseAnalyzer';
-import { TestData, TranscriptionServiceConfig } from './types';
 import { TranscriptionAnalyzer } from './TranscriptionAnalyzer';
 import { TranscriptionFileService } from './TranscriptionFileService';
 import { TranscriptionService } from './TranscriptionService';
+import { TestData, TranscriptionServiceConfig } from './types';
 
 export const start = async () => {
     const yargsArgs = cli();
