@@ -3,14 +3,14 @@
 // helpers
 //
 ///////////////////////////////////////////////////////////////////////////////
-export interface ITestDatum {
+export interface TestDatum {
     recording: string;
     transcription: string;
 }
 
-export type TestData = ITestDatum[];
+export type TestData = TestDatum[];
 
-export interface ITestResult {
+export interface TestResult {
     actualTranscription: string;
     expectedTranscription: string;
     wordErrorRate: number;

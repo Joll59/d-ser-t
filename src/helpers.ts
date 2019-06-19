@@ -4,7 +4,7 @@ import * as path from 'path';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
 import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
-import { ITestResult, TestData } from './types';
+import { TestResult, TestData } from './types';
 
 const validateFile = (filepath: string) => {
     if (filepath === undefined) {
@@ -100,7 +100,7 @@ export const handleResponse = (expectedTranscription: string, response: Detailed
  * and 1. An SER of 0 would mean every recording was transcribed perfectly, and
  * an SER of 1 would mean no recordings were transcribed perfectly.
  */
-export const calculateSER = (results: ITestResult[]) => {
+export const calculateSER = (results: TestResult[]) => {
     const totalTranscriptions = results.length;
     let incorrectTranscriptions = 0;
 
