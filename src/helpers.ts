@@ -75,8 +75,7 @@ export const writeToTextFile = (filePath: string, data: Object | Array<Object>) 
  */
 export const handleResponse = (expectedTranscription: string, response: DetailedSpeechPhrase) => {
     try {
-        // const actualTranscription = response.NBest[0].Lexical.toLowerCase();
-        const actualTranscription = "23089&^* 238 ^ ldskh-ef66666";
+        const actualTranscription = response.NBest[0].Lexical.toLowerCase();
 
         const analyzer = new TranscriptionAnalysisService();
 
