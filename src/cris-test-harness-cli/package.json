@@ -1,6 +1,6 @@
 {
   "name": "cris-test-harness-cli",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Package for running the cris-test-harness from the command line",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
