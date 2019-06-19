@@ -37,6 +37,7 @@ export const parseTextFileContent = (content: string, folderpath: string) => {
         .split(/\r?\n/)
         .map((item) => {
             let split = item.split('\t');
+            split[0] = !!path.extname(split[0]).substr(1)? path.normalize(split[0]) : path.normalize(split[0].concat('.wav'));
             return { recording: path.join(folderpath, split[0]), transcription: split[1] };
         })
 }

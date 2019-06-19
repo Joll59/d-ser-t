@@ -9,7 +9,7 @@ import {
     PullAudioInputStream,
 } from 'microsoft-cognitiveservices-speech-sdk';
 
-import { TestData } from './helpers';
+import { TestData } from './types';
 import { MultiFilePullStream } from './MultiFilePullStream';
 
 enum EndpointVariant {
@@ -136,6 +136,7 @@ export class TranscriptionService {
 
     public batchTranscribe = (testData: TestData, concurrentCalls: number) => {
         let piece = 0;
+        let start = 0;
         if (testData.length >= concurrentCalls) {
             piece = Math.floor(testData.length / concurrentCalls);
         } else if (testData.length < concurrentCalls) {
@@ -159,7 +160,7 @@ export class TranscriptionService {
 
                 processArray.push({
                     recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
-                    stream, filesArray: testData.slice(0, piece)
+                    stream, filesArray: testData.slice(start, start+=piece)
                 });
             }
         }
