@@ -3,8 +3,9 @@ import * as path from 'path';
 import {
     createTestData,
     parseTextFileContent,
-    calculateSER
 } from '../src/helpers';
+
+import { ResponseAnalysisService } from '../src/ResponseAnalysisService';
 
 import {
     TranscriptionAnalysisService
@@ -21,32 +22,36 @@ const TestResultsMock = jest.fn<TestResult, any[]>(() => ({
     expectedTranscription: 'this is only a sample',
     wordErrorRate: .023
 }));
-const calculateSERMock = jest.fn<string, any[]>(calculateSER);
 
-const analyzer = new TranscriptionAnalysisService();
+const transcriptAnalyzer = new TranscriptionAnalysisService();
+
+const responseAnalyzer = new ResponseAnalysisService(transcriptAnalyzer);
+
+const calculateSERMock = jest.fn<string, any[]>(responseAnalyzer.calculateSER);
+
 
 describe('validateExpectedTranscription', () => {
     it('Throws an error when transcription is invalid', () => {
         expect(() => {
-            analyzer.validateExpectedTranscription('I\'am not, ready')
+            transcriptAnalyzer.validateExpectedTranscription('I\'am not, ready')
         }).toThrowError(SyntaxError);
     });
 
     it('Not Throw an error when transcription is valid', () => {
         expect(() => {
-            analyzer.validateExpectedTranscription('I\'am not ready')
+            transcriptAnalyzer.validateExpectedTranscription('I\'am not ready')
         }).not.toThrowError(SyntaxError);
     });
 })
 
 describe('cleanExpectedTranscription', () => {
     it('Replaces hyphens with space', () => {
-        expect(analyzer.cleanExpectedTranscription('test-harness'))
+        expect(transcriptAnalyzer.cleanExpectedTranscription('test-harness'))
             .toEqual('test harness');
     });
 
     it('Lowercases strings', () => {
-        expect(analyzer.cleanExpectedTranscription("THIS IS SPARTA"))
+        expect(transcriptAnalyzer.cleanExpectedTranscription("THIS IS SPARTA"))
             .toStrictEqual('this is sparta');
     });
 })
