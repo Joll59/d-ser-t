@@ -3,21 +3,10 @@ import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/dis
 import * as path from 'path';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
-export interface ITestDatum {
-    recording: string;
-    transcription: string;
-}
+import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
+import { ITestResult, TestData } from './types';
 
-export type TestData = ITestDatum[];
-
-export interface ITestResult {
-    actualTranscription: string;
-    expectedTranscription: string;
-    wordErrorRate: number;
-};
-
-
-const validateFile = (filepath: string) =>{
+const validateFile = (filepath: string) => {
     if (filepath === undefined) {
         throw Error('Audio Folder Path or Transcription File Path not provided');
     }
@@ -40,10 +29,10 @@ const validateFolder = (folderpath: string) => {
 }
 
 const retrieveFileContent = (filepath: string) => {
-    return  fs.readFileSync(filepath, 'utf8');
+    return fs.readFileSync(filepath, 'utf8');
 }
 
-export const parseTextFileContent = (content: string, folderpath:string) => {
+export const parseTextFileContent = (content: string, folderpath: string) => {
     return content
         .split(/\r?\n/)
         .map((item) => {
@@ -64,48 +53,12 @@ export const createTestData = (filepath: string, folderpath: string): TestData =
 };
 
 /**
- * @throws if the transcriptions contain special characters like:
- *      ,<>/?!#$%^&*`~()_.
- * We prefer to throw rather than making a best guess at resolving typos.
- */
-export const validateExpectedTranscription = (expectedTranscription: string) => {
-    if (/[^A-Za-z0-9\s-']/g.test(expectedTranscription)) {
-        console.log("\x1b[31m",
-            `Error on expected transcription: "${expectedTranscription}"\n`);
-
-        const message = `Transcriptions may only contain letters, numbers, apostrophes, hyphens, and spaces.`;
-        throw SyntaxError(message);
-    }
-};
-
-/**
- * The STT service will not return hyphens, commas, periods, etc. Expect that
- * special characters in transcription files match the STT output.
- *
- * Some other oddities as we find them:
- *    `okay` is transcribed as `OK`.
- */
-export const cleanExpectedTranscription = (expectedTranscription: string): string => {
-    return expectedTranscription
-        .replace(/-/g, ` `)
-        .replace(/\bokay\b/g, `ok`)
-        .toLowerCase();
-};
-
-/**
- * Writes given data to file, a path without a provided extension is converted to .json.
- * @param filePath path to save file.
- * @param data data to be written to file.
- * 
- */
-export const writeDataToFile = (filePath: string, data: Object | Array<Object>) => {
+* @param filePath path to save file.
+* @param data data to be written to file.
+*/
+export const writeToTextFile = (filePath: string, data: Object | Array<Object>) => {
     try {
-        // if file path has an extension normalize it otherwise add .json, then normalize
-        if(!!path.extname(filePath).substr(1)){
-            filePath = path.normalize(filePath) 
-        } else {
-            filePath = path.normalize(filePath.concat('.json'));
-        }
+        !!path.extname(filePath).substr(1) ? filePath = path.normalize(filePath) : filePath.concat('.json');
         fs.writeFileSync(filePath, JSON.stringify(data, null, '\t'), 'utf8');
         console.info(`Writing to ${filePath} File`);
     } catch (error) {
@@ -122,7 +75,14 @@ export const writeDataToFile = (filePath: string, data: Object | Array<Object>) 
  */
 export const handleResponse = (expectedTranscription: string, response: DetailedSpeechPhrase) => {
     try {
-        const actualTranscription = response.NBest[0].Lexical;
+        const actualTranscription = response.NBest[0].Lexical.toLowerCase();
+
+        const analyzer = new TranscriptionAnalysisService();
+
+        // Check if the transcription contains special characters that the
+        // system does not currently account for.
+        analyzer.analyzeActualTranscription(actualTranscription);
+
         const wordErrorRate = calculateWER(actualTranscription, expectedTranscription);
 
         console.log(`Actual Response: "${actualTranscription}"`);
