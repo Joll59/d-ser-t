@@ -16,7 +16,7 @@ interface ITranscriptionAnalysisService {
 }
 
 export class TranscriptionAnalysisService implements ITranscriptionAnalysisService {
-    private data: UnhandledCharacters = {};
+    private data: UnhandledCharacters;
     private readonly filePath = `../unhandledSTTOutput.json`;
     private readonly transcriptRegEx: RegExp = /[^A-Za-z0-9\s']/g;
 
@@ -63,16 +63,16 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      *
      * NOTE: All expected and actual transcriptions will be lower case.
      */
-    public analyzeActualTranscription(actual: string): void {
+    public analyzeActualTranscription(actualTranscription: string): void {
         // This condition isn't necessary, but is fast for actual transcriptions
         // that are passed in clean.
-        if (this.transcriptRegEx.test(actual)) {
-            const words = actual.split(' ');
+        if (this.transcriptRegEx.test(actualTranscription)) {
+            const words = actualTranscription.split(' ');
             for (const word of words) {
                 const matches = word.match(this.transcriptRegEx);
                 if (matches) {
                     for (const match of matches) {
-                        this.pushUnhandledOutput(match, word, actual);
+                        this.pushUnhandledOutput(match, word, actualTranscription);
                     }
                 }
             }
@@ -177,9 +177,6 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
     /**
      * Reads a JSON file and returns the data as a JSON object. If no file has
      * been created, an empty JSON object is returned instead.
-     *
-     * @param filePath the relative path from the `lib/` folder to some JSON
-     * file.
      */
     private readJSONFileSync(): object {
         let json: object = {};
@@ -195,10 +192,6 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
     /**
      * Overwrite the contents of some JSON file, or add content to a new JSON
      * file.
-     *
-     * @param filePath the relative path from the `lib/` folder to some JSON
-     * file.
-     * @param json some JSON object to write to the file.
      */
     private writeJSONFileSync(): void {
         fs.writeFileSync(path.resolve(__dirname, this.filePath), JSON.stringify(this.data));
