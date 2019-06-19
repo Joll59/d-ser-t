@@ -4,19 +4,7 @@ import * as path from 'path';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
 import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
-
-export interface TestDatum {
-    recording: string;
-    transcription: string;
-}
-
-export type TestData = TestDatum[];
-
-export interface TestResults {
-    actual: string;
-    errorRate: number;
-    expected: string;
-};
+import { TestData } from './types';
 
 const validateFile = (filepath: string) => {
     if (filepath === undefined) {
@@ -88,7 +76,7 @@ export const writeToTextFile = (filePath: string, data: Object | Array<Object>) 
 export const handleResponse = (expectedTranscription: string, response: DetailedSpeechPhrase) => {
     try {
         // const actualTranscription = response.NBest[0].Lexical.toLowerCase();
-        const actualTranscription = `** ()& he_re`;
+        const actualTranscription = "23089&^* 238 ^ ldskh-ef66666";
 
         const analyzer = new TranscriptionAnalysisService();
 
