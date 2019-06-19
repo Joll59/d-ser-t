@@ -7,7 +7,7 @@ import {
 } from '../src/helpers';
 
 import { TranscriptionAnalysisService } from '../src/TranscriptionAnalysisService';
-import { ITestResult } from '../src/types';
+import { TestResult } from '../src/types';
 
 const analyzer = new TranscriptionAnalysisService();
 
@@ -15,7 +15,7 @@ const fakeFileContent = 'sample.wav\tthis is only a sample';
 const fakeAudioFolder = './audio-recording-info'
 const fakeItemInResult = { recording: path.join(fakeAudioFolder, fakeFileContent.split('\t')[0]), transcription: fakeFileContent.split('\t')[1]}
 const testData = parseTextFileContent(fakeFileContent, fakeAudioFolder)
-const TestResultsMock = jest.fn<ITestResult, any[]>(()=> ({
+const TestResultsMock = jest.fn<TestResult, any[]>(()=> ({
     actualTranscription:'this is only a sample',
     expectedTranscription: 'this is only a sample',
     wordErrorRate: .023
