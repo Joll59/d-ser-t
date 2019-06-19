@@ -1,12 +1,15 @@
-import { 
-    validateExpectedTranscription, 
-    createTestData, 
-    parseTextFileContent, 
-    cleanExpectedTranscription,
-    ITestResult,
+import * as path from 'path';
+
+import {
+    createTestData,
+    parseTextFileContent,
     calculateSER
 } from '../src/helpers';
-import * as path from 'path';
+
+import { TranscriptionAnalysisService } from '../src/TranscriptionAnalysisService';
+import { ITestResult } from '../src/types';
+
+const analyzer = new TranscriptionAnalysisService();
 
 const fakeFileContent = 'sample.wav\tthis is only a sample';
 const fakeAudioFolder = './audio-recording-info'
@@ -21,21 +24,25 @@ const calculateSERMock = jest.fn<string, any[]>(calculateSER);
 
 describe('validateExpectedTranscription', () => {
     it('Throws an error when transcription is invalid', () => {
-        expect( ()=>{validateExpectedTranscription('I\'am not, ready')}).toThrowError(SyntaxError);
+        expect( ()=>{
+            analyzer.validateExpectedTranscription('I\'am not, ready')
+        }).toThrowError(SyntaxError);
     });
 
     it('Not Throw an error when transcription is valid', () => {
-        expect(() => { validateExpectedTranscription('I\'am not ready') }).not.toThrowError(SyntaxError);
+        expect(() => {
+            analyzer.validateExpectedTranscription('I\'am not ready')
+        }).not.toThrowError(SyntaxError);
     });
 })
 
 describe('cleanExpectedTranscription', () => {
     it('Replaces hyphens with space', () => {
-        expect(cleanExpectedTranscription('test-harness')).toEqual('test harness');
+        expect(analyzer.cleanExpectedTranscription('test-harness')).toEqual('test harness');
     });
 
     it('Lowercases strings', () => {
-        expect(cleanExpectedTranscription("THIS IS SPARTA")).toStrictEqual('this is sparta');
+        expect(analyzer.cleanExpectedTranscription("THIS IS SPARTA")).toStrictEqual('this is sparta');
     });
 })
 
@@ -58,7 +65,7 @@ describe('createTestData', ()=>{
     })
 
     describe('parseTextFileContent', () => {
-    
+
         it('Returns Array', () => {
             expect(Array.isArray(testData)).toBe(true)
         })
@@ -69,7 +76,7 @@ describe('createTestData', ()=>{
 });
 
 describe('calculateSER', () => {
-    
+
     const ser = calculateSERMock([TestResultsMock()])
     it('Calculates & Returns Sentence Error Rate', () => {
         expect(ser).toEqual("1.00");

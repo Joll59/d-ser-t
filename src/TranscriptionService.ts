@@ -9,7 +9,7 @@ import {
     PullAudioInputStream,
 } from 'microsoft-cognitiveservices-speech-sdk';
 
-import { TestData } from './helpers';
+import { TestData } from './types';
 import { MultiFilePullStream } from './MultiFilePullStream';
 
 enum EndpointVariant {
