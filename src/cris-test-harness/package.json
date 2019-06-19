@@ -1,6 +1,6 @@
 {
   "name": "cris-test-harness",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Package for testing the CRIS speech-to-text model with some audio against the transcription of that audio, quantifying the quality of the model with respect to its Word Error Rate",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
