@@ -15,10 +15,6 @@ interface ITranscriptionAnalysisService {
 }
 
 export class TranscriptionAnalysisService implements ITranscriptionAnalysisService {
-    // Declare any fields.
-
-    constructor() { }
-
     /**
      * @throws if the transcriptions contain special characters like:
      *      ,<>/?!#$%^&*`~()_.
