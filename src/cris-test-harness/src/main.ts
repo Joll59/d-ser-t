@@ -1,4 +1,3 @@
-import cli from '../../cris-test-harness-cli/src/cli'
 import {
   calculateSER,
   cleanExpectedTranscription,
@@ -46,8 +45,6 @@ export class CustomSpeechTestHarness {
     this.singleFile = harnessConfig.audioFile as string;
     this.subscriptionKey = harnessConfig.subscriptionKey as string;
     this.transcriptionFile = harnessConfig.transcriptionFile as string;
-
-    this.setTranscriptionService();
   }
 
   public setTranscriptionService() {

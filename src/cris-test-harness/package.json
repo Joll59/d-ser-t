@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Package for testing the CRIS speech-to-text model with some audio against the transcription of that audio, quantifying the quality of the model with respect to its Word Error Rate",
   "main": "lib/main.js",
+  "types": "lib/main.d.ts",
   "scripts": {
     "build": "npx tsc"
   },
@@ -15,6 +16,16 @@
     "tslib": "^1.10.0",
     "typescript": "^3.5.2",
     "word-error-rate": "0.0.7",
-    "yargs": "^13.2.4"
+    "yargs": "13.2.4"
+  },
+  "devDependencies": {
+    "@types/async": "^2.4.2",
+    "@types/diff": "^4.0.2",
+    "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.0",
+    "@types/yargs": "^13.0.0",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.1.0"
   }
 }
