@@ -115,7 +115,15 @@ export const writeDataToFile = (filePath: string, data: Object | Array<Object>) 
  */
 export const handleResponse = (expectedTranscription: string, response: DetailedSpeechPhrase) => {
     try {
+        console.log(`####****recognition status: ${response.RecognitionStatus} `);
+        console.log(response.RecognitionStatus);
+        console.log("\n****response: \n");
+        console.log(response);
+        console.log("****response.NBest[0]: \n");
+        console.log(response.NBest[0]);
+        
         const actualTranscription = response.NBest[0].Lexical;
+        console.log("actualTranscription: " + actualTranscription)
         const wordErrorRate = calculateWER(actualTranscription, expectedTranscription);
 
         console.log(`Actual Response: "${actualTranscription}"`);
