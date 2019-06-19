@@ -9,20 +9,14 @@ import {
     PullAudioInputStream,
 } from 'microsoft-cognitiveservices-speech-sdk';
 
-import { TestData } from './types';
 import { MultiFilePullStream } from './MultiFilePullStream';
+import { TestData, TranscriptionServiceConfig } from './types';
 
 enum EndpointVariant {
     conversation = 'conversation',
     dictation = 'dictation',
     interactive = 'interactive'
 };
-
-export interface TranscriptionServiceConfig {
-    endpointID?: string;
-    serviceRegion: string;
-    subscriptionKey: string;
-}
 
 // Disable telemetry data.
 SpeechRecognizer.enableTelemetry(false);

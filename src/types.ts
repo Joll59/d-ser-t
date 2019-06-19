@@ -34,3 +34,14 @@ export interface UnhandledWord {
     word: string;
     transcriptions: string[];
 }
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// TranscriptionService
+//
+///////////////////////////////////////////////////////////////////////////////
+export interface TranscriptionServiceConfig {
+    endpointID?: string;
+    serviceRegion: string;
+    subscriptionKey: string;
+}
