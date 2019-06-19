@@ -1,13 +1,15 @@
 import cli from './cli'
+
 import {
     calculateSER,
-    cleanExpectedTranscription,
     createTestData,
     handleResponse,
     TestData,
-    validateExpectedTranscription,
     writeToTextFile
 } from './helpers';
+
+import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
+
 import {
     TranscriptionService,
     TranscriptionServiceConfig
@@ -24,6 +26,9 @@ export const start = async () => {
     const singleFile = yargsArgs.audioFile as string;
     const subscriptionKey = yargsArgs.subscriptionKey as string;
     const transcriptionFile = yargsArgs.transcriptionFile as string;
+
+    // Create the transcription analysis service.
+    const analyzer = new TranscriptionAnalysisService();
 
     // Create the speech service.
     const transcriptionService: TranscriptionServiceConfig = {
@@ -52,8 +57,8 @@ export const start = async () => {
         const parsedData: TestData = createTestData(transcriptionFile, audioDirectory);
 
         for (const testDatum of parsedData) {
-            validateExpectedTranscription(testDatum.transcription);
-            testDatum.transcription = cleanExpectedTranscription(testDatum.transcription);
+            analyzer.validateExpectedTranscription(testDatum.transcription);
+            testDatum.transcription = analyzer.cleanExpectedTranscription(testDatum.transcription);
         }
 
         await service.batchTranscribe(parsedData, Number.parseInt(concurrency))
