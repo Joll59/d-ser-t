@@ -1,14 +1,9 @@
 import cli from './cli'
-
-import {
-    createTestData,
-    writeToTextFile
-} from './helpers';
-
-import { ResponseAnalysisService } from './ResponseAnalysisService';
-import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
-import { TranscriptionService } from './TranscriptionService';
+import { ResponseAnalyzer } from './ResponseAnalyzer';
 import { TestData, TranscriptionServiceConfig } from './types';
+import { TranscriptionAnalyzer } from './TranscriptionAnalyzer';
+import { TranscriptionFileService } from './TranscriptionFileService';
+import { TranscriptionService } from './TranscriptionService';
 
 export const start = async () => {
     const yargsArgs = cli();
@@ -22,11 +17,10 @@ export const start = async () => {
     const subscriptionKey = yargsArgs.subscriptionKey as string;
     const transcriptionFile = yargsArgs.transcriptionFile as string;
 
-    // Create the result analysis service.
-    const transcriptAnalyzer = new TranscriptionAnalysisService();
-
-    // Create the transcription analysis service.
-    const responseAnalyzer = new ResponseAnalysisService(transcriptAnalyzer);
+    // Create the local services.
+    const tfs = new TranscriptionFileService();
+    const transcriptAnalyzer = new TranscriptionAnalyzer();
+    const responseAnalyzer = new ResponseAnalyzer(transcriptAnalyzer);
 
     // Create the speech service.
     const transcriptionService: TranscriptionServiceConfig = {
@@ -52,7 +46,7 @@ export const start = async () => {
             console.warn(`\nSetting concurrent calls to 1, you can set concurrent calls to service with "-c".\n`);
         }
 
-        const parsedData: TestData = createTestData(transcriptionFile, audioDirectory);
+        const parsedData: TestData = tfs.createTestData(transcriptionFile, audioDirectory);
 
         for (const testDatum of parsedData) {
             transcriptAnalyzer.validateExpectedTranscription(testDatum.transcription);
@@ -89,7 +83,7 @@ export const start = async () => {
                     totalTestingTime: testingTime,
                 }
 
-                outFile ? writeToTextFile(outFile, { results, metaData }) : null;
+                outFile ? tfs.writeToTextFile(outFile, { results, metaData }) : null;
                 console.log(`Runtime: ${testingTime}`);
             })
             .catch((error: Error) => {

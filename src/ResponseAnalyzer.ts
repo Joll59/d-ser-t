@@ -2,13 +2,13 @@
 import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.speech/ServiceMessages/DetailedSpeechPhrase';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
-import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
+import { TranscriptionAnalyzer } from './TranscriptionAnalyzer';
 import { TestResult } from './types';
 
-export class ResponseAnalysisService {
-    private readonly transcriptAnalyzer: TranscriptionAnalysisService;
+export class ResponseAnalyzer {
+    private readonly transcriptAnalyzer: TranscriptionAnalyzer;
 
-    constructor(transcriptAnalyzer: TranscriptionAnalysisService) {
+    constructor(transcriptAnalyzer: TranscriptionAnalyzer) {
         this.transcriptAnalyzer = transcriptAnalyzer;
     }
 
@@ -21,7 +21,8 @@ export class ResponseAnalysisService {
      */
     handleResponse(expectedTranscription: string, response: DetailedSpeechPhrase): TestResult {
         try {
-            const actualTranscription = response.NBest[0].Lexical.toLowerCase();
+            // const actualTranscription = response.NBest[0].Lexical.toLowerCase();
+            const actualTranscription = 'dfsasda& dsjh&&& ..wow ()ba badhl . fsda-sdf';
 
             // Check if the transcription contains special characters that the
             // system does not currently account for.

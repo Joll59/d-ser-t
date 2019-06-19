@@ -8,14 +8,14 @@ import {
     UnhandledWord
 } from './types';
 
-interface ITranscriptionAnalysisService {
+interface ITranscriptionAnalyzer {
     validateExpectedTranscription(expectedTranscription: string): void;
     cleanExpectedTranscription(expectedTranscription: string): string;
     analyzeActualTranscription(actual: string): void;
     pushUnhandledOutput(char: string, word: string, actual: string): void;
 }
 
-export class TranscriptionAnalysisService implements ITranscriptionAnalysisService {
+export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
     private data: UnhandledCharacters;
     private readonly filePath = `../unhandledSTTOutput.json`;
     private readonly transcriptRegEx: RegExp = /[^A-Za-z0-9\s']/g;

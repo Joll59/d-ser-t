@@ -1,31 +1,34 @@
 import * as path from 'path';
 
-import {
-    createTestData,
-    parseTextFileContent,
-} from '../src/helpers';
-
-import { ResponseAnalysisService } from '../src/ResponseAnalysisService';
-
-import {
-    TranscriptionAnalysisService
-} from '../src/TranscriptionAnalysisService';
-
+import { ResponseAnalyzer } from '../src/ResponseAnalyzer';
 import { TestResult } from '../src/types';
+
+import {
+    TranscriptionAnalyzer
+} from '../src/TranscriptionAnalyzer';
+
+import { TranscriptionFileService } from '../src/TranscriptionFileService';
 
 const fakeFileContent = 'sample.wav\tthis is only a sample';
 const fakeAudioFolder = './audio-recording-info'
-const fakeItemInResult = { recording: path.join(fakeAudioFolder, fakeFileContent.split('\t')[0]), transcription: fakeFileContent.split('\t')[1] }
-const testData = parseTextFileContent(fakeFileContent, fakeAudioFolder)
+
+const fakeItemInResult = {
+    recording: path.join(fakeAudioFolder, fakeFileContent.split('\t')[0]),
+    transcription: fakeFileContent.split('\t')[1]
+};
+
+const tfs = new TranscriptionFileService();
+const testData = tfs.parseTextFileContent(fakeFileContent, fakeAudioFolder);
+
 const TestResultsMock = jest.fn<TestResult, any[]>(() => ({
     actualTranscription: 'this is only a sample',
     expectedTranscription: 'this is only a sample',
     wordErrorRate: .023
 }));
 
-const transcriptAnalyzer = new TranscriptionAnalysisService();
+const transcriptAnalyzer = new TranscriptionAnalyzer();
 
-const responseAnalyzer = new ResponseAnalysisService(transcriptAnalyzer);
+const responseAnalyzer = new ResponseAnalyzer(transcriptAnalyzer);
 
 const calculateSERMock = jest.fn<string, any[]>(responseAnalyzer.calculateSER);
 
@@ -60,25 +63,25 @@ describe('cleanExpectedTranscription', () => {
 describe('createTestData', () => {
     it('Throws an error when file path is undefined', () => {
         expect(() => {
-            createTestData('', './audio-recording-info')
+            tfs.createTestData('', './audio-recording-info')
         }).toThrowError(Error);
     });
 
     it('Throws an error when folder path is undefined', () => {
         expect(() => {
-            createTestData('./audio-recording-info/transcription.txt', '')
+            tfs.createTestData('./audio-recording-info/transcription.txt', '')
         }).toThrowError(Error);
     });
 
     it('Throws an error when folder path is NOT pointing at a folder', () => {
         expect(() => {
-            createTestData('./audio-recording-info/transcription.txt', './jest.json')
+            tfs.createTestData('./audio-recording-info/transcription.txt', './jest.json')
         }).toThrowError(Error);
     });
 
     it('Throws an error when file extension is not .txt', () => {
         expect(() => {
-            createTestData('./audio-recording-info/greatSample.mp3', '')
+            tfs.createTestData('./audio-recording-info/greatSample.mp3', '')
         }).toThrowError(Error);
     })
 
