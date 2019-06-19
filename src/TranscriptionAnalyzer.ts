@@ -29,7 +29,7 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      *      ,<>/?!#$%^&*`~()_.
      * We prefer to throw rather than making a best guess at resolving typos.
      */
-    public validateExpectedTranscription(expectedTranscription: string): void {
+    public validateExpectedTranscription = (expectedTranscription: string): void => {
         if (this.transcriptRegEx.test(expectedTranscription)) {
             console.log(colors.red(
                 `Error on expected transcription: "${expectedTranscription}"\n`));
@@ -47,7 +47,7 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      *    is sometimes transcribed as `ya`. Apostrophes mid-word are sometimes
      *    preceded by a space.
      */
-    public cleanExpectedTranscription(expectedTranscription: string): string {
+    public cleanExpectedTranscription = (expectedTranscription: string): string => {
         return expectedTranscription
             .replace(/-/g, ` `)
             .replace(/\bokay\b/g, `ok`)
@@ -63,7 +63,7 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      *
      * NOTE: All expected and actual transcriptions will be lower case.
      */
-    public analyzeActualTranscription(actualTranscription: string): void {
+    public analyzeActualTranscription = (actualTranscription: string): void => {
         // This condition isn't necessary, but is fast for actual transcriptions
         // that are passed in clean.
         if (this.transcriptRegEx.test(actualTranscription)) {
@@ -92,7 +92,11 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      * @param actual the actual transcription that contained the special
      * character.
      */
-    public pushUnhandledOutput(char: string, word: string, actual: string): void {
+    public pushUnhandledOutput = (
+        char: string,
+        word: string,
+        actual: string
+    ): void => {
         if (this.data.unhandledCharacters) {
             let charIndex: number = -1;
             const chars: UnhandledCharacter[] = this.data.unhandledCharacters;
@@ -178,7 +182,7 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      * Reads a JSON file and returns the data as a JSON object. If no file has
      * been created, an empty JSON object is returned instead.
      */
-    private readJSONFileSync(): object {
+    private readJSONFileSync = (): object => {
         let json: object = {};
         try {
             const data = fs.readFileSync(path.resolve(__dirname, this.filePath), 'utf8');
@@ -193,7 +197,7 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      * Overwrite the contents of some JSON file, or add content to a new JSON
      * file.
      */
-    private writeJSONFileSync(): void {
+    private writeJSONFileSync = (): void => {
         fs.writeFileSync(path.resolve(__dirname, this.filePath), JSON.stringify(this.data));
     }
 }

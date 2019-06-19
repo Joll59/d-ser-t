@@ -19,7 +19,10 @@ export class ResponseAnalyzer {
      * @returns a TestResult object - the `actualTranscription`,
      * `expectedTranscription`, and `wordErrorRate` for any one recording.
      */
-    handleResponse(expectedTranscription: string, response: DetailedSpeechPhrase): TestResult {
+    handleResponse = (
+        expectedTranscription: string,
+        response: DetailedSpeechPhrase
+    ): TestResult => {
         try {
             // const actualTranscription = response.NBest[0].Lexical.toLowerCase();
             const actualTranscription = 'dfsasda& dsjh&&& ..wow ()ba badhl . fsda-sdf';
@@ -51,7 +54,7 @@ export class ResponseAnalyzer {
      * and 1. An SER of 0 would mean every recording was transcribed perfectly, and
      * an SER of 1 would mean no recordings were transcribed perfectly.
      */
-    calculateSER (results: TestResult[]) {
+    calculateSER = (results: TestResult[]): string => {
         let incorrectTranscriptions = 0;
 
         for (const result of results) {
