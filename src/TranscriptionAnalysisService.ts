@@ -21,11 +21,11 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      * We prefer to throw rather than making a best guess at resolving typos.
      */
     public validateExpectedTranscription(expectedTranscription: string): void {
-        if (/[^A-Za-z0-9\s-']/g.test(expectedTranscription)) {
+        if (/[^A-Za-z0-9\s']/g.test(expectedTranscription)) {
             console.log("\x1b[31m",
                 `Error on expected transcription: "${expectedTranscription}"\n`);
 
-            const message = `Transcriptions may only contain letters, numbers, apostrophes, hyphens, and spaces.`;
+            const message = `Transcriptions may only contain letters, numbers, apostrophes, and spaces.`;
             throw SyntaxError(message);
         }
     };
