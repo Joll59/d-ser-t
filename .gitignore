@@ -5,4 +5,3 @@ lib/
 .env
 test_results.json
 unhandledSTTOutput.json
-unhandledSTTOutput.ts
