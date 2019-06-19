@@ -1,3 +1,4 @@
+const colors = require('colors');
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -7,8 +8,6 @@ import {
     UnhandledWord
 } from './types';
 
-var colors = require('colors');
-
 interface ITranscriptionAnalysisService {
     validateExpectedTranscription(expectedTranscription: string): void;
     cleanExpectedTranscription(expectedTranscription: string): string;
@@ -17,13 +16,14 @@ interface ITranscriptionAnalysisService {
 }
 
 export class TranscriptionAnalysisService implements ITranscriptionAnalysisService {
+    private readonly transcriptRegEx = /[^A-Za-z0-9\s']/g;
     /**
      * @throws if the transcriptions contain special characters like:
      *      ,<>/?!#$%^&*`~()_.
      * We prefer to throw rather than making a best guess at resolving typos.
      */
     public validateExpectedTranscription(expectedTranscription: string): void {
-        if (/[^A-Za-z0-9\s']/g.test(expectedTranscription)) {
+        if (this.transcriptRegEx.test(expectedTranscription)) {
             console.log(colors.red(
                 `Error on expected transcription: "${expectedTranscription}"\n`));
 
@@ -57,12 +57,12 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      * NOTE: All expected and actual transcriptions will be lower case.
      */
     public analyzeActualTranscription(actual: string): void {
-        // This line isn't necessary, but is fast for clean actual
-        // transcriptions.
-        if (/[^A-Za-z0-9\s']/g.test(actual)) {
+        // This condition isn't necessary, but is fast for actual transcriptions
+        // that are passed in clean.
+        if (this.transcriptRegEx.test(actual)) {
             const words = actual.split(' ');
             for (const word of words) {
-                const matches = word.match(/[^A-Za-z0-9\s']/g)
+                const matches = word.match(this.transcriptRegEx);
                 if (matches) {
                     for (const match of matches) {
                         this.pushUnhandledOutput(match, word, actual);
