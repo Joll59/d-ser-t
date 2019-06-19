@@ -8,13 +8,8 @@ import {
 } from './helpers';
 
 import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
-
-import {
-    TranscriptionService,
-    TranscriptionServiceConfig
-} from './TranscriptionService';
-
-import { TestData } from './types';
+import { TranscriptionService } from './TranscriptionService';
+import { TestData, TranscriptionServiceConfig } from './types';
 
 export const start = async () => {
     const yargsArgs = cli();

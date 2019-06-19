@@ -16,7 +16,14 @@ interface ITranscriptionAnalysisService {
 }
 
 export class TranscriptionAnalysisService implements ITranscriptionAnalysisService {
-    private readonly transcriptRegEx = /[^A-Za-z0-9\s']/g;
+    private data: UnhandledCharacters;
+    private readonly filePath = `../unhandledSTTOutput.json`;
+    private readonly transcriptRegEx: RegExp = /[^A-Za-z0-9\s']/g;
+
+    constructor() {
+        this.data = this.readJSONFileSync(this.filePath);
+    }
+
     /**
      * @throws if the transcriptions contain special characters like:
      *      ,<>/?!#$%^&*`~()_.
@@ -86,13 +93,9 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      * character.
      */
     public pushUnhandledOutput(char: string, word: string, actual: string): void {
-        const filePath = `../unhandledSTTOutput.json`;
-
-        let data: UnhandledCharacters = this.readJSONFileSync(filePath);
-
-        if (data.unhandledCharacters) {
+        if (this.data.unhandledCharacters) {
             let charIndex: number = -1;
-            const chars: UnhandledCharacter[] = data.unhandledCharacters;
+            const chars: UnhandledCharacter[] = this.data.unhandledCharacters;
 
             // Check if the character matches any character already added. If
             // so, record the index for later.
@@ -131,7 +134,7 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
                     // The character and the word have already been added. Push
                     // the new transcription.
                     if (transcriptIndex === -1) {
-                        data.unhandledCharacters[charIndex].sources[sourceIndex]
+                        this.data.unhandledCharacters[charIndex].sources[sourceIndex]
                             .transcriptions.push(actual);
                     }
                 } else {
@@ -141,7 +144,7 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
                         word,
                         transcriptions: [actual]
                     };
-                    data.unhandledCharacters[charIndex].sources.push(newData);
+                    this.data.unhandledCharacters[charIndex].sources.push(newData);
                 }
             } else {
                 // The character has not already been added; add the character,
@@ -153,10 +156,10 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
                         transcriptions: [actual]
                     }]
                 }
-                data.unhandledCharacters.push(newData);
+                this.data.unhandledCharacters.push(newData);
             }
         } else {
-            data = {
+            this.data = {
                 unhandledCharacters: [{
                     character: char,
                     sources: [{
@@ -168,7 +171,7 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
         }
 
         // Overwrite the contents of the file.
-        this.writeJSONFileSync(filePath, data);
+        this.writeJSONFileSync(this.filePath, this.data);
     }
 
     /**
