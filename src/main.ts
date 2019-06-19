@@ -4,7 +4,6 @@ import {
     calculateSER,
     createTestData,
     handleResponse,
-    TestData,
     writeToTextFile
 } from './helpers';
 
@@ -14,6 +13,8 @@ import {
     TranscriptionService,
     TranscriptionServiceConfig
 } from './TranscriptionService';
+
+import { TestData } from './types';
 
 export const start = async () => {
     const yargsArgs = cli();
