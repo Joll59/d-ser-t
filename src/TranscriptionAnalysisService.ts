@@ -16,12 +16,12 @@ interface ITranscriptionAnalysisService {
 }
 
 export class TranscriptionAnalysisService implements ITranscriptionAnalysisService {
-    private data: UnhandledCharacters;
+    private data: UnhandledCharacters = {};
     private readonly filePath = `../unhandledSTTOutput.json`;
     private readonly transcriptRegEx: RegExp = /[^A-Za-z0-9\s']/g;
 
     constructor() {
-        this.data = this.readJSONFileSync(this.filePath);
+        this.data = this.readJSONFileSync();
     }
 
     /**
@@ -171,7 +171,7 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
         }
 
         // Overwrite the contents of the file.
-        this.writeJSONFileSync(this.filePath, this.data);
+        this.writeJSONFileSync();
     }
 
     /**
@@ -181,10 +181,10 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      * @param filePath the relative path from the `lib/` folder to some JSON
      * file.
      */
-    private readJSONFileSync(filePath: string): object {
+    private readJSONFileSync(): object {
         let json: object = {};
         try {
-            const data = fs.readFileSync(path.resolve(__dirname, filePath), 'utf8');
+            const data = fs.readFileSync(path.resolve(__dirname, this.filePath), 'utf8');
             json = JSON.parse(data);
         } catch {
             console.log(`Creating a file to store unhandled output from the STT service . . .`);
@@ -200,7 +200,7 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      * file.
      * @param json some JSON object to write to the file.
      */
-    private writeJSONFileSync(filePath: string, json: object): void {
-        fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(json));
+    private writeJSONFileSync(): void {
+        fs.writeFileSync(path.resolve(__dirname, this.filePath), JSON.stringify(this.data));
     }
 }

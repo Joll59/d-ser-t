@@ -78,10 +78,9 @@ export const handleResponse = (expectedTranscription: string, response: Detailed
     try {
         const actualTranscription = response.NBest[0].Lexical.toLowerCase();
 
-        const analyzer = new TranscriptionAnalysisService();
-
         // Check if the transcription contains special characters that the
         // system does not currently account for.
+        const analyzer = new TranscriptionAnalysisService();
         analyzer.analyzeActualTranscription(actualTranscription);
 
         const wordErrorRate = calculateWER(actualTranscription, expectedTranscription);
