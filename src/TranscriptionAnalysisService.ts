@@ -7,6 +7,8 @@ import {
     UnhandledWord
 } from './types';
 
+var colors = require('colors');
+
 interface ITranscriptionAnalysisService {
     validateExpectedTranscription(expectedTranscription: string): void;
     cleanExpectedTranscription(expectedTranscription: string): string;
@@ -22,8 +24,8 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      */
     public validateExpectedTranscription(expectedTranscription: string): void {
         if (/[^A-Za-z0-9\s']/g.test(expectedTranscription)) {
-            console.log("\x1b[31m",
-                `Error on expected transcription: "${expectedTranscription}"\n`);
+            console.log(colors.red(
+                `Error on expected transcription: "${expectedTranscription}"\n`));
 
             const message = `Transcriptions may only contain letters, numbers, apostrophes, and spaces.`;
             throw SyntaxError(message);
