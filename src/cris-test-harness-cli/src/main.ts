@@ -1,7 +1,14 @@
 import cli from './cli';
+import { CustomSpeechTestHarness } from 'cris-test-harness';
 
 export const start = async () => {
-  const yargsArgs = cli();
+  const harnessArgs = cli();
+  const harness = new CustomSpeechTestHarness(harnessArgs);
+  if (harnessArgs.singleFile) {
+    harness.singleFileTranscription();
+  } else {
+    harness.multipleFileTranscription();
+  }
 };
 
 try {

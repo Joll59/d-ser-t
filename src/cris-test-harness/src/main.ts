@@ -20,7 +20,7 @@ interface HarnessConfig {
   concurrentCalls: string;
   endpointId: string | undefined;
   outFile: string;
-  serviceRegion: string;
+  region: string;
   subscriptionKey: string;
   transcriptionFile: string;
 }
@@ -41,7 +41,7 @@ export class CustomSpeechTestHarness {
     this.concurrency = harnessConfig.concurrentCalls as string;
     this.crisEndpointId = harnessConfig.endpointId as string;
     this.outFile = harnessConfig.outFile as string || path.join('.','test_results.json');
-    this.serviceRegion = harnessConfig.serviceRegion as string;
+    this.serviceRegion = harnessConfig.region as string;
     this.singleFile = harnessConfig.audioFile as string;
     this.subscriptionKey = harnessConfig.subscriptionKey as string;
     this.transcriptionFile = harnessConfig.transcriptionFile as string;
