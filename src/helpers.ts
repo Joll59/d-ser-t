@@ -3,7 +3,7 @@ import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/dis
 import * as path from 'path';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
-// import { UnhandledCharacter, UnhandledWord } from './types';
+import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
 
 export interface TestDatum {
     recording: string;
@@ -65,55 +65,10 @@ export const createTestData = (filepath: string, folderpath: string): TestData =
 };
 
 /**
- * @throws if the transcriptions contain special characters like:
- *      ,<>/?!#$%^&*`~()_.
- * We prefer to throw rather than making a best guess at resolving typos.
- */
-export const validateExpectedTranscription = (expectedTranscription: string) => {
-    if (/[^A-Za-z0-9\s-']/g.test(expectedTranscription)) {
-        console.log("\x1b[31m",
-            `Error on expected transcription: "${expectedTranscription}"\n`);
-
-        const message = `Transcriptions may only contain letters, numbers, apostrophes, hyphens, and spaces.`;
-        throw SyntaxError(message);
-    }
-};
-
-/**
- * The STT service will not return hyphens, commas, periods, etc. Expect that
- * special characters in transcription files match the STT output.
- *
- * Some other oddities as we find them:
- *    `okay` is transcribed as `OK`.
- *    `you` is sometimes transcribed as `ya`.
- *    Apostrophes mid-word are sometimes preceded by a space.
- */
-export const cleanExpectedTranscription = (expectedTranscription: string): string => {
-    return expectedTranscription
-        .replace(/-/g, ` `)
-        .replace(/\bokay\b/g, `ok`)
-        .toLowerCase();
-};
-
-/**
 * @param filePath path to save file.
 * @param data data to be written to file.
 */
 export const writeToTextFile = (filePath: string, data: Object | Array<Object>) => {
-    try {
-        !!path.extname(filePath).substr(1) ? filePath = path.normalize(filePath) : filePath.concat('.json');
-        fs.writeFileSync(filePath, JSON.stringify(data, null, '\t'), 'utf8');
-        console.info(`Writing to ${filePath} File`);
-    } catch (error) {
-        throw Error(error);
-    }
-}
-
-/**
-* @param filePath path to save file.
-* @param data data to be written to file.
-*/
-export const writeToJSONFile = (filePath: string, data: Object | Array<Object>) => {
     try {
         !!path.extname(filePath).substr(1) ? filePath = path.normalize(filePath) : filePath.concat('.json');
         fs.writeFileSync(filePath, JSON.stringify(data, null, '\t'), 'utf8');
@@ -133,9 +88,13 @@ export const writeToJSONFile = (filePath: string, data: Object | Array<Object>) 
 export const handleResponse = (expectedTranscription: string, response: DetailedSpeechPhrase) => {
     try {
         // const actualTranscription = response.NBest[0].Lexical.toLowerCase();
+        const actualTranscription = `** ()& he_re`;
 
-        const actualTranscription = `here is so_me output that we might get with-weird characters®`;
-        analyzeActualTranscription(actualTranscription);
+        const analyzer = new TranscriptionAnalysisService();
+
+        // Check if the transcription contains special characters that the
+        // system does not currently account for.
+        analyzer.analyzeActualTranscription(actualTranscription);
 
         const wordErrorRate = calculateWER(actualTranscription, expectedTranscription);
 
@@ -147,73 +106,6 @@ export const handleResponse = (expectedTranscription: string, response: Detailed
     } catch (error) {
         throw Error(error);
     }
-}
-
-/**
- * The STT service occasionally has unexpected behavior. For example:
- *    Spoken `okay` is sometimes transcribed as `OK`.
- *
- * Any STT output that contains unexpected characters will be logged in
- * `unhandledSTTOutput.json`.
- *
- * NOTE: All expected and actual transcriptions will be lower case.
- */
-const analyzeActualTranscription = (actual: string): void => {
-    // This line isn't necessary, but is fast for clean actual transcriptions.
-    if (/[^A-Za-z0-9\s']/g.test(actual)) {
-        const words = actual.split(' ');
-        for (const word of words) {
-            const matches = word.match(/[^A-Za-z0-9\s']/g)
-            if (matches) {
-                for (const match of matches) {
-                    pushUnhandledOutput(word, match, actual);
-                }
-            }
-        }
-    }
-}
-
-/**
- * Reads a JSON file and returns the data as a JSON object. If no file has been
- * created, an empty JSON object is returned instead.
- *
- * @param filePath the relative path from the `lib/` folder to some JSON file.
- */
-const readJSONFileSync = (filePath: string): object => {
-    let json: object = {};
-    try {
-        const data = fs.readFileSync(path.resolve(__dirname, filePath), 'utf8');
-        json = JSON.parse(data);
-        console.log(json);
-    } catch {
-        console.log(`Creating a file to store unhandled output from the STT service . . .`);
-    }
-    return json;
-}
-
-/**
- * Overwrite the contents of some JSON file, or add content to a new JSON file.
- *
- * @param filePath the relative path from the `lib/` folder to some JSON file.
- * @param json some JSON object to write to the file.
- */
-const writeJSONFileSync = (filePath: string, json: object) => {
-    fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(json));
-}
-
-const pushUnhandledOutput = (word: string, match: string, actual: string) => {
-    const filePath = `../unhandledSTTOutput.json`;
-
-    let data: object = readJSONFileSync(filePath);
-
-    // Modify the data, don't overwrite it.
-    data = {
-        b: 6
-    };
-
-    // Overwrite the contents of the file.
-    writeJSONFileSync(filePath, data);
-    console.log(data);
 }
 
 /**

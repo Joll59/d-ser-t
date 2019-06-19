@@ -1,10 +1,13 @@
+export interface UnhandledCharacters {
+    unhandledCharacters?: UnhandledCharacter[];
+}
+
 export interface UnhandledCharacter {
-    unhandledCharacter: string;
-    unhandledWords: UnhandledWord[];
+    character: string;
+    sources: UnhandledWord[];
 }
 
 export interface UnhandledWord {
-    sourceWord: string;
-    sourceTranscriptions: string[];
-    isFakeSampleOutput?: boolean;
+    word: string;
+    transcriptions: string[];
 }
