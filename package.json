@@ -43,7 +43,8 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "test": "jest --colors --config jest.json"
+    "test": "jest --colors --config jest.json",
+    "ci": "npm run build && jest --testNamePattern model --colors --config jest.json"
   },
   "author": "@jolly59",
   "license": "ISC",
