@@ -40,17 +40,37 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
     };
 
     /**
-     * The STT service will not return hyphens, commas, periods, etc. Expect
-     * that special characters in transcription files match the STT output.
+     * Actual and expected transcriptions should be cleaned in the same way, but
+     * only when we know exactly the behavior we are cleaning.
      *
-     * Some other oddities as we find them: `okay` is transcribed as `OK`. `you`
-     *    is sometimes transcribed as `ya`. Apostrophes mid-word are sometimes
-     *    preceded by a space.
+     * We still do not know exactly what to expect from the STT service, but
+     * that uncertainty will be handled in `analyzeActualTranscription`.
      */
     public cleanTranscription = (transcription: string): string => {
         return transcription
             .toLowerCase()
             .replace(/\bokay\b/g, `ok`);
+    };
+
+    /**
+     * The STT service will **sometimes** return commas, periods, question
+     * marks, and more. When we discover patterns that only sometimes occur from
+     * the STT service, we will account for and clean them here.
+     *
+     * At this point, the actual transcription is already lowercase and "okay"
+     * is converted to "ok".
+     *
+     * We do not pass expected transcriptions through this function because we
+     * would have to assume no typos were made. Instead, we expect the human
+     * completing the transcription file to do so correctly.
+     */
+    public cleanActualTranscription = (actualTranscription: string): string => {
+        return this.cleanTranscription(actualTranscription)
+            // Replace commas, periods, and question marks with an empty string.
+            .replace(/,|\.|\?/g, ``)
+            // Plural words are sometimes returned with " 's" at the end. Replace
+            // the space and apostrophe with "s".
+            .replace(/\s's\b/g, `s`);
     };
 
     /**
@@ -61,12 +81,11 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      * `unhandledSTTOutput.json`.
      */
     public analyzeActualTranscription = (actualTranscription: string): void => {
-        this.cleanTranscription(actualTranscription);
-
         // This condition isn't necessary, but is fast for actual transcriptions
         // that are passed in clean.
         if (this.uncleanTranscriptionRegEx.test(actualTranscription)) {
             const words = actualTranscription.split(' ');
+            // Find individual words that contain unhandled characters.
             for (const word of words) {
                 const matches = word.match(this.uncleanTranscriptionRegEx);
                 if (matches) {
