@@ -49,8 +49,8 @@ export const start = async () => {
         const parsedData: TestData = tfs.createTestData(transcriptionFile, audioDirectory);
 
         for (const testDatum of parsedData) {
+            testDatum.transcription = transcriptAnalyzer.cleanTranscription(testDatum.transcription);
             transcriptAnalyzer.validateExpectedTranscription(testDatum.transcription);
-            testDatum.transcription = transcriptAnalyzer.cleanExpectedTranscription(testDatum.transcription);
         }
 
         await service.batchTranscribe(parsedData, Number.parseInt(concurrency))
