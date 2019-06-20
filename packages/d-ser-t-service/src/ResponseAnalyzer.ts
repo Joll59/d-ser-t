@@ -24,10 +24,10 @@ export class ResponseAnalyzer {
         response: DetailedSpeechPhrase
     ): TestResult => {
         try {
-            const actualTranscription = response.NBest[0].Lexical.toLowerCase();
+            const actualTranscription = response.NBest[0].Lexical;
 
-            // Check if the transcription contains special characters that the
-            // system does not currently account for.
+            // Clean the transcription, then check if it contains special
+            // characters that the system does not currently account for.
             this.transcriptAnalyzer.analyzeActualTranscription(actualTranscription);
 
             const wordErrorRate = calculateWER(actualTranscription, expectedTranscription);

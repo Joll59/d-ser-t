@@ -10,7 +10,7 @@ import {
 
 interface ITranscriptionAnalyzer {
     validateExpectedTranscription(expectedTranscription: string): void;
-    cleanExpectedTranscription(expectedTranscription: string): string;
+    cleanTranscription(expectedTranscription: string): string;
     analyzeActualTranscription(actual: string): void;
     pushUnhandledOutput(char: string, word: string, actual: string): void;
 }
@@ -18,7 +18,7 @@ interface ITranscriptionAnalyzer {
 export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
     private data: UnhandledCharacters;
     private readonly filePath = `../unhandledSTTOutput.json`;
-    private readonly expectedRegEx: RegExp = /[^A-Za-z0-9\s']/g;
+    private readonly uncleanTranscriptionRegEx: RegExp = /[^a-z\s']/g;
 
     constructor() {
         this.data = this.readJSONFileSync();
@@ -30,11 +30,11 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      * We prefer to throw rather than making a best guess at resolving typos.
      */
     public validateExpectedTranscription = (expectedTranscription: string): void => {
-        if (this.expectedRegEx.test(expectedTranscription)) {
+        if (this.uncleanTranscriptionRegEx.test(expectedTranscription)) {
             console.log(colors.red(
                 `Error on expected transcription: "${expectedTranscription}"\n`));
 
-            const message = `Transcriptions may only contain letters, numbers, apostrophes, and spaces.`;
+            const message = `Transcriptions may only contain letters, apostrophes, and spaces.`;
             throw SyntaxError(message);
         }
     };
@@ -47,11 +47,10 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      *    is sometimes transcribed as `ya`. Apostrophes mid-word are sometimes
      *    preceded by a space.
      */
-    public cleanExpectedTranscription = (expectedTranscription: string): string => {
-        return expectedTranscription
-            .replace(/-/g, ` `)
-            .replace(/\bokay\b/g, `ok`)
-            .toLowerCase();
+    public cleanTranscription = (transcription: string): string => {
+        return transcription
+            .toLowerCase()
+            .replace(/\bokay\b/g, `ok`);
     };
 
     /**
@@ -60,16 +59,16 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      *
      * Any STT output that contains unexpected characters will be logged in
      * `unhandledSTTOutput.json`.
-     *
-     * NOTE: All expected and actual transcriptions will be lower case.
      */
     public analyzeActualTranscription = (actualTranscription: string): void => {
+        this.cleanTranscription(actualTranscription);
+
         // This condition isn't necessary, but is fast for actual transcriptions
         // that are passed in clean.
-        if (this.expectedRegEx.test(actualTranscription)) {
+        if (this.uncleanTranscriptionRegEx.test(actualTranscription)) {
             const words = actualTranscription.split(' ');
             for (const word of words) {
-                const matches = word.match(this.expectedRegEx);
+                const matches = word.match(this.uncleanTranscriptionRegEx);
                 if (matches) {
                     for (const match of matches) {
                         this.pushUnhandledOutput(match, word, actualTranscription);
