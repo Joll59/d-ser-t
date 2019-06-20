@@ -81,8 +81,6 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      * `unhandledSTTOutput.json`.
      */
     public analyzeActualTranscription = (actualTranscription: string): void => {
-        this.cleanTranscription(actualTranscription);
-
         // This condition isn't necessary, but is fast for actual transcriptions
         // that are passed in clean.
         if (this.uncleanTranscriptionRegEx.test(actualTranscription)) {
