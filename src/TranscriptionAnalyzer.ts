@@ -1,3 +1,4 @@
+const colors = require('colors');
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -7,23 +8,29 @@ import {
     UnhandledWord
 } from './types';
 
-var colors = require('colors');
-
-interface ITranscriptionAnalysisService {
+interface ITranscriptionAnalyzer {
     validateExpectedTranscription(expectedTranscription: string): void;
     cleanExpectedTranscription(expectedTranscription: string): string;
     analyzeActualTranscription(actual: string): void;
     pushUnhandledOutput(char: string, word: string, actual: string): void;
 }
 
-export class TranscriptionAnalysisService implements ITranscriptionAnalysisService {
+export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
+    private data: UnhandledCharacters;
+    private readonly filePath = `../unhandledSTTOutput.json`;
+    private readonly expectedRegEx: RegExp = /[^A-Za-z0-9\s']/g;
+
+    constructor() {
+        this.data = this.readJSONFileSync();
+    }
+
     /**
      * @throws if the transcriptions contain special characters like:
      *      ,<>/?!#$%^&*`~()_.
      * We prefer to throw rather than making a best guess at resolving typos.
      */
-    public validateExpectedTranscription(expectedTranscription: string): void {
-        if (/[^A-Za-z0-9\s']/g.test(expectedTranscription)) {
+    public validateExpectedTranscription = (expectedTranscription: string): void => {
+        if (this.expectedRegEx.test(expectedTranscription)) {
             console.log(colors.red(
                 `Error on expected transcription: "${expectedTranscription}"\n`));
 
@@ -40,7 +47,7 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      *    is sometimes transcribed as `ya`. Apostrophes mid-word are sometimes
      *    preceded by a space.
      */
-    public cleanExpectedTranscription(expectedTranscription: string): string {
+    public cleanExpectedTranscription = (expectedTranscription: string): string => {
         return expectedTranscription
             .replace(/-/g, ` `)
             .replace(/\bokay\b/g, `ok`)
@@ -56,16 +63,16 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      *
      * NOTE: All expected and actual transcriptions will be lower case.
      */
-    public analyzeActualTranscription(actual: string): void {
-        // This line isn't necessary, but is fast for clean actual
-        // transcriptions.
-        if (/[^A-Za-z0-9\s']/g.test(actual)) {
-            const words = actual.split(' ');
+    public analyzeActualTranscription = (actualTranscription: string): void => {
+        // This condition isn't necessary, but is fast for actual transcriptions
+        // that are passed in clean.
+        if (this.expectedRegEx.test(actualTranscription)) {
+            const words = actualTranscription.split(' ');
             for (const word of words) {
-                const matches = word.match(/[^A-Za-z0-9\s']/g)
+                const matches = word.match(this.expectedRegEx);
                 if (matches) {
                     for (const match of matches) {
-                        this.pushUnhandledOutput(match, word, actual);
+                        this.pushUnhandledOutput(match, word, actualTranscription);
                     }
                 }
             }
@@ -85,14 +92,14 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
      * @param actual the actual transcription that contained the special
      * character.
      */
-    public pushUnhandledOutput(char: string, word: string, actual: string): void {
-        const filePath = `../unhandledSTTOutput.json`;
-
-        let data: UnhandledCharacters = this.readJSONFileSync(filePath);
-
-        if (data.unhandledCharacters) {
+    public pushUnhandledOutput = (
+        char: string,
+        word: string,
+        actual: string
+    ): void => {
+        if (this.data.unhandledCharacters) {
             let charIndex: number = -1;
-            const chars: UnhandledCharacter[] = data.unhandledCharacters;
+            const chars: UnhandledCharacter[] = this.data.unhandledCharacters;
 
             // Check if the character matches any character already added. If
             // so, record the index for later.
@@ -131,7 +138,7 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
                     // The character and the word have already been added. Push
                     // the new transcription.
                     if (transcriptIndex === -1) {
-                        data.unhandledCharacters[charIndex].sources[sourceIndex]
+                        this.data.unhandledCharacters[charIndex].sources[sourceIndex]
                             .transcriptions.push(actual);
                     }
                 } else {
@@ -141,7 +148,7 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
                         word,
                         transcriptions: [actual]
                     };
-                    data.unhandledCharacters[charIndex].sources.push(newData);
+                    this.data.unhandledCharacters[charIndex].sources.push(newData);
                 }
             } else {
                 // The character has not already been added; add the character,
@@ -153,10 +160,10 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
                         transcriptions: [actual]
                     }]
                 }
-                data.unhandledCharacters.push(newData);
+                this.data.unhandledCharacters.push(newData);
             }
         } else {
-            data = {
+            this.data = {
                 unhandledCharacters: [{
                     character: char,
                     sources: [{
@@ -168,20 +175,17 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
         }
 
         // Overwrite the contents of the file.
-        this.writeJSONFileSync(filePath, data);
+        this.writeJSONFileSync();
     }
 
     /**
      * Reads a JSON file and returns the data as a JSON object. If no file has
      * been created, an empty JSON object is returned instead.
-     *
-     * @param filePath the relative path from the `lib/` folder to some JSON
-     * file.
      */
-    private readJSONFileSync(filePath: string): object {
+    private readJSONFileSync = (): object => {
         let json: object = {};
         try {
-            const data = fs.readFileSync(path.resolve(__dirname, filePath), 'utf8');
+            const data = fs.readFileSync(path.resolve(__dirname, this.filePath), 'utf8');
             json = JSON.parse(data);
         } catch {
             console.log(`Creating a file to store unhandled output from the STT service . . .`);
@@ -192,12 +196,8 @@ export class TranscriptionAnalysisService implements ITranscriptionAnalysisServi
     /**
      * Overwrite the contents of some JSON file, or add content to a new JSON
      * file.
-     *
-     * @param filePath the relative path from the `lib/` folder to some JSON
-     * file.
-     * @param json some JSON object to write to the file.
      */
-    private writeJSONFileSync(filePath: string, json: object): void {
-        fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(json));
+    private writeJSONFileSync = (): void => {
+        fs.writeFileSync(path.resolve(__dirname, this.filePath), JSON.stringify(this.data));
     }
 }

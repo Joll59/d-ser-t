@@ -36,7 +36,7 @@ export class MultiFilePullStream extends PullAudioInputStreamCallback {
         this.isStreamClosed = true;
     }
 
-    public setFile = (fileName: string) => {
+    public setFile = (fileName: string): void => {
         // Obtain and open the file.
         this.currentFile = fs.readFileSync(fileName);
         this.currentOffset = 0;

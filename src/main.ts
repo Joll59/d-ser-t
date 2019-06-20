@@ -1,20 +1,9 @@
 import cli from './cli'
-
-import {
-    calculateSER,
-    createTestData,
-    handleResponse,
-    writeToTextFile
-} from './helpers';
-
-import { TranscriptionAnalysisService } from './TranscriptionAnalysisService';
-
-import {
-    TranscriptionService,
-    TranscriptionServiceConfig
-} from './TranscriptionService';
-
-import { TestData } from './types';
+import { ResponseAnalyzer } from './ResponseAnalyzer';
+import { TranscriptionAnalyzer } from './TranscriptionAnalyzer';
+import { TranscriptionFileService } from './TranscriptionFileService';
+import { TranscriptionService } from './TranscriptionService';
+import { TestData, TranscriptionServiceConfig } from './types';
 
 export const start = async () => {
     const yargsArgs = cli();
@@ -28,8 +17,10 @@ export const start = async () => {
     const subscriptionKey = yargsArgs.subscriptionKey as string;
     const transcriptionFile = yargsArgs.transcriptionFile as string;
 
-    // Create the transcription analysis service.
-    const analyzer = new TranscriptionAnalysisService();
+    // Create the local services.
+    const tfs = new TranscriptionFileService();
+    const transcriptAnalyzer = new TranscriptionAnalyzer();
+    const responseAnalyzer = new ResponseAnalyzer(transcriptAnalyzer);
 
     // Create the speech service.
     const transcriptionService: TranscriptionServiceConfig = {
@@ -55,11 +46,11 @@ export const start = async () => {
             console.warn(`\nSetting concurrent calls to 1, you can set concurrent calls to service with "-c".\n`);
         }
 
-        const parsedData: TestData = createTestData(transcriptionFile, audioDirectory);
+        const parsedData: TestData = tfs.createTestData(transcriptionFile, audioDirectory);
 
         for (const testDatum of parsedData) {
-            analyzer.validateExpectedTranscription(testDatum.transcription);
-            testDatum.transcription = analyzer.cleanExpectedTranscription(testDatum.transcription);
+            transcriptAnalyzer.validateExpectedTranscription(testDatum.transcription);
+            testDatum.transcription = transcriptAnalyzer.cleanExpectedTranscription(testDatum.transcription);
         }
 
         await service.batchTranscribe(parsedData, Number.parseInt(concurrency))
@@ -70,13 +61,13 @@ export const start = async () => {
                 const results = service.resultArray.map(
                     (item, index) => {
                         console.log(`Handling result ${index + 1}/${service.resultArray.length} . . .`);
-                        return handleResponse(item.transcription, JSON.parse(item.data.json));
+                        return responseAnalyzer.handleResponse(item.transcription, JSON.parse(item.data.json));
                     });
 
                 const reducer = (accumulator: number, currentValue: number) =>
                     accumulator + currentValue;
 
-                const sentenceErrorRate = calculateSER(results);
+                const sentenceErrorRate = responseAnalyzer.calculateSER(results);
                 console.log(`Sentence Error Rate: ${sentenceErrorRate}`);
 
                 const averageWordErrorRate = ((results.map((item, index: number) =>
@@ -92,7 +83,7 @@ export const start = async () => {
                     totalTestingTime: testingTime,
                 }
 
-                outFile ? writeToTextFile(outFile, { results, metaData }) : null;
+                outFile ? tfs.writeToTextFile(outFile, { results, metaData }) : null;
                 console.log(`Runtime: ${testingTime}`);
             })
             .catch((error: Error) => {

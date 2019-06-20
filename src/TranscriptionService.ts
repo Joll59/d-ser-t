@@ -9,20 +9,14 @@ import {
     PullAudioInputStream,
 } from 'microsoft-cognitiveservices-speech-sdk';
 
-import { TestData } from './types';
 import { MultiFilePullStream } from './MultiFilePullStream';
+import { TestData, TranscriptionServiceConfig } from './types';
 
 enum EndpointVariant {
     conversation = 'conversation',
     dictation = 'dictation',
     interactive = 'interactive'
 };
-
-export interface TranscriptionServiceConfig {
-    endpointID?: string;
-    serviceRegion: string;
-    subscriptionKey: string;
-}
 
 // Disable telemetry data.
 SpeechRecognizer.enableTelemetry(false);
@@ -54,11 +48,11 @@ export class TranscriptionService {
         this.speechConfig.outputFormat = OutputFormat.Detailed;
     }
 
-    private createAudioConfig = (path: fs.PathLike) => {
+    private createAudioConfig = (path: fs.PathLike): AudioConfig => {
         return AudioConfig.fromStreamInput(this.createFileStream(path))
     }
 
-    private constructCRISURL = (endpointType: EndpointVariant) => {
+    private constructCRISURL = (endpointType: EndpointVariant): URL => {
         const url = `wss:${this.serviceRegion}.stt.speech.microsoft.com/speech/recognition/${endpointType}/cognitiveservices/v1?cid=${this.crisEndpointID}`;
         return new URL(url);
     }
@@ -66,7 +60,7 @@ export class TranscriptionService {
     /**
      * @param path path to local file for speech recognition.
      */
-    private createFileStream = (path: fs.PathLike) => {
+    private createFileStream = (path: fs.PathLike): AudioInputStream => {
         const pushStream = AudioInputStream.createPushStream();
         fs.createReadStream(path)
             .on('data', (arrayBuffer) => { pushStream.write(arrayBuffer.buffer); })
@@ -75,7 +69,9 @@ export class TranscriptionService {
         return pushStream;
     };
 
-    private continuousRecognize = (recognizer: SpeechRecognizer) => {
+    private continuousRecognize = (
+        recognizer: SpeechRecognizer
+    ): Promise<SpeechRecognitionResult> => {
         try {
             return new Promise<SpeechRecognitionResult>((resolve, reject) => {
                 recognizer.recognized = (_, event) => {
@@ -99,7 +95,12 @@ export class TranscriptionService {
         }
     }
 
-    private internalRecognizer = async (recognizer: SpeechRecognizer, stream: MultiFilePullStream, dataArray: TestData, recognizerID?: number) => {
+    private internalRecognizer = async (
+        recognizer: SpeechRecognizer,
+        stream: MultiFilePullStream,
+        dataArray: TestData,
+        recognizerID?: number
+    ): Promise<void> => {
         let currentFileIndex = 0;
         return new Promise<void>((resolve, reject) => {
             recognizer.canceled = (r, e) => {
@@ -127,7 +128,9 @@ export class TranscriptionService {
 
             // Start stream.
             recognizer.startContinuousRecognitionAsync(() =>
-                console.info(`Starting Recognizer ${recognizerID} . . .`), (error) => console.error(`${recognizerID} error:`, error));
+                console.info(`Starting Recognizer ${recognizerID} . . .`),
+                (error) => console.error(`${recognizerID} error:`, error)
+            );
 
             // Insert the first file into the buffer.
             stream.setFile(dataArray[currentFileIndex++].recording);
@@ -170,7 +173,9 @@ export class TranscriptionService {
         ));
     }
 
-    public singleFiletranscribe = async (filePath: string) => {
+    public singleFiletranscribe = async (
+        filePath: string
+    ): Promise<SpeechRecognitionResult> => {
         if (!fs.lstatSync(filePath).isFile() || filePath === undefined) {
             throw Error(`File Path provided is not a file or is undefined.`);
         }
