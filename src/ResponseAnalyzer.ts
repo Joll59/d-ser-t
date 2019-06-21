@@ -24,13 +24,20 @@ export class ResponseAnalyzer {
         response: DetailedSpeechPhrase
     ): TestResult => {
         try {
-            const actualTranscription = response.NBest[0].Lexical.toLowerCase();
+            let actualTranscription = response.NBest[0].Lexical;
+
+            // Clean the transcription of specific patterns that are sometimes
+            // returned from the STT service.
+            actualTranscription = this.transcriptAnalyzer.
+                cleanActualTranscription(actualTranscription);
 
             // Check if the transcription contains special characters that the
             // system does not currently account for.
-            this.transcriptAnalyzer.analyzeActualTranscription(actualTranscription);
+            this.transcriptAnalyzer.
+                analyzeActualTranscription(actualTranscription);
 
-            const wordErrorRate = calculateWER(actualTranscription, expectedTranscription);
+            const wordErrorRate = calculateWER(
+                actualTranscription, expectedTranscription);
 
             console.log(`Actual Response: "${actualTranscription}"`);
             console.log(`Expected Response: "${expectedTranscription}"`);
