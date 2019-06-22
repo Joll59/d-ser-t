@@ -24,7 +24,7 @@ This project requires Microsoft speech service, audio files and a corresponding 
 
 Install the project from npm
 
-```npm install cris-test-harness```
+```npm install d-ser-t-service```
 
 ### Import into Codebase.
 
@@ -32,10 +32,10 @@ If writing with TypeScript you can import it with `import`. If not, `require`.
 
 ```js
 // with import
-import { CustomSpeechTestHarness } from 'cris-test-harness';
+import { CustomSpeechTestHarness } from 'd-ser-t-service';
 
 // with require
-const CustomSpeechTestHarness = require('cris-test-harness').CustomSpeechTestHarness;
+const CustomSpeechTestHarness = require('d-ser-t-service').CustomSpeechTestHarness;
 ```
 
 ### Pass values into the Test Harness
