@@ -173,7 +173,7 @@ export class TranscriptionService {
         ));
     }
 
-    public singleFiletranscribe = async (
+    public singleFileTranscribe = async (
         filePath: string
     ): Promise<SpeechRecognitionResult> => {
         if (!fs.lstatSync(filePath).isFile() || filePath === undefined) {

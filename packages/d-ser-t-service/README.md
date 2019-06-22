@@ -1,7 +1,7 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 # Speech Recognition Testing
-This project tests speech recognition . It takes sample audio and expected transcriptions, and tests whether or not there is proper transcription of the audio file in real time. 
+This project tests speech recognition . It takes sample audio and expected transcriptions, and tests whether or not there is proper transcription of the audio file in real time.
 
 ## Using the project
 
@@ -20,35 +20,38 @@ This project requires Microsoft speech service, audio files and a corresponding 
 
 ## Running this test Harness
 
-### First Build
+### First Install
 
-Compile the project:
+Install the project from npm
 
-```npm run build```
+```npm install cris-test-harness```
 
-### Run CLI with FLAGS.
+### Import into Codebase.
 
-Run the test harness:
+If writing with TypeScript you can import it with `import`. If not, `require`.
 
-```node lib/main.js``` : runs the cli, don't forget your flags.
+```js
+// with import
+import { CustomSpeechTestHarness } from 'cris-test-harness';
 
-## Flags needed to run CLI. <Pass these Flags in> 
-| flag  | alias  | value  |
-|---|---|---|
-| -s | subscription-key | Microsoft Speech Subscription Key |
-| -r | service-region | Speech Service Region |
-| -d | audio-directory | Path to Directory of wav files |
-| -e | endpoint-Id | Custom Speech Endpoint ID |
-| -t | transcription-file | Transcription File Path, `.txt` file |
-| -f | audio-file | singular audio file `.wav` for console logging Speech Transcription ~~-t~~, ~~-d~~|
-| -o | out-file [ optional ] | test output file: saves JSON Array [ defaults to `./test_results.json` ] |
-| -c | concurrent-calls | concurrent service calls[defaults to 1] |
-| Conflicts --> -f : (-d & -t) |   | Providing a singular file to transcribe, results in console log of transcription from service |
+// with require
+const CustomSpeechTestHarness = require('cris-test-harness').CustomSpeechTestHarness;
 ```
-example:
 
-node lib/main.js -s "<subscription key>" -r "westus" -e "<CRIS endpoint ID >" -d "<audio directory with wav files>" -t "<transcription.txt file path>"
+### Pass values into the Test Harness
 
+Create an instance of the test harness and pass the appropriate values as noted above.
+
+```js
+const testHarness = new CustomSpeechTestHarness(
+  audioDirectory='path/to/audio/directory',
+  concurrency='number of concurrent calls, ≥ 1',
+  crisEndpointId='Custom Speech Endpoint ID',
+  serviceRegion='Speech service region, e.g. westus',
+  transcriptionFile='path/to/existing/transcription/file',
+  audioFile="optional; use if there's a single file to transcribe",
+  outFile='optional; defaults to ./test_results.json'
+);
 ```
 
 ### Calls to the Custom speech service is limited to 20 Maximum calls.
@@ -100,13 +103,12 @@ Audio must be `.wav` files sampled at `16kHz`. My recommended approach for gener
 
 ## Creation of transcriptions.txt file.
 
-As you create your audio files, keep track of the expected transcriptions in a text file called ```transcriptions.txt```. The structure for `.txt` file is the same structure used for training a custom acoustic model. Each line of the transcription file should have the name of an audio file, followed by the corresponding transcription. The file name and transcription should be separated by a tab (\t). 
+As you create your audio files, keep track of the expected transcriptions in a text file called ```transcriptions.txt```. The structure for `.txt` file is the same structure used for training a custom acoustic model. Each line of the transcription file should have the name of an audio file, followed by the corresponding transcription. The file name and transcription should be separated by a tab (\t).
 
-Important: TXT files should be encoded as UTF-8 BOM and not contain any UTF-8 characters above U+00A1 in the Unicode characters table. Typically –, ‘, ‚, “ etc. This harness tries to address this by cleaning your data. 
+Important: TXT files should be encoded as UTF-8 BOM and not contain any UTF-8 characters above U+00A1 in the Unicode characters table. Typically –, ‘, ‚, “ etc. This harness tries to address this by cleaning your data.
 
-### Results stored in JSON format. 
-Testing stores test results in JSON format which is stored in `./test_results.json` by default, can be changed with a flag 
-
+### Results stored in JSON format.
+Testing stores test results in JSON format which is stored in `./test_results.json` by default, can be changed with a flag
 
 ## Version Support
 

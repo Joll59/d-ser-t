@@ -1,0 +1,33 @@
+{
+  "name": "d-ser-t-service",
+  "version": "0.3.0",
+  "description": "Dynamic Sentence Error Rate Testing: A Package for testing the CRIS speech-to-text model, quantifying the quality of the model with respect to its Word Error Rate",
+  "license": "ISC",
+  "author": "@jolly59, @nhuntwalker, @KatieProchilo",
+  "main": "lib/main.js",
+  "types": "lib/main.d.ts",
+  "dependencies": {
+    "colors": "^1.3.3",
+    "diff": "^4.0.1",
+    "microsoft-cognitiveservices-speech-sdk": "^1.5.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.1",
+    "word-error-rate": "0.0.7"
+  },
+  "devDependencies": {
+    "@types/async": "^2.4.2",
+    "@types/node": "^12.0.0",
+    "@types/diff": "^4.0.2",
+    "@types/jest": "^24.0.13",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "test": "jest --colors --config jest.json",
+    "ci": "jest --testNamePattern model --colors --config jest.json"
+  }
+}
