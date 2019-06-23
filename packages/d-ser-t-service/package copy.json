@@ -1,13 +1,13 @@
 {
-  "name": "cris-test-harness-cli",
+  "name": "cris-test-harness",
   "version": "0.3.0",
-  "description": "Package for running the cris-test-harness from the command line",
+  "description": "Package for testing the CRIS speech-to-text model with some audio against the transcription of that audio, quantifying the quality of the model with respect to its Word Error Rate",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
   "scripts": {
     "build": "npx tsc"
   },
-  "author": "@jolly59, @nhuntwalker",
+  "author": "@jolly59, @nhuntwalker, @KatieProchilo",
   "license": "ISC",
   "dependencies": {
     "colors": "^1.3.3",

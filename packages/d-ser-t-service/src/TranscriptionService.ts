@@ -173,7 +173,9 @@ export class TranscriptionService {
         ));
     }
 
-    public singleFileTranscribe = async (filePath: string) => {
+    public singleFileTranscribe = async (
+        filePath: string
+    ): Promise<SpeechRecognitionResult> => {
         if (!fs.lstatSync(filePath).isFile() || filePath === undefined) {
             throw Error(`File Path provided is not a file or is undefined.`);
         }

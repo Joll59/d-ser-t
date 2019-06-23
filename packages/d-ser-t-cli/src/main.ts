@@ -1,5 +1,5 @@
 import cli from './cli';
-import { CustomSpeechTestHarness } from 'cris-test-harness';
+import { CustomSpeechTestHarness } from 'd-ser-t-service';
 
 export const start = async () => {
   const harnessArgs = cli();

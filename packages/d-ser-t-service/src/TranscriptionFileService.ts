@@ -6,21 +6,21 @@ import { TestData } from './types';
 export class TranscriptionFileService {
     validateFile = (filepath: string): string => {
         if (filepath === undefined) {
-            throw Error('Audio Folder Path or Transcription File Path not provided');
+            throw Error('Transcription file path not provided');
         }
         if (path.extname(filepath).substr(1) !== 'txt') {
-            throw Error('Transcription File extension is not .txt');
+            throw Error('Transcription file extension is not .txt');
         };
 
-        return filepath = path.normalize(filepath);
+        return path.normalize(filepath);
     }
 
     validateFolder = (folderpath: string): string => {
         if (folderpath === undefined) {
-            throw Error('Audio Folder Path or Transcription File Path not provided');
+            throw Error('Audio folder path not provided');
         }
         if (!fs.existsSync(folderpath) || !fs.lstatSync(folderpath).isDirectory()) {
-            throw Error('Audio Folder Path provided is not a directory');
+            throw Error('Audio folder path provided is not a directory');
         };
 
         return folderpath = path.normalize(folderpath);
@@ -35,7 +35,8 @@ export class TranscriptionFileService {
             .split(/\r?\n/)
             .map((item) => {
                 let split = item.split('\t');
-                return { recording: path.join(folderpath, split[0]), transcription: split[1] };
+                let filepath:string = !!path.extname(split[0]).substr(1) ? path.normalize(split[0]) : path.normalize(split[0].concat('.wav'));
+                return { recording: path.join(folderpath, filepath), transcription: split[1] };
             });
     }
 

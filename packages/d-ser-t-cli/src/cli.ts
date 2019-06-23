@@ -1,7 +1,7 @@
 import * as argv from 'yargs';
 export default function () {
     const yargsArgs = argv
-        .scriptName("test-harness")
+        .scriptName("d-ser-t-harness")
         .options({
             subscriptionKey: {
                 alias: ['s', 'key'],

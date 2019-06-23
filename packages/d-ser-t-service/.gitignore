@@ -1,7 +1,7 @@
 node_modules/
-lerna-debug.log
-npm-debug.log
-packages/*/lib
+coverage/
+lib/
 .vscode
+.env
 test_results.json
 unhandledSTTOutput.json

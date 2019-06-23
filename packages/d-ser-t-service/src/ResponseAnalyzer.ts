@@ -54,7 +54,10 @@ export class ResponseAnalyzer {
             throw Error(error);
         }
     }
-
+    /**
+     * Sum function for totaling up values with a reducer
+     */
+    reducerSum = (total: number, currentNum: number) => total + currentNum;
     /**
      * Sentence Error Rate (SER) is a measure of perfect transcriptions between 0
      * and 1. An SER of 0 would mean every recording was transcribed perfectly, and

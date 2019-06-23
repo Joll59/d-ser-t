@@ -206,7 +206,9 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
             const data = fs.readFileSync(path.resolve(__dirname, this.filePath), 'utf8');
             json = JSON.parse(data);
         } catch {
-            console.log(`Creating a file to store unhandled output from the STT service . . .`);
+            console.log(`Creating a store for unhandled output from the STT service . . .`);
+        } finally {
+            console.log('Store Creation Success!!')
         }
         return json;
     }
