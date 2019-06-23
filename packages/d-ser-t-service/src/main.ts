@@ -77,7 +77,7 @@ export class CustomSpeechTestHarness {
 
     public validateAndCleanTranscription(parsedData: TestData) {
         for (const testDatum of parsedData) {
-            testDatum.transcription = this.transcriptAnalyzer.cleanExpectedTranscription(testDatum.transcription);
+            testDatum.transcription = this.transcriptAnalyzer.cleanTranscription(testDatum.transcription);
             this.transcriptAnalyzer.validateExpectedTranscription(testDatum.transcription);
         }
     }
