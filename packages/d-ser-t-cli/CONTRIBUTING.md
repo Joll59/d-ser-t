@@ -35,7 +35,7 @@ Changes that are cosmetic in nature and do not add anything substantial to the s
 
 * We encourage you to pitch in.
 
-Thanks! :heart: :heart: :heart:
+:heart: :heart: Thanks! :heart: :heart:
 
 d-ser-t Team
 
