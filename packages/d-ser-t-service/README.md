@@ -70,7 +70,7 @@ Audio must be `.wav` files sampled at `16kHz`. My recommended approach for gener
 2. Set your recording settings
    * Correct mic selected (in toolbar near top)
    * Mono selected (in toolbar near top)
-   * Project rate is 44100 Hz (bottom left) default, Speech Service Accepts 16000 Hz, change this setting to match.
+   * Project rate is 44100 Hz (bottom left) default,
 3. Record all the samples
    * Hit record and speak all of your samples, back-to-back, with 1 - 1.5 sec of silence in between (try to be consistent). When finished, press stop
    * Try not to pause for more than 1 sec within a single sample (such as for commas or periods)
