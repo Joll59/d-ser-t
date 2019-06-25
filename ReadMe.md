@@ -5,18 +5,13 @@
 # Introduction
     This is a monorepo containing both the Dynamic Sentence Error Rate Testing Utility and its accompaning CLI.
 # Getting Started
+
+
 ## Install
 - From root of repository:
     - `npm install` 
 
-## Usage
-
-## Example
-TypeScript
-```
-
-```
-# Deployment/Upload
+## Deployment/Upload
 > `lerna publish`
 # License
 Licensed under the MIT License  

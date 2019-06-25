@@ -58,9 +58,8 @@ argv
         .conflicts("d", "f")
         .conflicts("f", "t")
         .conflicts('f', 'o')
-        .usage('$0 -s [string] -r [string] -e [string] -d [string] -t [string]')
         .help('help')
-        .command(["$0","d-ser-t -r <region> -s <sub key> -f <audio file>"], "Minimal command to run the service", ():any => {}, (argv) => {
+        .command(["$0"], "Minimal command to run the service: -r [string] -s [string] -f [string]", ():any => {}, (argv) => {
             const values = { 
                 audioDirectory: argv.audioDirectory as string, 
                 audioFile: argv.audioFile  as string, 
