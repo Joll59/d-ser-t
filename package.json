@@ -19,7 +19,7 @@
   },
   "scripts": {
     "publish": "lerna publish",
-    "prepublishOnly": "lerna run build",
+    "prepublishOnly": "npm install",
     "postinstall": "npm-run-all bootstrap build",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build"
