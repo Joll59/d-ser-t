@@ -1,6 +1,6 @@
 {
   "name": "d-ser-t-cli",
-  "version": "1.0.2-alpha.0",
+  "version": "1.0.2",
   "description": "Package for running d-ser-t from the command line",
   "main": "lib/cli.js",
   "types": "lib/cli.d.ts",
@@ -22,7 +22,7 @@
     "bin"
   ],
   "dependencies": {
-    "d-ser-t-service": "^1.0.2-alpha.0",
+    "d-ser-t-service": "^1.0.2",
     "yargs": "13.2.4"
   },
   "devDependencies": {
