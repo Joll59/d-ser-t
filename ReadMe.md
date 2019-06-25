@@ -13,4 +13,3 @@
 ## Top Level Commands.
 - From root of repository:
     - `npm install` 
-    - `npm run start`

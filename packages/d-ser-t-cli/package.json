@@ -2,19 +2,26 @@
   "name": "d-ser-t-cli",
   "version": "0.3.0",
   "description": "Package for running d-ser-t from the command line",
-  "main": "lib/main.js",
-  "types": "lib/main.d.ts",
-  "author": "@jolly59, @nhuntwalker, @KatieProchilo",
-  "license": "ISC",
+  "main": "lib/cli.js",
+  "types": "lib/cli.d.ts",
+  "author": "Yomi (@jolly59), Katie (@KatieProchilo), Nick (@nhuntwalker)",
+  "license": "MIT",
+  "bin": {
+    "d-ser-t": "./bin/d-ser-t-cli"
+  },
+  "files": [
+    "lib",
+    "bin"
+  ],
   "dependencies": {
-    "yargs": "13.2.4",
-    "d-ser-t-service": "^0.3.0"
+    "d-ser-t-service": "0.3.0",
+    "yargs": "13.2.4"
   },
   "devDependencies": {
     "@types/yargs": "^13.0.0"
   },
   "scripts": {
-    "build": "npx tsc"
+    "build": "tsc"
   },
   "gitHead": "731c25486adc924a180e04f9dad46ee8bf4eb6f2"
 }
