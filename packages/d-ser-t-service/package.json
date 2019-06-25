@@ -26,5 +26,6 @@
     "build": "tsc",
     "test": "jest --colors --config \"../../jest.json\" --rootDir . --passWithNoTests",
     "ci": "jest --testNamePattern model --colors --config jest.json"
-  }
+  },
+  "gitHead": "1869055199d6326fc6776d9a7cb34edb1ac1d37c"
 }
