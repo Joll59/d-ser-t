@@ -9,7 +9,7 @@ This project requires Microsoft speech service, audio files and a corresponding 
 
 ## Values needed to run test harness.
 - Microsoft speech subscription key.
-- Speech service region
+- Speech service region  
     Optional Parameters
     - endpoint-id; necessary to use custom speech service
     - Concurrent calls; generally < 20.

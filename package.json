@@ -1,20 +1,9 @@
 {
   "name": "d-ser-t",
   "version": "1.0.0",
-  "main": "lib/main.js",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "publish": "lerna publish",
-    "prepublishOnly": "npm install",
-    "postinstall": "npm-run-all bootstrap build",
-    "bootstrap": "lerna bootstrap",
-    "build": "lerna run build"
-  },
-  "author": "Yomi (@jolly59) Katie (@KatieProchilo), Nick (@nhuntwalker)",
-  "license": "MIT",
   "description": "Composite package housing d-ser-t-service and d-ser-t-cli",
+  "license": "MIT",
+  "author": "Yomi (@jolly59) Katie (@KatieProchilo), Nick (@nhuntwalker)",
   "homepage": "https://github.com/Joll59/d-ser-t#ReadMe",
   "repository": {
     "type": "git",
@@ -22,6 +11,9 @@
   },
   "bugs": {
     "url": "https://github.com/Joll59/d-ser-t/issues"
+  },
+  "directories": {
+    "lib": "lib"
   },
   "dependencies": {},
   "devDependencies": {
@@ -34,5 +26,12 @@
     "ts-node": "^8.1.0",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2"
+  },
+  "scripts": {
+    "publish": "lerna publish",
+    "prepublishOnly": "npm install",
+    "postinstall": "npm-run-all bootstrap build",
+    "bootstrap": "lerna bootstrap",
+    "build": "lerna run build"
   }
 }

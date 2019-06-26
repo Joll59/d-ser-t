@@ -2,9 +2,10 @@
   "name": "d-ser-t-cli",
   "version": "1.0.2",
   "description": "Package for running d-ser-t from the command line",
+  "license": "MIT",
+  "author": "Yomi (@jolly59), Katie (@KatieProchilo), Nick (@nhuntwalker)",
   "main": "lib/cli.js",
   "types": "lib/cli.d.ts",
-  "author": "Yomi (@jolly59), Katie (@KatieProchilo), Nick (@nhuntwalker)",
   "homepage": "https://github.com/Joll59/d-ser-t/blob/master/packages/d-ser-t-cli/README.md",
   "repository": {
     "type": "git",
@@ -13,13 +14,20 @@
   "bugs": {
     "url": "https://github.com/Joll59/d-ser-t/issues"
   },
-  "license": "MIT",
   "bin": {
     "d-ser-t": "./bin/d-ser-t-cli"
   },
   "files": [
-    "lib",
-    "bin"
+    "/lib",
+    "/bin"
+  ],
+  "keywords": [
+    "d-ser-t",
+    "d-ser-t-service",
+    "sentence","error","rate",
+    "word","error","rate",
+    "batch","testing","cli",
+    "custom","speech","model","recognition"
   ],
   "dependencies": {
     "d-ser-t-service": "^1.0.2",

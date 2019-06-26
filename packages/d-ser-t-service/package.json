@@ -14,6 +14,22 @@
   "bugs": {
     "url": "https://github.com/Joll59/d-ser-t/issues"
   },
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "/lib"
+  ],
+  "keywords": [
+    "d-ser-t",
+    "d-ser-t-cli",
+    "speech-recognition",
+    "sentence-error-rate",
+    "word-error-rate",
+    "testing",
+    "batch",
+    "custom-speech-model"
+  ],
   "dependencies": {
     "colors": "^1.3.3",
     "diff": "^4.0.1",
@@ -24,12 +40,6 @@
   "devDependencies": {
     "@types/diff": "^4.0.2"
   },
-  "directories": {
-    "lib": "lib"
-  },
-  "files": [
-    "lib"
-  ],
   "scripts": {
     "build": "tsc",
     "test": "jest --colors --config \"../../jest.json\" --rootDir . --passWithNoTests",
