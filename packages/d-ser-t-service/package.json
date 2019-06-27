@@ -1,6 +1,6 @@
 {
   "name": "d-ser-t-service",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Dynamic Sentence Error Rate Testing: A Package for testing the CRIS speech-to-text model, quantifying the quality of the model with respect to its Word Error Rate",
   "license": "MIT",
   "author": "Yomi (@jolly59), Katie(@KatieProchilo), Nick (@nhuntwalker) ",
@@ -40,8 +40,8 @@
   "devDependencies": {
     "@types/diff": "^4.0.2",
     "@types/jest": "^24.0.13",
-    "ts-jest": "^24.0.2",
-    "jest": "^24.8.0"
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2"
   },
   "scripts": {
     "build": "tsc",

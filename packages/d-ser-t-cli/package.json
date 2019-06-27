@@ -1,6 +1,6 @@
 {
   "name": "d-ser-t-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Package for running d-ser-t from the command line",
   "license": "MIT",
   "author": "Yomi (@jolly59), Katie (@KatieProchilo), Nick (@nhuntwalker)",
@@ -39,7 +39,7 @@
     "recognition"
   ],
   "dependencies": {
-    "d-ser-t-service": "^1.0.2",
+    "d-ser-t-service": "^1.0.3",
     "yargs": "13.2.4"
   },
   "devDependencies": {
