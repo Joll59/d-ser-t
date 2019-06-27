@@ -38,5 +38,5 @@ This project requires Microsoft speech service, audio files and a corresponding 
 ## Running
 ```
 Sample
-npm run start -- -s [string] -r [string] -f [string]
+npm run d-ser-t -- -s [string] -r [string] -f [string]
 ```

@@ -12,7 +12,7 @@
     - `npm install` 
 
 ## Deployment/Upload
-> `lerna publish`
+> `npm publish`..whcih runs `lerna publish`.
 # License
 Licensed under the MIT License  
 

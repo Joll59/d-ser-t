@@ -38,11 +38,14 @@
     "word-error-rate": "0.0.7"
   },
   "devDependencies": {
-    "@types/diff": "^4.0.2"
+    "@types/diff": "^4.0.2",
+    "@types/jest": "^24.0.13",
+    "ts-jest": "^24.0.2",
+    "jest": "^24.8.0"
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest --colors --config \"../../jest.json\" --rootDir . --passWithNoTests",
+    "test": "jest --colors --verbose --config jest.json --rootDir . --passWithNoTests",
     "ci": "jest --testNamePattern model --colors --config jest.json"
   },
   "gitHead": "7ea89ad951bd73ea27914cd7a61b9d8da2264eae"

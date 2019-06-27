@@ -48,9 +48,8 @@ describe('validateExpectedTranscription', () => {
 })
 
 describe('cleanExpectedTranscription', () => {
-    it('Replaces hyphens with space', () => {
-        expect(transcriptAnalyzer.cleanActualTranscription('test-harness'))
-            .toEqual('test harness');
+    it('Does NOT replace hyphens with space', () => {
+        expect(transcriptAnalyzer.cleanActualTranscription('test-harness')).not.toEqual('test harness');
     });
 
     it('Lowercases strings', () => {

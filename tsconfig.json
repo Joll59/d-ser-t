@@ -19,8 +19,5 @@
     "references": [
         {"path": "packages/d-ser-t-cli"},
         {"path": "packages/d-ser-t-service"}
-    ],
-    "include": [
-        "src/**/*", "/tests/**/*",
     ]
 }

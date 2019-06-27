@@ -24,10 +24,19 @@
   "keywords": [
     "d-ser-t",
     "d-ser-t-service",
-    "sentence","error","rate",
-    "word","error","rate",
-    "batch","testing","cli",
-    "custom","speech","model","recognition"
+    "sentence",
+    "error",
+    "rate",
+    "word",
+    "error",
+    "rate",
+    "batch",
+    "testing",
+    "cli",
+    "custom",
+    "speech",
+    "model",
+    "recognition"
   ],
   "dependencies": {
     "d-ser-t-service": "^1.0.2",
@@ -38,7 +47,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "npx d-ser-t"
+    "d-ser-t": "npx d-ser-t"
   },
   "gitHead": "7ea89ad951bd73ea27914cd7a61b9d8da2264eae"
 }
