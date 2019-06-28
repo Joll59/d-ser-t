@@ -112,7 +112,6 @@ export class TranscriptionService {
             };
 
             recognizer.recognized = (r, e) => {
-                
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
                 if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
@@ -147,14 +146,10 @@ export class TranscriptionService {
     }
 
     public batchTranscribe = (testData: TestData, concurrentCalls: number) => {
-        let piece = 0;
         let start = 0;
-        if (testData.length >= concurrentCalls) {
-            piece = Math.ceil(testData.length / concurrentCalls);
-        } else if (testData.length < concurrentCalls) {
-            piece = testData.length;
-            concurrentCalls = piece;
-        }
+
+        // The number of files to be transcribed by each recognizer.
+        const piece = Math.ceil(testData.length / concurrentCalls);
 
         let processArray: {
             recognizer: SpeechRecognizer,
