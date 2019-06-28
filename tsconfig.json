@@ -15,15 +15,9 @@
         "declarationMap": true,
         "importHelpers": true,
         "incremental": true,
-        "outDir": "./lib",
-        "types": [
-            "node",
-        ],
-        "typeRoots": [
-            "./node_modules/@types"
-        ],
     },
-    "include": [
-        "src/**/*", "/tests/**/*",
+    "references": [
+        {"path": "packages/d-ser-t-cli"},
+        {"path": "packages/d-ser-t-service"}
     ]
 }
