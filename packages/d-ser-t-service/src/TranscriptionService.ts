@@ -112,17 +112,28 @@ export class TranscriptionService {
             };
 
             recognizer.recognized = (r, e) => {
-                if (currentFileIndex >= dataArray.length) {
+                
+                // send the same stream back for any null response from Speech API
+                // where there are no utterances returned
+                if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
+                    stream.setFile(dataArray[currentFileIndex - 2].recording);
+                }
+                else {
+                    // push response into the resultArray
                     this.resultArray.push({
                         data: e.result, transcription: dataArray[currentFileIndex - 1].transcription
                     });
-                    console.info(`Closing stream from Recognizer ${recognizerID} . . .`);
-                    stream.close();
-                } else {
+
+                    // if last response, close stream
+                    if (currentFileIndex >= dataArray.length) {
+                        console.info(`Closing stream from Recognizer ${recognizerID} . . .`);
+                        stream.close();
+                    } 
                     // Increment file counter, pass next file to stream.
-                    console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
-                    this.resultArray.push({ data: e.result, transcription: dataArray[currentFileIndex - 1].transcription });
-                    stream.setFile(dataArray[currentFileIndex++].recording);
+                    else {
+                        console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
+                        stream.setFile(dataArray[currentFileIndex++].recording);
+                    }
                 }
             };
 
@@ -141,7 +152,7 @@ export class TranscriptionService {
         let piece = 0;
         let start = 0;
         if (testData.length >= concurrentCalls) {
-            piece = Math.floor(testData.length / concurrentCalls);
+            piece = Math.ceil(testData.length / concurrentCalls);
         } else if (testData.length < concurrentCalls) {
             piece = testData.length;
             concurrentCalls = piece;
@@ -161,10 +172,18 @@ export class TranscriptionService {
                 const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(stream);
                 const audioConfig: AudioConfig = AudioConfig.fromStreamInput(pullStream);
 
-                processArray.push({
-                    recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
-                    stream, filesArray: testData.slice(start, start+=piece)
-                });
+                if (piece <= testData.length) {
+                    processArray.push({
+                        recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
+                        stream, filesArray: testData.slice(start, start += piece)
+                    });
+                }
+                else{
+                    processArray.push({
+                        recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
+                        stream, filesArray: testData
+                    });
+                }
             }
         }
         return Promise.all(processArray.map(
