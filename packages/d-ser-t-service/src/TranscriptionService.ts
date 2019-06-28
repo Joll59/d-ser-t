@@ -101,8 +101,8 @@ export class TranscriptionService {
         dataArray: TestData,
         recognizerID?: number
     ): Promise<void> => {
-        let currentFileIndex = 0;
         return new Promise<void>((resolve, reject) => {
+            let currentFileIndex = 0;
             recognizer.canceled = (r, e) => {
                 if (e.errorDetails !== undefined) {
                     reject(e);
@@ -116,21 +116,19 @@ export class TranscriptionService {
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
                 if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
-                    stream.setFile(dataArray[currentFileIndex - 2].recording);
-                }
-                else {
+                    stream.setFile(dataArray[currentFileIndex - 1].recording);
+                } else {
                     // push response into the resultArray
                     this.resultArray.push({
                         data: e.result, transcription: dataArray[currentFileIndex - 1].transcription
                     });
 
-                    // if last response, close stream
                     if (currentFileIndex >= dataArray.length) {
+                        // if last response, close stream
                         console.info(`Closing stream from Recognizer ${recognizerID} . . .`);
                         stream.close();
-                    } 
-                    // Increment file counter, pass next file to stream.
-                    else {
+                    } else {
+                        // Increment file counter, pass next file to stream.
                         console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
                         stream.setFile(dataArray[currentFileIndex++].recording);
                     }
