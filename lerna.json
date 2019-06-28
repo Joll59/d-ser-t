@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "independent",
   "npmClient": "npm",
   "command": {
     "publish": {
@@ -8,11 +8,6 @@
         "*.md"
       ],
       "message": "chore(release): publish"
-    },
-    "bootstrap": {
-      "npmClientArgs": [
-        "--no-package-lock"
-      ]
     }
   },
   "packages": [

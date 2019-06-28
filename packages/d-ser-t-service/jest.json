@@ -7,6 +7,6 @@
     "verbose": true,
     "collectCoverage": true,
     "collectCoverageFrom": [
-        "src/**/*.ts"
+        "<rootDir>/**/src/**/*[!.test].ts"
     ]
 }

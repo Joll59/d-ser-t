@@ -1,20 +1,53 @@
 {
   "name": "d-ser-t-cli",
-  "version": "0.3.0",
+  "version": "1.0.4-alpha.0",
   "description": "Package for running d-ser-t from the command line",
-  "main": "lib/main.js",
-  "types": "lib/main.d.ts",
-  "author": "@jolly59, @nhuntwalker, @KatieProchilo",
-  "license": "ISC",
+  "license": "MIT",
+  "author": "Yomi (@jolly59), Katie (@KatieProchilo), Nick (@nhuntwalker)",
+  "main": "lib/cli.js",
+  "types": "lib/cli.d.ts",
+  "homepage": "https://github.com/Joll59/d-ser-t/blob/master/packages/d-ser-t-cli/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Joll59/d-ser-t.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Joll59/d-ser-t/issues"
+  },
+  "bin": {
+    "d-ser-t": "./bin/d-ser-t-cli"
+  },
+  "files": [
+    "/lib",
+    "/bin"
+  ],
+  "keywords": [
+    "d-ser-t",
+    "d-ser-t-service",
+    "sentence",
+    "error",
+    "rate",
+    "word",
+    "error",
+    "rate",
+    "batch",
+    "testing",
+    "cli",
+    "custom",
+    "speech",
+    "model",
+    "recognition"
+  ],
   "dependencies": {
-    "yargs": "13.2.4",
-    "d-ser-t-service": "^0.3.0"
+    "d-ser-t-service": "^1.0.4",
+    "yargs": "13.2.4"
   },
   "devDependencies": {
     "@types/yargs": "^13.0.0"
   },
   "scripts": {
-    "build": "npx tsc"
+    "build": "tsc",
+    "d-ser-t": "npx d-ser-t"
   },
-  "gitHead": "731c25486adc924a180e04f9dad46ee8bf4eb6f2"
+  "gitHead": "7ea89ad951bd73ea27914cd7a61b9d8da2264eae"
 }

@@ -1,7 +1,7 @@
 import * as argv from 'yargs';
-export default function () {
-    const yargsArgs = argv
-        .scriptName("d-ser-t-harness")
+import {start} from './main';
+argv
+        .scriptName("d-ser-t")
         .options({
             subscriptionKey: {
                 alias: ['s', 'key'],
@@ -58,8 +58,18 @@ export default function () {
         .conflicts("d", "f")
         .conflicts("f", "t")
         .conflicts('f', 'o')
-        .usage('$0 -s [string] -r [string] -e [string] -d [string] -t [string]')
         .help('help')
+        .command(["$0"], "Minimal command to run the service: -r [string] -s [string] -f [string]", ():any => {}, (argv) => {
+            const values = { 
+                audioDirectory: argv.audioDirectory as string, 
+                audioFile: argv.audioFile  as string, 
+                concurrentCalls: argv.concurrentCalls  as string, 
+                transcriptionFile: argv.transcriptionFile  as string, 
+                subscriptionKey: argv.subscriptionKey  as string, 
+                endpointId: argv.endpointId  as string, 
+                outFile: argv.outFile  as string, 
+                region: argv.region  as string 
+            }
+            start(values);
+        })
         .argv;
-    return yargsArgs;
-}

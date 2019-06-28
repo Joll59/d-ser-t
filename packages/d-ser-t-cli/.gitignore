@@ -3,3 +3,4 @@ coverage/
 lib/
 .vscode
 .env
+tsconfig.tsbuildinfo
