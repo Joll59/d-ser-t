@@ -25,7 +25,7 @@
     "ts-node": "^8.1.0"
   },
   "scripts": {
-    "publish": "lerna publish",
+    "publish": "lerna publish from-git",
     "prepublishOnly": "npm install",
     "postinstall": "npm-run-all bootstrap build",
     "bootstrap": "lerna bootstrap",
