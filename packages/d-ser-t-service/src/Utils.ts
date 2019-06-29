@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { UnhandledCharacters } from './types';
 
-export class Utils {
+export default class Utils {
     /**
      * Reads a JSON file and returns the data as a JSON object. If no file has
      * been created, an empty JSON object is returned instead.
@@ -14,7 +14,7 @@ export class Utils {
             const data = fs.readFileSync(path.resolve(__dirname, filePath), 'utf8');
             json = JSON.parse(data);
         } catch {
-            console.log(`Opening ${filePath} for the STT service . . .`);
+            console.log(`Coulld not open ${filePath} for the STT service . . .`);
         } finally {
             console.log('Creation Success!!')
         }

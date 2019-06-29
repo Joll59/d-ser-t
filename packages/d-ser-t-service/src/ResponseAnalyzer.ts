@@ -2,13 +2,13 @@
 import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.speech/ServiceMessages/DetailedSpeechPhrase';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
-import { TranscriptionAnalyzer } from './TranscriptionAnalyzer';
 import { TestResult } from './types';
+import { ITranscriptionAnalyzer } from './interfaces/ITranscriptionAnalyzer';
 
 export class ResponseAnalyzer {
-    private readonly transcriptAnalyzer: TranscriptionAnalyzer;
+    private readonly transcriptAnalyzer: ITranscriptionAnalyzer;
 
-    constructor(transcriptAnalyzer: TranscriptionAnalyzer) {
+    constructor(transcriptAnalyzer: ITranscriptionAnalyzer) {
         this.transcriptAnalyzer = transcriptAnalyzer;
     }
 
