@@ -2,22 +2,10 @@
 import { ResponseAnalyzer } from './ResponseAnalyzer';
 import { TranscriptionFileService } from './TranscriptionFileService';
 import { TranscriptionService } from './TranscriptionService';
-import { TestData, TranscriptionServiceConfig, TestResult } from './types';
+import { TestData, TranscriptionServiceConfig, TestResult, HarnessConfig } from './types';
 import path from 'path';
 import { ITranscriptionAnalyzer } from './interfaces/ITranscriptionAnalyzer';
 import TranscriptionAnalyzerFactory from './TranscriptionAnalyzerFactory';
-
-interface HarnessConfig {
-    audioDirectory?: string;
-    audioFile?: string;
-    concurrentCalls?: string;
-    endpointId?: string;
-    outFile?: string;
-    region: string;
-    subscriptionKey: string;
-    transcriptionFile?: string;
-    exceptions?: string;
-}
 
 export class CustomSpeechTestHarness {
     private exceptions?: string;

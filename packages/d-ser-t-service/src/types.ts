@@ -53,3 +53,20 @@ export interface TranscriptionServiceConfig {
     serviceRegion: string;
     subscriptionKey: string;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Harness Config
+//
+///////////////////////////////////////////////////////////////////////////////
+export interface HarnessConfig {
+    audioDirectory?: string;
+    audioFile?: string;
+    concurrentCalls?: string;
+    endpointId?: string;
+    outFile?: string;
+    region: string;
+    subscriptionKey: string;
+    transcriptionFile?: string;
+    exceptions?: string;
+}
