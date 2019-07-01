@@ -14,7 +14,7 @@ export default class Utils {
             const data = fs.readFileSync(path.resolve(__dirname, filePath), 'utf8');
             json = JSON.parse(data);
         } catch {
-            console.log(`Coulld not open ${filePath} for the STT service . . .`);
+            console.log(`Could not open ${filePath} for the STT service . . .`);
         } finally {
             console.log('Creation Success!!')
         }
@@ -27,5 +27,24 @@ export default class Utils {
      */
     static writeJSONFileSync = (filePath: string, data: UnhandledCharacters): void => {
         fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(data));
+    }
+
+    /**
+     * Extract regex pattern. /\\s's\\b/g" --> \\s's\\b. If no regex pattern 
+     * exists, return undefined.
+     * @returns regex pattern or undefined if none found
+     * @param input string
+     */
+    static extractRegExPattern = (input: string): string | undefined => {
+        if (input.length < 2) {
+            console.warn(`${input} is not a regex pattern`);
+        }
+        if (input.charAt(0) === `/` &&
+            input.charAt(input.length - 2) === `/` &&
+            input.charAt(input.length - 1) === `g`) {
+
+            return input.substr(1, input.length - 3);
+        }
+        return undefined;
     }
 }

@@ -1,7 +1,8 @@
 {
     "replaceExpressions": {
         "gotten": "got an",
-        "OK": "okay",
-        "all right": "alright"
+        "all right": "alright",
+        "/,|\\.|\\?/g": "",
+        "/\\s's\\b/g": "s"
     }
 }

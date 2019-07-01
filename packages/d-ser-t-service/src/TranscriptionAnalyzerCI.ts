@@ -12,16 +12,18 @@ export class TranscriptionAnalyzerCI extends TranscriptionAnalyzerBase {
 
     public cleanActualTranscription = (actualTranscription: string): string => {
         let result: string = this.cleanTranscription(actualTranscription)
-            // Replace commas, periods, and question marks with an empty string.
-            .replace(/,|\.|\?/g, ``)
-            // Plural words are sometimes returned with " 's" at the end. Replace
-            // the space and apostrophe with "s".
-            .replace(/\s's\b/g, `s`);
-
         let config: CleanUpConfig = <CleanUpConfig>Utils.readJSONFileSync(this.configFile);
 
         for (let key in config.replaceExpressions) {
+
             let value = config.replaceExpressions[key];
+            const regextStr = Utils.extractRegExPattern(key);
+
+            if (regextStr) {
+                let regex: RegExp = new RegExp(regextStr, "g");
+                result = result.replace(regex, value);
+                continue;
+            }
 
             if (result.includes(key)) {
                 result = result.replace(key, value);
