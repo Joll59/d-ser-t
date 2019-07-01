@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TestData } from './types';
+import { TestData } from './index';
 
 export class TranscriptionFileService {
     validateFile = (filepath: string): string => {

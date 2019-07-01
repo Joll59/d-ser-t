@@ -6,7 +6,7 @@ import {
     UnhandledCharacter,
     UnhandledCharacters,
     UnhandledWord
-} from './types';
+} from './index';
 
 interface ITranscriptionAnalyzer {
     validateExpectedTranscription(expectedTranscription: string): void;
@@ -31,7 +31,7 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
      */
     public validateExpectedTranscription = (expectedTranscription: string): void => {
         if (this.uncleanTranscriptionRegEx.test(expectedTranscription)) {
-            console.log(colors.red(
+            console.warn(colors.red(
                 `Error on expected transcription: "${expectedTranscription}"\n`));
 
             const message = `Transcriptions may only contain letters, apostrophes, and spaces.`;
@@ -208,7 +208,7 @@ export class TranscriptionAnalyzer implements ITranscriptionAnalyzer {
         } catch {
             console.log(`Creating a store for unhandled output from the STT service . . .`);
         } finally {
-            console.log('Store Creation Success!!')
+            // console.log('Store Creation Success!!')
         }
         return json;
     }

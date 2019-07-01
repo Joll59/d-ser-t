@@ -9,8 +9,11 @@ import {
     PullAudioInputStream,
 } from 'microsoft-cognitiveservices-speech-sdk';
 
-import { MultiFilePullStream } from './MultiFilePullStream';
-import { TestData, TranscriptionServiceConfig } from './types';
+import {
+    MultiFilePullStream,
+    TestData,
+    TranscriptionServiceConfig
+} from './index';
 
 enum EndpointVariant {
     conversation = 'conversation',
