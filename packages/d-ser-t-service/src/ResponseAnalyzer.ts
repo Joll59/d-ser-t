@@ -1,5 +1,7 @@
 
-import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.speech/ServiceMessages/DetailedSpeechPhrase';
+import {
+    IDetailedSpeechPhrase
+} from "microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.speech/ServiceMessages/DetailedSpeechPhrase";
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
 import { TestResult } from './types';
@@ -21,7 +23,7 @@ export class ResponseAnalyzer {
      */
     handleResponse = (
         expectedTranscription: string,
-        response: DetailedSpeechPhrase
+        response: IDetailedSpeechPhrase
     ): TestResult => {
         try {
             let actualTranscription = response.NBest[0].Lexical;
@@ -39,9 +41,9 @@ export class ResponseAnalyzer {
             const wordErrorRate = calculateWER(
                 actualTranscription, expectedTranscription);
 
-            console.log(`Actual Response: "${actualTranscription}"`);
-            console.log(`Expected Response: "${expectedTranscription}"`);
-            console.log(`Word Error Rate: ${wordErrorRate}\n`);
+            // console.log(`Actual Response: "${actualTranscription}"`);
+            // console.log(`Expected Response: "${expectedTranscription}"`);
+            // console.log(`Word Error Rate: ${wordErrorRate}\n`);
 
             const result: TestResult = {
                 actualTranscription,
