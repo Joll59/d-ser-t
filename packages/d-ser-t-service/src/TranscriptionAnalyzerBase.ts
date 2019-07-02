@@ -14,7 +14,7 @@ import {
 
 export class TranscriptionAnalyzerBase implements ITranscriptionAnalyzer {
     private data: UnhandledCharacters;
-    private readonly filePath = `../unhandledSTTOutput.json`;
+    private readonly filePath = `../../../unhandledSTTOutput.json`;
     private readonly uncleanTranscriptionRegEx: RegExp = /[^a-z\s']/g;
 
     constructor() {

@@ -89,17 +89,26 @@ export class CustomSpeechTestHarness {
 
             await this.transcriptionService.batchTranscribe(parsedData, parseInt(this.concurrency!))
                 .then(() => {
+                    // Time it took to parse, validate, and batch transcribe all
+                    // the audio and transcription files.
                     const endTime = process.hrtime(startTime);
+
                     const results = this.transcriptionService!.resultArray.map((item, idx) => {
                         console.log(`Handling result ${idx + 1}/${this.transcriptionService!.resultArray.length} . . .`);
                         return this.responseAnalyzer.handleResponse(item.transcription, JSON.parse(item.data.json));
                     });
 
+                    // From 0 to 1, the rate of transcriptions with at least one
+                    // error. An SER of 1 means every utterance was transcribed
+                    // with at least one error. An SER of 0 means every
+                    // utterance was transcribed perfectly.
                     const sentenceErrorRate = this.responseAnalyzer.calculateSER(results);
                     console.log(`Sentence Error Rate: ${sentenceErrorRate}`);
+
                     const averageWordErrorRate = ((results.map((item: TestResult, idx: number) => {
                         return item.wordErrorRate && item.wordErrorRate > 0 ? item.wordErrorRate : 0
-                    }).reduce(this.responseAnalyzer.reducerSum) / results.length) as number);
+                    }).reduce(this.responseAnalyzer.reducerSum) / results.length) as number).toPrecision(3);
+                    console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
 
                     const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
                     const metaData = {
