@@ -123,35 +123,28 @@ export class CustomSpeechTestHarness {
         }
     }
     public async audioFolderTranscription(files:fs.PathLike[]){
+        let results:{count: number, file:string, transcription:string}[];
         this.setTranscriptionService();
         this.setLocalServices();
         if (this.transcriptionService) {
             this.checkConcurrency();
             const startTime = process.hrtime();
-            await this.transcriptionService
-                .audioOnlyBatchTranscribe(
-                    files,
-                    parseInt(this.concurrency!)
-                )
-                .then(() => {
-                    const endTime = process.hrtime(startTime);
-                    const results = this.transcriptionService!.audioOnlyResultArray.map(
-                        (item, idx) => {
-                            return {
-                                count: idx,
-                                file: item.file,
-                                transcription: JSON.parse(item.data.json).NBest[0].Lexical
-                            };
-                        }
+            await this.transcriptionService.audioOnlyBatchTranscribe(files,parseInt(this.concurrency!)).then(()=>{
+                const endTime = process.hrtime(startTime);
+                results = this.transcriptionService!.audioOnlyResultArray.map(
+                    (item, idx) => ({
+                        count: idx,
+                        file: item.file,
+                        transcription: JSON.parse(item.data.json).NBest[0].Lexical})
                     );
-                    const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
-                    console.log(`Runtime: ${totalTestingTime}`);
-                    console.log(results);
-                })
-                .catch((error: Error) =>
-                    console.error(`#### ENCOUNTERED AN ERROR ####:\n`,error)
-                )
-                .finally(() => process.exit(1));
+                const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
+                console.log(`Runtime: ${totalTestingTime}`);
+                return results;
+            })
+            .catch((error: Error) => console.error(`#### ENCOUNTERED AN ERROR ####:\n`,error))
+            .finally(()=>{
+                process.exitCode = 0;
+            })
         }
     }
 

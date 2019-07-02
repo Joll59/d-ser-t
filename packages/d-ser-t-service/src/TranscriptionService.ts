@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from "fs";
 
 import {
     SpeechRecognitionResult,
@@ -7,17 +7,17 @@ import {
     AudioInputStream,
     SpeechRecognizer,
     AudioConfig,
-    PullAudioInputStream,
-} from 'microsoft-cognitiveservices-speech-sdk';
+    PullAudioInputStream
+} from "microsoft-cognitiveservices-speech-sdk";
 
-import { MultiFilePullStream } from './MultiFilePullStream';
-import { TestData, TestDatum, TranscriptionServiceConfig } from './types';
+import { MultiFilePullStream } from "./MultiFilePullStream";
+import { TestData, TestDatum, TranscriptionServiceConfig } from "./types";
 
 enum EndpointVariant {
-    conversation = 'conversation',
-    dictation = 'dictation',
-    interactive = 'interactive'
-};
+    conversation = "conversation",
+    dictation = "dictation",
+    interactive = "interactive"
+}
 
 // Disable telemetry data.
 SpeechRecognizer.enableTelemetry(false);
@@ -28,12 +28,12 @@ export class TranscriptionService {
     private subscriptionKey: string;
     private serviceRegion: string;
     public resultArray: {
-        data: SpeechRecognitionResult,
-        transcription: string
+        data: SpeechRecognitionResult;
+        transcription: string;
     }[] = [];
     public audioOnlyResultArray: {
-        data: SpeechRecognitionResult,
-        file: string
+        data: SpeechRecognitionResult;
+        file: string;
     }[] = [];
 
     public constructor(transcriptionService: TranscriptionServiceConfig) {
@@ -43,24 +43,34 @@ export class TranscriptionService {
 
         if (this.crisEndpointID) {
             const crisUrl = this.constructCRISURL(EndpointVariant.conversation);
-            this.speechConfig = SpeechConfig.fromEndpoint(crisUrl, this.subscriptionKey);
+            this.speechConfig = SpeechConfig.fromEndpoint(
+                crisUrl,
+                this.subscriptionKey
+            );
         } else {
-            this.speechConfig = SpeechConfig.fromSubscription(this.subscriptionKey, this.serviceRegion);
+            this.speechConfig = SpeechConfig.fromSubscription(
+                this.subscriptionKey,
+                this.serviceRegion
+            );
         }
 
-        const recognitionLanguage = 'en-US';
+        const recognitionLanguage = "en-US";
         this.speechConfig.speechRecognitionLanguage = recognitionLanguage;
         this.speechConfig.outputFormat = OutputFormat.Detailed;
     }
 
     private createAudioConfig = (path: fs.PathLike): AudioConfig => {
-        return AudioConfig.fromStreamInput(this.createFileStream(path))
-    }
+        return AudioConfig.fromStreamInput(this.createFileStream(path));
+    };
 
     private constructCRISURL = (endpointType: EndpointVariant): URL => {
-        const url = `wss:${this.serviceRegion}.stt.speech.microsoft.com/speech/recognition/${endpointType}/cognitiveservices/v1?cid=${this.crisEndpointID}`;
+        const url = `wss:${
+            this.serviceRegion
+            }.stt.speech.microsoft.com/speech/recognition/${endpointType}/cognitiveservices/v1?cid=${
+            this.crisEndpointID
+            }`;
         return new URL(url);
-    }
+    };
 
     /**
      * @param path path to local file for speech recognition.
@@ -68,8 +78,12 @@ export class TranscriptionService {
     private createFileStream = (path: fs.PathLike): AudioInputStream => {
         const pushStream = AudioInputStream.createPushStream();
         fs.createReadStream(path)
-            .on('data', (arrayBuffer) => { pushStream.write(arrayBuffer.buffer); })
-            .on('end', () => { pushStream.close(); });
+            .on("data", arrayBuffer => {
+                pushStream.write(arrayBuffer.buffer);
+            })
+            .on("end", () => {
+                pushStream.close();
+            });
 
         return pushStream;
     };
@@ -80,25 +94,33 @@ export class TranscriptionService {
         try {
             return new Promise<SpeechRecognitionResult>((resolve, reject) => {
                 recognizer.recognized = (_, event) => {
-                    resolve(event.result)
+                    resolve(event.result);
                     recognizer.stopContinuousRecognitionAsync(
-                        () => { console.log(`Stopping recognition . . .`); },
-                        (e) => { throw Error(e) }
+                        () => {
+                            console.log(`Stopping recognition . . .`);
+                        },
+                        e => {
+                            throw Error(e);
+                        }
                     );
                 };
                 recognizer.canceled = (_, event) => {
                     reject(event.errorDetails);
                     recognizer.stopContinuousRecognitionAsync();
-                }
+                };
                 recognizer.startContinuousRecognitionAsync(
-                    () => { console.log(`Starting recognition . . .`); },
-                    (e) => { throw Error(e) }
+                    () => {
+                        console.log(`Starting recognition . . .`);
+                    },
+                    e => {
+                        throw Error(e);
+                    }
                 );
-            })
+            });
         } catch (error) {
             throw Error(error);
         }
-    }
+    };
 
     private internalRecognizer = async (
         recognizer: SpeechRecognizer,
@@ -120,36 +142,44 @@ export class TranscriptionService {
             recognizer.recognized = (r, e) => {
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
-                if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
+                if (!JSON.parse(e.result.json).NBest && currentFileIndex >= 0) {
                     stream.setFile(dataArray[currentFileIndex - 1].recording);
                 } else {
                     // push response into the resultArray
                     this.resultArray.push({
-                        data: e.result, transcription: dataArray[currentFileIndex - 1].transcription
+                        data: e.result,
+                        transcription:
+                            dataArray[currentFileIndex - 1].transcription
                     });
 
                     if (currentFileIndex >= dataArray.length) {
                         // if last response, close stream
-                        console.info(`Closing stream from Recognizer ${recognizerID} . . .`);
+                        console.info(
+                            `Closing stream from Recognizer ${recognizerID} . . .`
+                        );
                         stream.close();
                     } else {
                         // Increment file counter, pass next file to stream.
-                        console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
+                        console.info(
+                            `New file into stream, ${currentFileIndex}/${
+                            dataArray.length
+                            }, recognizer: ${recognizerID}`
+                        );
                         stream.setFile(dataArray[currentFileIndex++].recording);
                     }
                 }
             };
 
             // Start stream.
-            recognizer.startContinuousRecognitionAsync(() =>
-                console.info(`Starting Recognizer ${recognizerID} . . .`),
-                (error) => console.error(`${recognizerID} error:`, error)
+            recognizer.startContinuousRecognitionAsync(
+                () => console.info(`Starting Recognizer ${recognizerID} . . .`),
+                error => console.error(`${recognizerID} error:`, error)
             );
 
             // Insert the first file into the buffer.
             stream.setFile(dataArray[currentFileIndex++].recording);
         });
-    }
+    };
 
     private audioOnlyInternalRecognizer = async (
         recognizer: SpeechRecognizer,
@@ -170,7 +200,7 @@ export class TranscriptionService {
             recognizer.recognized = (r, e) => {
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
-                if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
+                if (!JSON.parse(e.result.json).NBest && currentFileIndex >= 0) {
                     stream.setFile(dataArray[currentFileIndex - 1].toString());
                 } else {
                     // push response into the resultArray
@@ -181,26 +211,34 @@ export class TranscriptionService {
 
                     if (currentFileIndex >= dataArray.length) {
                         // if last response, close stream
-                        console.info(`Closing stream from Recognizer ${recognizerID} . . .`);
+                        console.info(
+                            `Closing stream from Recognizer ${recognizerID} . . .`
+                        );
                         stream.close();
                     } else {
                         // Increment file counter, pass next file to stream.
-                        console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
-                        stream.setFile(dataArray[currentFileIndex++].toString());
+                        console.info(
+                            `New file into stream, ${currentFileIndex}/${
+                            dataArray.length
+                            }, recognizer: ${recognizerID}`
+                        );
+                        stream.setFile(
+                            dataArray[currentFileIndex++].toString()
+                        );
                     }
                 }
             };
 
             // Start stream.
-            recognizer.startContinuousRecognitionAsync(() =>
-                console.info(`Starting Recognizer ${recognizerID} . . .`),
-                (error) => console.error(`${recognizerID} error:`, error)
+            recognizer.startContinuousRecognitionAsync(
+                () => console.info(`Starting Recognizer ${recognizerID} . . .`),
+                error => console.error(`${recognizerID} error:`, error)
             );
 
             // Insert the first file into the buffer.
             stream.setFile(dataArray[currentFileIndex++].toString());
         });
-    }
+    };
 
     public batchTranscribe = (testData: TestData, concurrentCalls: number) => {
         const totalFiles = testData.length;
@@ -215,15 +253,19 @@ export class TranscriptionService {
 
         // Recognizers and the respective files they will transcribe.
         const processArray: {
-            recognizer: SpeechRecognizer,
-            stream: MultiFilePullStream,
-            filesArray: TestData,
+            recognizer: SpeechRecognizer;
+            stream: MultiFilePullStream;
+            filesArray: TestData;
         }[] = [];
 
         for (let index = 0; index < totalRecognizers; index++) {
             const stream = new MultiFilePullStream();
-            const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(stream);
-            const audioConfig: AudioConfig = AudioConfig.fromStreamInput(pullStream);
+            const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(
+                stream
+            );
+            const audioConfig: AudioConfig = AudioConfig.fromStreamInput(
+                pullStream
+            );
 
             let filesArray: TestDatum[] = testData;
 
@@ -234,57 +276,73 @@ export class TranscriptionService {
             // Push a new recognizer with the audio files and transcriptions
             // that recognizer will process.
             processArray.push({
-                recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
+                recognizer: new SpeechRecognizer(
+                    this.speechConfig,
+                    audioConfig
+                ),
                 stream,
                 filesArray
             });
         }
 
-        return Promise.all(processArray.map(
-            ({ recognizer, stream, filesArray }, index) =>
+        return Promise.all(
+            processArray.map(({ recognizer, stream, filesArray }, index) =>
                 this.internalRecognizer(recognizer, stream, filesArray, index)
-        ));
-    }
+            )
+        );
+    };
 
-    public audioOnlyBatchTranscribe = (testData: fs.PathLike[], concurrentCalls: number) => {
-        let start = 0;
+    public audioOnlyBatchTranscribe = (
+        testData: fs.PathLike[],
+        concurrentCalls: number
+    ) => {
+        const totalFiles = testData.length;
 
-        // The number of files to be transcribed by each recognizer.
-        const piece = Math.ceil(testData.length / concurrentCalls);
+        // The maximum number of files to be transcribed by each recognizer.
+        const maxFilesPerRecognizer = Math.ceil(totalFiles / concurrentCalls);
 
-        let processArray: {
+        // Each recognizer will have `maxFilesPerRecognizer` number of files.
+        // The possible exception is the last recognizer which will have between
+        // 1 and `maxFilesPerRecognizer` files.
+        const totalRecognizers = Math.ceil(totalFiles / maxFilesPerRecognizer);
+
+        // Recognizers and the respective files they will transcribe.
+        const processArray: {
             recognizer: SpeechRecognizer;
             stream: MultiFilePullStream;
             filesArray: fs.PathLike[];
         }[] = [];
 
-        for (let index = 0; index < concurrentCalls; index++) {
-            if (index > testData.length - 1) {
-                break;
-            } else {
-                const stream = new MultiFilePullStream();
-                const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(stream);
-                const audioConfig: AudioConfig = AudioConfig.fromStreamInput(pullStream);
+        for (let index = 0; index < totalRecognizers; index++) {
+            const stream = new MultiFilePullStream();
+            const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(
+                stream
+            );
+            const audioConfig: AudioConfig = AudioConfig.fromStreamInput(
+                pullStream
+            );
 
-                if (piece <= testData.length) {
-                    processArray.push({
-                        recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
-                        stream, filesArray: testData.slice(start, start += piece)
-                    });
-                }
-                else{
-                    processArray.push({
-                        recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
-                        stream, filesArray: testData
-                    });
-                }
+            let filesArray: fs.PathLike[] = testData;
+
+            if (maxFilesPerRecognizer <= totalFiles) {
+                filesArray = testData.splice(0, maxFilesPerRecognizer);
             }
+
+            // Push a new recognizer with the audio files
+            // that recognizer will process.
+            processArray.push({
+                recognizer: new SpeechRecognizer(this.speechConfig,audioConfig),
+                stream,
+                filesArray
+            });
         }
-        return Promise.all(processArray.map(
-            ({ recognizer, stream, filesArray }, index) =>
-                this.audioOnlyInternalRecognizer(recognizer, stream, filesArray, index)
-        ));
-    }
+
+        return Promise.all(
+            processArray.map(({ recognizer, stream, filesArray }, index) =>
+                this.audioOnlyInternalRecognizer(recognizer,stream,filesArray,index)
+            )
+        );
+    };
 
     public singleFileTranscribe = async (
         filePath: string
@@ -299,11 +357,11 @@ export class TranscriptionService {
         try {
             return await this.continuousRecognize(recognizer);
         } catch (error) {
-            throw Error(error)
+            throw Error(error);
         } finally {
             recognizer.close();
             audioConfig.close();
             this.speechConfig.close();
         }
-    }
+    };
 }
