@@ -26,7 +26,6 @@ argv
             audioDirectory: {
                 alias: ['folder', 'd'],
                 description: 'Directory containing PCM wav audio files slated for transcription',
-                // required: true,
                 requiresArg: true,
                 type: 'string'
             },
@@ -34,7 +33,6 @@ argv
                 alias: ['t', 'transcription-file'],
                 description: 'Transcription .txt file mapping audio files to transcription',
                 example: '<audiofile.wav> <tabcharacter"\\t"> <audio transcription> per line',
-                // required: true,
                 requiresArg: true,
                 type: 'string'
             },
@@ -53,22 +51,30 @@ argv
                 description: 'Number of concurrent calls you want to make to speech service default is 5',
                 type: 'string',
                 requiresArg: true
+            }, audioFolderOnly: {
+                alias: ['afo'],
+                description: 'a flag to establish you are only sending audio folder without transcription file',
+                type: 'boolean',
+                default: false,
+                requiresArg: false
             }
         })
         .conflicts("d", "f")
         .conflicts("f", "t")
         .conflicts('f', 'o')
         .help('help')
+        .alias('h', 'help')
+        .showHelpOnFail(false, "Specify --help for available options")
         .command(["$0"], "Minimal command to run the service: -r [string] -s [string] -f [string]", ():any => {}, (argv) => {
-            const values = { 
-                audioDirectory: argv.audioDirectory as string, 
-                audioFile: argv.audioFile  as string, 
-                concurrentCalls: argv.concurrentCalls  as string, 
-                transcriptionFile: argv.transcriptionFile  as string, 
-                subscriptionKey: argv.subscriptionKey  as string, 
-                endpointId: argv.endpointId  as string, 
-                outFile: argv.outFile  as string, 
-                region: argv.region  as string 
+            const values = {
+                audioDirectory: argv.audioDirectory as string,
+                audioFile: argv.audioFile  as string,
+                concurrentCalls: argv.concurrentCalls  as string,
+                transcriptionFile: argv.transcriptionFile  as string,
+                subscriptionKey: argv.subscriptionKey  as string,
+                endpointId: argv.endpointId  as string,
+                outFile: argv.outFile  as string,
+                region: argv.region  as string
             }
             start(values);
         })

@@ -5,6 +5,7 @@ import { TranscriptionFileService } from './TranscriptionFileService';
 import { TranscriptionService } from './TranscriptionService';
 import { TestData, TranscriptionServiceConfig, TestResult, HarnessConfig } from './types';
 import path from 'path';
+import fs, { Dirent } from 'fs';
 
 
 
@@ -109,4 +110,53 @@ export class CustomSpeechTestHarness {
                 .finally(() => process.exit(1));
         }
     }
+    public async audioFolderTranscription(){
+        this.setTranscriptionService();
+        this.setLocalServices();
+        if (this.transcriptionService && this.audioDirectory) {
+            this.checkConcurrency();
+            const parseFolderContent = (folder: string) => {
+                const files = fs.readdirSync(folder, {withFileTypes: true});
+                return files.map((file, index) => {
+                    if (
+                        file.isFile() &&
+                        path.extname(file.name).substr(1) === "wav"
+                    ) {
+                        return file;
+                    }
+                });
+            };
+            const createAudioFolderOnlyData = (folderPath: string) => {
+                folderPath = this.localFileService.validateFolder(folderPath);
+                return parseFolderContent(folderPath);
+            };
+            const startTime = process.hrtime();
+            const parsedAudioOnlyData = createAudioFolderOnlyData(this.audioDirectory);
+            await this.transcriptionService
+                .audioOnlyBatchTranscribe(
+                    parsedAudioOnlyData as Dirent[],
+                    parseInt(this.concurrency!)
+                )
+                .then(() => {
+                    const endTime = process.hrtime(startTime);
+                    const results = this.transcriptionService!.audioOnlyResultArray.map(
+                        (item, idx) => {
+                            return {
+                                count: idx,
+                                file: item.file,
+                                transcription: JSON.parse(item.data.json).NBest[0].Lexical
+                            };
+                        }
+                    );
+                    const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
+                    console.log(`Runtime: ${totalTestingTime}`);
+                    console.log(results);
+                })
+                .catch((error: Error) =>
+                    console.error(`#### ENCOUNTERED AN ERROR ####:\n`,error)
+                )
+                .finally(() => process.exit(1));
+        }
+    }
+
 }

@@ -30,6 +30,10 @@ export class TranscriptionService {
         data: SpeechRecognitionResult,
         transcription: string
     }[] = [];
+    public audioOnlyResultArray: {
+        data: SpeechRecognitionResult,
+        file: string
+    }[] = [];
 
     public constructor(transcriptionService: TranscriptionServiceConfig) {
         this.crisEndpointID = transcriptionService.endpointID;
@@ -145,6 +149,57 @@ export class TranscriptionService {
         });
     }
 
+    private audioOnlyInternalRecognizer = async (
+        recognizer: SpeechRecognizer,
+        stream: MultiFilePullStream,
+        dataArray: fs.Dirent[],
+        recognizerID?: number
+    ): Promise<void> => {
+        return new Promise<void>((resolve, reject) => {
+            let currentFileIndex = 0;
+            recognizer.canceled = (r, e) => {
+                if (e.errorDetails !== undefined) {
+                    reject(e);
+                } else {
+                    resolve();
+                }
+            };
+
+            recognizer.recognized = (r, e) => {
+                // send the same stream back for any null response from Speech API
+                // where there are no utterances returned
+                if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
+                    stream.setFile(dataArray[currentFileIndex - 1].name);
+                } else {
+                    // push response into the resultArray
+                    this.audioOnlyResultArray.push({
+                        data: e.result,
+                        file: dataArray[currentFileIndex - 1].name
+                    });
+
+                    if (currentFileIndex >= dataArray.length) {
+                        // if last response, close stream
+                        console.info(`Closing stream from Recognizer ${recognizerID} . . .`);
+                        stream.close();
+                    } else {
+                        // Increment file counter, pass next file to stream.
+                        console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
+                        stream.setFile(dataArray[currentFileIndex++].name);
+                    }
+                }
+            };
+
+            // Start stream.
+            recognizer.startContinuousRecognitionAsync(() =>
+                console.info(`Starting Recognizer ${recognizerID} . . .`),
+                (error) => console.error(`${recognizerID} error:`, error)
+            );
+
+            // Insert the first file into the buffer.
+            stream.setFile(dataArray[currentFileIndex++].name);
+        });
+    }
+
     public batchTranscribe = (testData: TestData, concurrentCalls: number) => {
         let start = 0;
 
@@ -182,6 +237,46 @@ export class TranscriptionService {
         return Promise.all(processArray.map(
             ({ recognizer, stream, filesArray }, index) =>
                 this.internalRecognizer(recognizer, stream, filesArray, index)
+        ));
+    }
+
+    public audioOnlyBatchTranscribe = (testData: fs.Dirent[], concurrentCalls: number) => {
+        let start = 0;
+
+        // The number of files to be transcribed by each recognizer.
+        const piece = Math.ceil(testData.length / concurrentCalls);
+
+        let processArray: {
+            recognizer: SpeechRecognizer;
+            stream: MultiFilePullStream;
+            filesArray: fs.Dirent[];
+        }[] = [];
+
+        for (let index = 0; index < concurrentCalls; index++) {
+            if (index > testData.length - 1) {
+                break;
+            } else {
+                const stream = new MultiFilePullStream();
+                const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(stream);
+                const audioConfig: AudioConfig = AudioConfig.fromStreamInput(pullStream);
+
+                if (piece <= testData.length) {
+                    processArray.push({
+                        recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
+                        stream, filesArray: testData.slice(start, start += piece)
+                    });
+                }
+                else{
+                    processArray.push({
+                        recognizer: new SpeechRecognizer(this.speechConfig, audioConfig),
+                        stream, filesArray: testData
+                    });
+                }
+            }
+        }
+        return Promise.all(processArray.map(
+            ({ recognizer, stream, filesArray }, index) =>
+                this.audioOnlyInternalRecognizer(recognizer, stream, filesArray, index)
         ));
     }
 
