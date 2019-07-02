@@ -1,14 +1,14 @@
 
 import { ResponseAnalyzer } from './ResponseAnalyzer';
-import { TranscriptionAnalyzer } from './TranscriptionAnalyzer';
 import { TranscriptionFileService } from './TranscriptionFileService';
 import { TranscriptionService } from './TranscriptionService';
 import { TestData, TranscriptionServiceConfig, TestResult, HarnessConfig } from './types';
 import path from 'path';
-
-
+import { ITranscriptionAnalyzer } from './interfaces/ITranscriptionAnalyzer';
+import TranscriptionAnalyzerFactory from './TranscriptionAnalyzerFactory';
 
 export class CustomSpeechTestHarness {
+    private exceptions?: string;
     private audioDirectory?: string;
     private concurrency?: string;
     private crisEndpointId?: string;
@@ -19,7 +19,7 @@ export class CustomSpeechTestHarness {
     private transcriptionFile?: string;
     private transcriptionService!: TranscriptionService;
     private localFileService!: TranscriptionFileService;
-    private transcriptAnalyzer!: TranscriptionAnalyzer;
+    private transcriptAnalyzer!: ITranscriptionAnalyzer;
     private responseAnalyzer!: ResponseAnalyzer;
 
 
@@ -32,6 +32,7 @@ export class CustomSpeechTestHarness {
         this.singleFile = harnessConfig.audioFile;
         this.subscriptionKey = harnessConfig.subscriptionKey;
         this.transcriptionFile = harnessConfig.transcriptionFile;
+        this.exceptions = harnessConfig.exceptions;
     }
 
     public setTranscriptionService() {
@@ -45,7 +46,7 @@ export class CustomSpeechTestHarness {
     }
     public setLocalServices() {
         this.localFileService = new TranscriptionFileService();
-        this.transcriptAnalyzer = new TranscriptionAnalyzer();
+        this.transcriptAnalyzer = TranscriptionAnalyzerFactory.createTranscriptionAnalyzer(this.exceptions);
         this.responseAnalyzer = new ResponseAnalyzer(this.transcriptAnalyzer);
     }
     public async singleFileTranscription() {

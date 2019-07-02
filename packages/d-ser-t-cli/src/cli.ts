@@ -53,6 +53,12 @@ argv
                 description: 'Number of concurrent calls you want to make to speech service default is 5',
                 type: 'string',
                 requiresArg: true
+            }, exceptions: {
+                alias: ['x', 'exceptions'],
+                description: 'An exception file for transcribed words',
+                required: false,
+                requiresArg: true,
+                type: 'string'
             }
         })
         .conflicts("d", "f")
