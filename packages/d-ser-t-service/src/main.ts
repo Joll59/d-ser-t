@@ -5,7 +5,7 @@ import { TranscriptionFileService } from './TranscriptionFileService';
 import { TranscriptionService } from './TranscriptionService';
 import { TestData, TranscriptionServiceConfig, TestResult, HarnessConfig } from './types';
 import path from 'path';
-import fs, { Dirent } from 'fs';
+import fs  from 'fs';
 
 
 
@@ -110,31 +110,15 @@ export class CustomSpeechTestHarness {
                 .finally(() => process.exit(1));
         }
     }
-    public async audioFolderTranscription(){
+    public async audioFolderTranscription(files:fs.PathLike[]){
         this.setTranscriptionService();
         this.setLocalServices();
-        if (this.transcriptionService && this.audioDirectory) {
+        if (this.transcriptionService) {
             this.checkConcurrency();
-            const parseFolderContent = (folder: string) => {
-                const files = fs.readdirSync(folder, {withFileTypes: true});
-                return files.map((file, index) => {
-                    if (
-                        file.isFile() &&
-                        path.extname(file.name).substr(1) === "wav"
-                    ) {
-                        return file;
-                    }
-                });
-            };
-            const createAudioFolderOnlyData = (folderPath: string) => {
-                folderPath = this.localFileService.validateFolder(folderPath);
-                return parseFolderContent(folderPath);
-            };
             const startTime = process.hrtime();
-            const parsedAudioOnlyData = createAudioFolderOnlyData(this.audioDirectory);
             await this.transcriptionService
                 .audioOnlyBatchTranscribe(
-                    parsedAudioOnlyData as Dirent[],
+                    files,
                     parseInt(this.concurrency!)
                 )
                 .then(() => {

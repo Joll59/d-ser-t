@@ -152,7 +152,7 @@ export class TranscriptionService {
     private audioOnlyInternalRecognizer = async (
         recognizer: SpeechRecognizer,
         stream: MultiFilePullStream,
-        dataArray: fs.Dirent[],
+        dataArray: fs.PathLike[],
         recognizerID?: number
     ): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
@@ -169,12 +169,12 @@ export class TranscriptionService {
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
                 if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
-                    stream.setFile(dataArray[currentFileIndex - 1].name);
+                    stream.setFile(dataArray[currentFileIndex - 1].toString());
                 } else {
                     // push response into the resultArray
                     this.audioOnlyResultArray.push({
                         data: e.result,
-                        file: dataArray[currentFileIndex - 1].name
+                        file: dataArray[currentFileIndex - 1].toString()
                     });
 
                     if (currentFileIndex >= dataArray.length) {
@@ -184,7 +184,7 @@ export class TranscriptionService {
                     } else {
                         // Increment file counter, pass next file to stream.
                         console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
-                        stream.setFile(dataArray[currentFileIndex++].name);
+                        stream.setFile(dataArray[currentFileIndex++].toString());
                     }
                 }
             };
@@ -196,7 +196,7 @@ export class TranscriptionService {
             );
 
             // Insert the first file into the buffer.
-            stream.setFile(dataArray[currentFileIndex++].name);
+            stream.setFile(dataArray[currentFileIndex++].toString());
         });
     }
 
@@ -240,7 +240,7 @@ export class TranscriptionService {
         ));
     }
 
-    public audioOnlyBatchTranscribe = (testData: fs.Dirent[], concurrentCalls: number) => {
+    public audioOnlyBatchTranscribe = (testData: fs.PathLike[], concurrentCalls: number) => {
         let start = 0;
 
         // The number of files to be transcribed by each recognizer.
@@ -249,7 +249,7 @@ export class TranscriptionService {
         let processArray: {
             recognizer: SpeechRecognizer;
             stream: MultiFilePullStream;
-            filesArray: fs.Dirent[];
+            filesArray: fs.PathLike[];
         }[] = [];
 
         for (let index = 0; index < concurrentCalls; index++) {
