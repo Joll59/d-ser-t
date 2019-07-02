@@ -57,6 +57,12 @@ argv
                 type: 'boolean',
                 default: false,
                 requiresArg: false
+            }, exceptions: {
+                alias: ['x', 'exceptions'],
+                description: 'An exception file for transcribed words',
+                required: false,
+                requiresArg: true,
+                type: 'string'
             }
         })
         .conflicts("d", "f")
