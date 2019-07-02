@@ -1,6 +1,6 @@
 {
   "name": "d-ser-t",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Composite package housing d-ser-t-service and d-ser-t-cli",
   "license": "MIT",
   "author": "Yomi (@jolly59) Katie (@KatieProchilo), Nick (@nhuntwalker)",
