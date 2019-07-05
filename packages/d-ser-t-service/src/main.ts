@@ -88,64 +88,49 @@ export class CustomSpeechTestHarness {
             this.validateAndCleanTranscription(parsedData);
 
             await this.transcriptionService.batchTranscribe(parsedData, parseInt(this.concurrency!))
-                .then(() => {
-                    // Time it took to parse, validate, and batch transcribe all
-                    // the audio and transcription files.
-                    const endTime = process.hrtime(startTime);
+            // Time it took to parse, validate, and batch transcribe all
+            // the audio and transcription files.
+            const endTime = process.hrtime(startTime);
 
-                    const results = this.transcriptionService!.resultArray.map((item, idx) => {
-                        console.log(`Handling result ${idx + 1}/${this.transcriptionService!.resultArray.length} . . .`);
-                        return this.responseAnalyzer.handleResponse(item.transcription, JSON.parse(item.data.json));
-                    });
+            const results = this.transcriptionService!.resultArray.map((item, idx) => {
+                console.log(`Handling result ${idx + 1}/${this.transcriptionService!.resultArray.length} . . .`);
+                return this.responseAnalyzer.handleResponse(item.transcription!, JSON.parse(item.data.json));
+            });
 
-                    // From 0 to 1, the rate of transcriptions with at least one
-                    // error. An SER of 1 means every utterance was transcribed
-                    // with at least one error. An SER of 0 means every
-                    // utterance was transcribed perfectly.
-                    const sentenceErrorRate = this.responseAnalyzer.calculateSER(results);
-                    console.log(`Sentence Error Rate: ${sentenceErrorRate}`);
+            // From 0 to 1, the rate of transcriptions with at least one
+            // error. An SER of 1 means every utterance was transcribed
+            // with at least one error. An SER of 0 means every
+            // utterance was transcribed perfectly.
+            const sentenceErrorRate = this.responseAnalyzer.calculateSER(results);
+            console.log(`Sentence Error Rate: ${sentenceErrorRate}`);
 
-                    const averageWordErrorRate = ((results.map((item: TestResult, idx: number) => {
-                        return item.wordErrorRate && item.wordErrorRate > 0 ? item.wordErrorRate : 0
-                    }).reduce(this.responseAnalyzer.reducerSum) / results.length) as number).toPrecision(3);
-                    console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
+            const averageWordErrorRate = ((results.map((item: TestResult, idx: number) => {
+                return item.wordErrorRate && item.wordErrorRate > 0 ? item.wordErrorRate : 0
+            }).reduce(this.responseAnalyzer.reducerSum) / results.length) as number).toPrecision(3);
+            console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
 
-                    const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
-                    const metaData = {
-                        sentenceErrorRate, averageWordErrorRate, totalTestingTime
-                    };
+            const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
+            const metaData = {
+                sentenceErrorRate, averageWordErrorRate, totalTestingTime
+            };
 
-                    this.outFile ? this.localFileService.writeToTextFile(this.outFile, { results, metaData }) : null;
-                    console.log(`Runtime: ${totalTestingTime}`);
-                })
-                .catch((error: Error) => console.error(`#### ENCOUNTERED AN ERROR ####:\n`, error))
-                .finally(() => process.exit(1));
+            this.outFile ? this.localFileService.writeToTextFile(this.outFile, { results, metaData }) : null;
+            console.log(`Runtime: ${totalTestingTime}`);
         }
     }
-    public async audioFolderTranscription(files:fs.PathLike[]){
-        let results:{count: number, file:string, transcription:string}[];
+    public async audioFolderTranscription(files:fs.PathLike[]) {
         this.setTranscriptionService();
-        this.setLocalServices();
         if (this.transcriptionService) {
             this.checkConcurrency();
             const startTime = process.hrtime();
-            await this.transcriptionService.audioOnlyBatchTranscribe(files,parseInt(this.concurrency!)).then(()=>{
-                const endTime = process.hrtime(startTime);
-                results = this.transcriptionService!.audioOnlyResultArray.map(
-                    (item, idx) => ({
-                        count: idx,
-                        file: item.file,
-                        transcription: JSON.parse(item.data.json).NBest[0].Lexical})
-                    );
-                const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
-                console.log(`Runtime: ${totalTestingTime}`);
-                return results;
-            })
-            .catch((error: Error) => console.error(`#### ENCOUNTERED AN ERROR ####:\n`,error))
-            .finally(()=>{
-                process.exitCode = 0;
-            })
+            await this.transcriptionService.batchTranscribe(files, parseInt(this.concurrency!));
+            const endTime = process.hrtime(startTime);
+            const results: { index: number, file?: string, transcription: string }[] = this.transcriptionService!.resultArray.map(
+                (item, index) => ({index, file:item.file, transcription:JSON.parse(item.data.json).NBest[0].Lexical})
+            );
+            const totalTestingTime = `${endTime[0]} seconds`;
+            console.log(`Runtime: ${totalTestingTime}`);
+            return results;
         }
-    }
-
+    };
 }

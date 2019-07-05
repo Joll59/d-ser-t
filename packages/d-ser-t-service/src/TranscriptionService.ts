@@ -29,11 +29,8 @@ export class TranscriptionService {
     private serviceRegion: string;
     public resultArray: {
         data: SpeechRecognitionResult;
-        transcription: string;
-    }[] = [];
-    public audioOnlyResultArray: {
-        data: SpeechRecognitionResult;
-        file: string;
+        transcription?: string;
+        file?: string;
     }[] = [];
 
     public constructor(transcriptionService: TranscriptionServiceConfig) {
@@ -125,7 +122,7 @@ export class TranscriptionService {
     private internalRecognizer = async (
         recognizer: SpeechRecognizer,
         stream: MultiFilePullStream,
-        dataArray: TestData,
+        dataArray: TestData | fs.PathLike[],
         recognizerID?: number
     ): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
@@ -143,29 +140,23 @@ export class TranscriptionService {
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
                 if (!JSON.parse(e.result.json).NBest && currentFileIndex >= 0) {
-                    stream.setFile(dataArray[currentFileIndex - 1].recording);
+                    stream.setFile((dataArray[currentFileIndex - 1] as TestDatum).recording || dataArray[currentFileIndex - 1].toString());
                 } else {
                     // push response into the resultArray
                     this.resultArray.push({
                         data: e.result,
-                        transcription:
-                            dataArray[currentFileIndex - 1].transcription
+                        transcription: (dataArray[currentFileIndex - 1] as TestDatum).transcription,
+                        file: !(dataArray[currentFileIndex - 1] as TestDatum).transcription ? dataArray[currentFileIndex -1 ].toString() : undefined,
                     });
 
                     if (currentFileIndex >= dataArray.length) {
                         // if last response, close stream
-                        console.info(
-                            `Closing stream from Recognizer ${recognizerID} . . .`
-                        );
+                        console.info(`Closing stream from Recognizer ${recognizerID} . . .`);
                         stream.close();
                     } else {
                         // Increment file counter, pass next file to stream.
-                        console.info(
-                            `New file into stream, ${currentFileIndex}/${
-                            dataArray.length
-                            }, recognizer: ${recognizerID}`
-                        );
-                        stream.setFile(dataArray[currentFileIndex++].recording);
+                        console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
+                        stream.setFile((dataArray[currentFileIndex++] as TestDatum).recording || dataArray[currentFileIndex - 1].toString());
                     }
                 }
             };
@@ -177,70 +168,11 @@ export class TranscriptionService {
             );
 
             // Insert the first file into the buffer.
-            stream.setFile(dataArray[currentFileIndex++].recording);
+            stream.setFile((dataArray[currentFileIndex++] as TestDatum).recording || dataArray[currentFileIndex - 1].toString());
         });
     };
 
-    private audioOnlyInternalRecognizer = async (
-        recognizer: SpeechRecognizer,
-        stream: MultiFilePullStream,
-        dataArray: fs.PathLike[],
-        recognizerID?: number
-    ): Promise<void> => {
-        return new Promise<void>((resolve, reject) => {
-            let currentFileIndex = 0;
-            recognizer.canceled = (r, e) => {
-                if (e.errorDetails !== undefined) {
-                    reject(e);
-                } else {
-                    resolve();
-                }
-            };
-
-            recognizer.recognized = (r, e) => {
-                // send the same stream back for any null response from Speech API
-                // where there are no utterances returned
-                if (!JSON.parse(e.result.json).NBest && currentFileIndex >= 0) {
-                    stream.setFile(dataArray[currentFileIndex - 1].toString());
-                } else {
-                    // push response into the resultArray
-                    this.audioOnlyResultArray.push({
-                        data: e.result,
-                        file: dataArray[currentFileIndex - 1].toString()
-                    });
-
-                    if (currentFileIndex >= dataArray.length) {
-                        // if last response, close stream
-                        console.info(
-                            `Closing stream from Recognizer ${recognizerID} . . .`
-                        );
-                        stream.close();
-                    } else {
-                        // Increment file counter, pass next file to stream.
-                        console.info(
-                            `New file into stream, ${currentFileIndex}/${
-                            dataArray.length
-                            }, recognizer: ${recognizerID}`
-                        );
-                        stream.setFile(
-                            dataArray[currentFileIndex++].toString()
-                        );
-                    }
-                }
-            };
-
-            // Start stream.
-            recognizer.startContinuousRecognitionAsync(
-                () => console.info(`Starting Recognizer ${recognizerID} . . .`),
-                error => console.error(`${recognizerID} error:`, error)
-            );
-
-            // Insert the first file into the buffer.
-            stream.setFile(dataArray[currentFileIndex++].toString());
-        });
-    };
-
-    public batchTranscribe = (testData: TestData, concurrentCalls: number) => {
+    public batchTranscribe = (testData: TestData | fs.PathLike[], concurrentCalls: number) => {
         const totalFiles = testData.length;
 
         // The maximum number of files to be transcribed by each recognizer.
@@ -255,19 +187,15 @@ export class TranscriptionService {
         const processArray: {
             recognizer: SpeechRecognizer;
             stream: MultiFilePullStream;
-            filesArray: TestData;
+            filesArray: TestData | fs.PathLike[];
         }[] = [];
 
         for (let index = 0; index < totalRecognizers; index++) {
             const stream = new MultiFilePullStream();
-            const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(
-                stream
-            );
-            const audioConfig: AudioConfig = AudioConfig.fromStreamInput(
-                pullStream
-            );
+            const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(stream);
+            const audioConfig: AudioConfig = AudioConfig.fromStreamInput(pullStream);
 
-            let filesArray: TestDatum[] = testData;
+            let filesArray = testData;
 
             if (maxFilesPerRecognizer <= totalFiles) {
                 filesArray = testData.splice(0, maxFilesPerRecognizer);
@@ -276,72 +204,23 @@ export class TranscriptionService {
             // Push a new recognizer with the audio files and transcriptions
             // that recognizer will process.
             processArray.push({
-                recognizer: new SpeechRecognizer(
-                    this.speechConfig,
-                    audioConfig
-                ),
-                stream,
-                filesArray
-            });
-        }
-
-        return Promise.all(
-            processArray.map(({ recognizer, stream, filesArray }, index) =>
-                this.internalRecognizer(recognizer, stream, filesArray, index)
-            )
-        );
-    };
-
-    public audioOnlyBatchTranscribe = (
-        testData: fs.PathLike[],
-        concurrentCalls: number
-    ) => {
-        const totalFiles = testData.length;
-
-        // The maximum number of files to be transcribed by each recognizer.
-        const maxFilesPerRecognizer = Math.ceil(totalFiles / concurrentCalls);
-
-        // Each recognizer will have `maxFilesPerRecognizer` number of files.
-        // The possible exception is the last recognizer which will have between
-        // 1 and `maxFilesPerRecognizer` files.
-        const totalRecognizers = Math.ceil(totalFiles / maxFilesPerRecognizer);
-
-        // Recognizers and the respective files they will transcribe.
-        const processArray: {
-            recognizer: SpeechRecognizer;
-            stream: MultiFilePullStream;
-            filesArray: fs.PathLike[];
-        }[] = [];
-
-        for (let index = 0; index < totalRecognizers; index++) {
-            const stream = new MultiFilePullStream();
-            const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(
-                stream
-            );
-            const audioConfig: AudioConfig = AudioConfig.fromStreamInput(
-                pullStream
-            );
-
-            let filesArray: fs.PathLike[] = testData;
-
-            if (maxFilesPerRecognizer <= totalFiles) {
-                filesArray = testData.splice(0, maxFilesPerRecognizer);
-            }
-
-            // Push a new recognizer with the audio files
-            // that recognizer will process.
-            processArray.push({
                 recognizer: new SpeechRecognizer(this.speechConfig,audioConfig),
                 stream,
                 filesArray
             });
         }
-
         return Promise.all(
             processArray.map(({ recognizer, stream, filesArray }, index) =>
-                this.audioOnlyInternalRecognizer(recognizer,stream,filesArray,index)
-            )
-        );
+            this.internalRecognizer(recognizer, stream, filesArray, index)
+        ))
+        .catch((error)=>{throw Error(error)})
+        .finally(()=>{
+            processArray.forEach(({ recognizer }, index) => {
+                console.info('Closing recognizer:',index);
+                recognizer.stopContinuousRecognitionAsync();
+                recognizer.close();
+            });
+        });
     };
 
     public singleFileTranscribe = async (
