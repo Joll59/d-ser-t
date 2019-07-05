@@ -110,6 +110,7 @@ export class CustomSpeechTestHarness {
                     const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
                     const metaData = {
                         transcriptionFile: this.transcriptionFile,
+                        crisEndpointId: this.crisEndpointId,
                         sentenceErrorRate, 
                         averageWordErrorRate, 
                         totalTestingTime
