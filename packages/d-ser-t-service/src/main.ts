@@ -109,10 +109,13 @@ export class CustomSpeechTestHarness {
 
                     const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
                     const metaData = {
-                        sentenceErrorRate, averageWordErrorRate, totalTestingTime
+                        transcriptionFile: this.transcriptionFile,
+                        sentenceErrorRate, 
+                        averageWordErrorRate, 
+                        totalTestingTime
                     };
 
-                    this.outFile ? this.localFileService.writeToTextFile(this.outFile, { results, metaData }) : null;
+                    this.outFile ? this.localFileService.writeToTextFile(this.outFile, { metaData, results }) : null;
                     console.log(`Runtime: ${totalTestingTime}`);
                 })
                 .catch((error: Error) => console.error(`#### ENCOUNTERED AN ERROR ####:\n`, error))
