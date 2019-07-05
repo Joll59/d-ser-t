@@ -106,13 +106,14 @@ export class CustomSpeechTestHarness {
             }).reduce(this.responseAnalyzer.reducerSum) / results.length) as number).toPrecision(3);
             console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
 
-            const totalTestingTime = `${endTime[0]} seconds`;
-            const metaData = {
-                transcriptionFile: this.transcriptionFile,
-                sentenceErrorRate,
-                averageWordErrorRate,
-                totalTestingTime
-            };
+                    const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
+                    const metaData = {
+                        transcriptionFile: this.transcriptionFile,
+                        crisEndpointId: this.crisEndpointId,
+                        sentenceErrorRate, 
+                        averageWordErrorRate, 
+                        totalTestingTime
+                    };
 
             this.outFile ? this.localFileService.writeToTextFile(this.outFile, { metaData, results }) : null;
             console.log(`Runtime: ${totalTestingTime}`);
