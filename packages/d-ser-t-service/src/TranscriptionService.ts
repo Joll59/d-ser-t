@@ -117,6 +117,8 @@ export class TranscriptionService {
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
                 if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
+                    console.log(`Interesting that ${recognizerID} returned nothing for ${currentFileIndex - 1}...`)
+                    console.log(`Utterance - \"${dataArray[currentFileIndex - 1].transcription}\" and file - \"${dataArray[currentFileIndex - 1].recording}\" \n`)
                     stream.setFile(dataArray[currentFileIndex - 1].recording);
                 } else {
                     // push response into the resultArray
@@ -130,7 +132,7 @@ export class TranscriptionService {
                         stream.close();
                     } else {
                         // Increment file counter, pass next file to stream.
-                        console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
+                        //console.info(`New file into stream, ${currentFileIndex}/${dataArray.length - 1}, recognizer: ${recognizerID}`);
                         stream.setFile(dataArray[currentFileIndex++].recording);
                     }
                 }
