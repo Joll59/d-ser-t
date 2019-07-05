@@ -39,10 +39,11 @@ export class ResponseAnalyzer {
             const wordErrorRate = calculateWER(
                 actualTranscription, expectedTranscription);
 
-            console.log(`Actual Response: "${actualTranscription}"`);
-            console.log(`Expected Response: "${expectedTranscription}"`);
-            console.log(`Word Error Rate: ${wordErrorRate}\n`);
-
+            if (wordErrorRate > 0.2) {
+                console.log(`Actual Response: "${actualTranscription}"`);
+                console.log(`Expected Response: "${expectedTranscription}"`);
+                console.log(`Word Error Rate: ${wordErrorRate}\n`);
+            }
             const result: TestResult = {
                 actualTranscription,
                 expectedTranscription,
