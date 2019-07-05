@@ -45,8 +45,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "jest --colors --verbose --config jest.json --rootDir . --passWithNoTests",
-    "ci": "jest --testNamePattern model --colors --config jest.json"
+    "test": "jest --colors --verbose --config jest.json --rootDir . --passWithNoTests"
   },
   "gitHead": "7ea89ad951bd73ea27914cd7a61b9d8da2264eae"
 }
