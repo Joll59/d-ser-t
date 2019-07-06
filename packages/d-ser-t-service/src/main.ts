@@ -93,7 +93,7 @@ export class CustomSpeechTestHarness {
             const endTime = process.hrtime(startTime);
 
             const results = this.transcriptionService!.resultArray.map((item, idx) => {
-                console.log(`Handling result ${idx + 1}/${this.transcriptionService!.resultArray.length} . . .`);
+                // console.log(`Handling result ${idx + 1}/${this.transcriptionService!.resultArray.length} . . .`);
                 return this.responseAnalyzer.handleResponse(item.transcription!, JSON.parse(item.data.json));
             });
 
@@ -102,34 +102,37 @@ export class CustomSpeechTestHarness {
             // with at least one error. An SER of 0 means every
             // utterance was transcribed perfectly.
             const sentenceErrorRate = this.responseAnalyzer.calculateSER(results);
-            console.log(`Sentence Error Rate: ${sentenceErrorRate}`);
+            // console.log(`Sentence Error Rate: ${sentenceErrorRate}`);
 
             const averageWordErrorRate = ((results.map((item: TestResult, idx: number) => {
                 return item.wordErrorRate && item.wordErrorRate > 0 ? item.wordErrorRate : 0
             }).reduce(this.responseAnalyzer.reducerSum) / results.length) as number).toPrecision(3);
-            console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
+            // console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
 
-            const totalTestingTime = `${endTime[0]} seconds, ${endTime[1]} nanoseconds`;
+            const totalTestingTime = `${endTime[0]} seconds`;
             const metaData = {
-                sentenceErrorRate, averageWordErrorRate, totalTestingTime
+                transcriptionFile: this.transcriptionFile,
+                sentenceErrorRate,
+                averageWordErrorRate,
+                totalTestingTime
             };
 
-            this.outFile ? this.localFileService.writeToTextFile(this.outFile, { results, metaData }) : null;
-            console.log(`Runtime: ${totalTestingTime}`);
+            this.outFile ? this.localFileService.writeToTextFile(this.outFile, { metaData, results }) : null;
+            // console.log(`Runtime: ${totalTestingTime}`);
         }
     }
     public async audioFolderTranscription(files:fs.PathLike[]) {
         this.setTranscriptionService();
-        if (this.transcriptionService) {
+        if (this.transcriptionService && files) {
             this.checkConcurrency();
-            const startTime = process.hrtime();
+            // const startTime = process.hrtime();
             await this.transcriptionService.batchTranscribe(files, parseInt(this.concurrency!));
-            const endTime = process.hrtime(startTime);
+            // const endTime = process.hrtime(startTime);
+            // const totalTestingTime = `${endTime[0]} seconds`;
             const results: { index: number, file?: string, transcription: string }[] = this.transcriptionService!.resultArray.map(
                 (item, index) => ({index, file:item.file, transcription:JSON.parse(item.data.json).NBest[0].Lexical})
             );
-            const totalTestingTime = `${endTime[0]} seconds`;
-            console.log(`Runtime: ${totalTestingTime}`);
+            // console.log(`Runtime: ${totalTestingTime}`);
             return results;
         }
     };
