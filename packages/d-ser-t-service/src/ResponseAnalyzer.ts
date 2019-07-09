@@ -29,7 +29,7 @@ export class ResponseAnalyzer {
             // Clean the transcription of specific patterns that are sometimes
             // returned from the STT service.
             actualTranscription = this.transcriptAnalyzer.
-                cleanActualTranscription(actualTranscription);
+                cleanActualTranscription(actualTranscription, expectedTranscription);
 
             // Check if the transcription contains special characters that the
             // system does not currently account for.
@@ -39,7 +39,7 @@ export class ResponseAnalyzer {
             const wordErrorRate = calculateWER(
                 actualTranscription, expectedTranscription);
 
-            if (wordErrorRate > 0.2) {
+            if (wordErrorRate > 0.15) {
                 console.log(`Actual Response: "${actualTranscription}"`);
                 console.log(`Expected Response: "${expectedTranscription}"`);
                 console.log(`Word Error Rate: ${wordErrorRate}\n`);
@@ -68,7 +68,7 @@ export class ResponseAnalyzer {
         let incorrectTranscriptions = 0;
 
         for (const result of results) {
-            if (result.wordErrorRate > 0) {
+            if (result.wordErrorRate > 0.15) {
                 incorrectTranscriptions++;
             }
         }
