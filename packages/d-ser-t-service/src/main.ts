@@ -123,14 +123,10 @@ export class CustomSpeechTestHarness {
         this.setTranscriptionService();
         if (this.transcriptionService && files) {
             this.checkConcurrency();
-            // const startTime = process.hrtime();
             await this.transcriptionService.batchTranscribe(files, parseInt(this.concurrency!));
-            // const endTime = process.hrtime(startTime);
-            // const totalTestingTime = `${endTime[0]} seconds`;
             const results: { index: number, file?: string, transcription: string }[] = this.transcriptionService!.resultArray.map(
                 (item, index) => ({ index, file: item.file, transcription: JSON.parse(item.data.json).NBest[0].Lexical })
             );
-            // console.log(`Runtime: ${totalTestingTime}`);
             return results;
         }
     };
