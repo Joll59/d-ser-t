@@ -52,5 +52,5 @@
     "build": "tsc",
     "d-ser-t": "npx d-ser-t"
   },
-  "gitHead": "cd1ca2cf4caf6675b03fb1255010e92a5adf3b70"
+  "gitHead": "d28b5afec325253aaea5dcaee00cbfef083e4655"
 }
