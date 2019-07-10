@@ -146,7 +146,9 @@ export class TranscriptionService {
             );
 
             // Insert the first file into the buffer.
-            stream.setFile((dataArray[currentFileIndex++] as TestDatum).recording || dataArray[currentFileIndex++].toString());
+            const start = currentFileIndex;
+            currentFileIndex+=1;
+            stream.setFile((dataArray[start] as TestDatum).recording || dataArray[start].toString());
         });
     }
 
