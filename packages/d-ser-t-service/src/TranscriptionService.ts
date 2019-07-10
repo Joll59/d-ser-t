@@ -29,7 +29,8 @@ export class TranscriptionService {
     private serviceRegion: string;
     public resultArray: {
         data: SpeechRecognitionResult,
-        transcription: string
+        transcription?: string;
+        file?:string;
     }[] = [];
 
     public constructor(transcriptionService: TranscriptionServiceConfig) {
@@ -99,7 +100,7 @@ export class TranscriptionService {
     private internalRecognizer = async (
         recognizer: SpeechRecognizer,
         stream: MultiFilePullStream,
-        dataArray: TestData,
+        dataArray: TestData | fs.PathLike[],
         recognizerID?: number
     ): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
@@ -117,11 +118,13 @@ export class TranscriptionService {
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
                 if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
-                    stream.setFile(dataArray[currentFileIndex - 1].recording);
+                    stream.setFile((dataArray[currentFileIndex - 1] as TestDatum).recording || dataArray[currentFileIndex - 1].toString());
                 } else {
                     // push response into the resultArray
                     this.resultArray.push({
-                        data: e.result, transcription: dataArray[currentFileIndex - 1].transcription
+                        data: e.result,
+                        transcription: (dataArray[currentFileIndex - 1] as TestDatum).transcription,
+                        file: !(dataArray[currentFileIndex - 1] as TestDatum).transcription ? dataArray[currentFileIndex - 1].toString() : undefined,
                     });
 
                     if (currentFileIndex >= dataArray.length) {
@@ -131,7 +134,7 @@ export class TranscriptionService {
                     } else {
                         // Increment file counter, pass next file to stream.
                         console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
-                        stream.setFile(dataArray[currentFileIndex++].recording);
+                        stream.setFile((dataArray[currentFileIndex++] as TestDatum).recording || dataArray[currentFileIndex++].toString());
                     }
                 }
             };
@@ -143,11 +146,11 @@ export class TranscriptionService {
             );
 
             // Insert the first file into the buffer.
-            stream.setFile(dataArray[currentFileIndex++].recording);
+            stream.setFile((dataArray[currentFileIndex++] as TestDatum).recording || dataArray[currentFileIndex++].toString());
         });
     }
 
-    public batchTranscribe = (testData: TestData, concurrentCalls: number) => {
+    public batchTranscribe = (testData: TestData | fs.PathLike[], concurrentCalls: number) => {
         const totalFiles = testData.length;
 
         // The maximum number of files to be transcribed by each recognizer.
@@ -162,7 +165,7 @@ export class TranscriptionService {
         const processArray: {
             recognizer: SpeechRecognizer,
             stream: MultiFilePullStream,
-            filesArray: TestData,
+            filesArray: TestData | fs.PathLike[],
         }[] = [];
 
         for (let index = 0; index < totalRecognizers; index++) {
@@ -170,7 +173,7 @@ export class TranscriptionService {
             const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(stream);
             const audioConfig: AudioConfig = AudioConfig.fromStreamInput(pullStream);
 
-            let filesArray: TestDatum[] = testData;
+            let filesArray = testData;
 
             if (maxFilesPerRecognizer <= totalFiles) {
                 filesArray = testData.splice(0, maxFilesPerRecognizer);
@@ -188,8 +191,16 @@ export class TranscriptionService {
         return Promise.all(processArray.map(
             ({ recognizer, stream, filesArray }, index) =>
                 this.internalRecognizer(recognizer, stream, filesArray, index)
-        ));
-    }
+        ))
+            .catch((error:Error) => { throw Error(error.message) })
+            .finally(() => {
+                processArray.forEach(({ recognizer }, index) => {
+                    console.info('Closing recognizer:', index);
+                    recognizer.stopContinuousRecognitionAsync();
+                    recognizer.close();
+                });
+            });
+    };
 
     public singleFileTranscribe = async (
         filePath: string
