@@ -10,7 +10,7 @@ export class TranscriptionAnalyzerCI extends TranscriptionAnalyzerBase {
         this.configFile = exceptions;
     }
 
-    public cleanActualTranscription = (actualTranscription: string): string => {
+    public cleanActualTranscription = (actualTranscription: string, expectedTranscription: string): string => {
         let result: string = this.cleanTranscription(actualTranscription)
         let config: CleanUpConfig = <CleanUpConfig>Utils.readJSONFileSync(this.configFile);
 
@@ -25,7 +25,7 @@ export class TranscriptionAnalyzerCI extends TranscriptionAnalyzerBase {
                 continue;
             }
 
-            if (result.includes(key)) {
+            if (expectedTranscription.includes(value) && result.includes(key)) {
                 result = result.replace(key, value);
             }
         }

@@ -29,7 +29,7 @@ export class ResponseAnalyzer {
             // Clean the transcription of specific patterns that are sometimes
             // returned from the STT service.
             actualTranscription = this.transcriptAnalyzer.
-                cleanActualTranscription(actualTranscription);
+                cleanActualTranscription(actualTranscription, expectedTranscription);
 
             // Check if the transcription contains special characters that the
             // system does not currently account for.

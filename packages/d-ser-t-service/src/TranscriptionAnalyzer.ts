@@ -18,7 +18,7 @@ export class TranscriptionAnalyzer extends TranscriptionAnalyzerBase {
      * would have to assume no typos were made. Instead, we expect the human
      * completing the transcription file to do so correctly.
      */
-    public cleanActualTranscription = (actualTranscription: string): string => {
+    public cleanActualTranscription = (actualTranscription: string, expectedTranscription: string): string => {
         return this.cleanTranscription(actualTranscription)
             // Replace commas, periods, and question marks with an empty string.
             .replace(/,|\.|\?/g, ``)
