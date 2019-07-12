@@ -119,8 +119,8 @@ export class TranscriptionService {
                 // where there are no utterances returned
                 if (!(JSON.parse(e.result.json).NBest) && currentFileIndex >= 0) {
                     console.log(`Interesting that ${recognizerID} returned nothing for ${currentFileIndex - 1}...`)
-                    console.log(`Utterance - \"${dataArray[currentFileIndex - 1].transcription}\" and file - \"${dataArray[currentFileIndex - 1].recording}\" \n`)
-                    stream.setFile(dataArray[currentFileIndex - 1].recording);
+                    console.log(`Utterance - \"${(dataArray[currentFileIndex - 1] as TestDatum).transcription}\" and file - \"${(dataArray[currentFileIndex - 1] as TestDatum).recording}\" \n`)
+                    stream.setFile((dataArray[currentFileIndex - 1] as TestDatum).recording || dataArray[currentFileIndex - 1].toString());
                 } else {
                     // push response into the resultArray
                     this.resultArray.push({
@@ -136,7 +136,7 @@ export class TranscriptionService {
                     } else {
                         // Increment file counter, pass next file to stream.
                         //console.info(`New file into stream, ${currentFileIndex}/${dataArray.length - 1}, recognizer: ${recognizerID}`);
-                        stream.setFile(dataArray[currentFileIndex++].recording);
+                        stream.setFile((dataArray[currentFileIndex++] as TestDatum).recording || dataArray[currentFileIndex++].toString());
                     }
                 }
             };

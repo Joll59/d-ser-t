@@ -68,7 +68,7 @@ export class ResponseAnalyzer {
         let incorrectTranscriptions = 0;
 
         for (const result of results) {
-            if (result.wordErrorRate > 0.15) {
+            if (result.wordErrorRate > 0) {
                 incorrectTranscriptions++;
             }
         }
