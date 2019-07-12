@@ -135,7 +135,7 @@ export class TranscriptionService {
                         stream.close();
                     } else {
                         // Increment file counter, pass next file to stream.
-                        console.info(`New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`);
+                        //console.info(`New file into stream, ${currentFileIndex}/${dataArray.length - 1}, recognizer: ${recognizerID}`);
                         stream.setFile(dataArray[currentFileIndex++].recording);
                     }
                 }
