@@ -49,7 +49,8 @@
     "ts-jest": "^24.0.2"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
+    "clean": "del-cli lib tsconfig.tsbuildinfo node_modules",
     "d-ser-t": "npx d-ser-t"
   },
   "gitHead": "cd1ca2cf4caf6675b03fb1255010e92a5adf3b70"
