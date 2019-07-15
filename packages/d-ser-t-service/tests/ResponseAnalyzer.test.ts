@@ -32,32 +32,27 @@ const FakeSpeechResponse: IDetailedSpeechPhrase = {
     RecognitionStatus: FakeRecognitionStatus,
 }
 
-describe('hanldeResponse', ()=>{
+describe("ResponseAnalyzer", ()=>{
+    describe('handleResponse', () => {
+        it('returns a TestResult Obeject', () => {
+            const responseResult = responseAnalyzer.handleResponse(FakeTestResults.expectedTranscription, FakeSpeechResponse)
+            expect(responseResult)
+            .toEqual(FakeTestResults);
+        });
+    })
 
-    it('throws on errors',()=>{
-        expect(() => {
-            responseAnalyzer.handleResponse(FakeTestResults.actualTranscription, FakeSpeechResponse)
+    describe('calculateSER', () => {
+        const ser = calculateSERMock([FakeTestResults])
+        it('Calculates & Returns Sentence Error Rate', () => {
+            expect(ser)
+            .toEqual("0.00");
+        });
+    });
+
+    describe('reducerSum', () => {
+        it('Sums up values provided', () => {
+            expect(responseAnalyzer.reducerSum(12, 6))
+            .toEqual(18);
         })
-        .toThrowError()
     })
-    it('returns a TestResult Obeject',()=>{
-        const responseResult = responseAnalyzer.handleResponse(FakeTestResults.actualTranscription, FakeSpeechResponse)
-        expect(responseResult)
-        .toEqual(FakeTestResults);
-    });
-})
-
-describe('calculateSER', () => {
-    const ser = calculateSERMock([FakeTestResults])
-    it('Calculates & Returns Sentence Error Rate', () => {
-        expect(ser)
-        .toEqual("0.00");
-    });
 });
-
-describe('reducerSum', ()=>{
-    it('Sums up values provided', ()=> {
-        expect(responseAnalyzer.reducerSum(12,6))
-        .toEqual(18);
-    })
-})

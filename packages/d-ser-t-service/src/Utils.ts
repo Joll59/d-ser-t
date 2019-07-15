@@ -15,8 +15,6 @@ export default class Utils {
             json = JSON.parse(data);
         } catch {
             console.log(`Could not open ${filePath} for the STT service . . .`);
-        } finally {
-            console.log('Creation Success!!')
         }
         return json;
     }
@@ -30,7 +28,7 @@ export default class Utils {
     }
 
     /**
-     * Extract regex pattern. /\\s's\\b/g" --> \\s's\\b. If no regex pattern 
+     * Extract regex pattern. /\\s's\\b/g" --> \\s's\\b. If no regex pattern
      * exists, return undefined.
      * @returns regex pattern or undefined if none found
      * @param input string
