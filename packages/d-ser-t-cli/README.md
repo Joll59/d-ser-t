@@ -3,24 +3,26 @@
 
 # D-SER-T-CLI
 
-## Using the project
+### Using the project
 
-This project requires Microsoft speech service, audio files and a corresponding transcriptions.txt file.
+This CLI requires Microsoft speech service, a directory of audio files and a corresponding transcriptions text file.
 
-## Install
-
-`npm install d-ser-t-cli`
-
-## Values needed to run test harness.
-- Microsoft speech subscription key.
-- Speech service region
-    Optional Parameters
-    - endpoint-id; necessary to use custom speech service
-    - Concurrent calls; generally < 20.
+### Prerequisites
+* Node.js
+* Microsoft speech service subscription key.
+* Speech service region
+  * Conditional Parameters
+    - endpoint-id; _necessary to use custom speech_
+    - Concurrent calls; _generally < 20_
     - audio-directory
     - transcription-file
     - output-file
     - audio-file
+
+### Install
+
+`npm install d-ser-t-cli`
+
 
 ### Calls to the Custom speech service is limited to 20 Maximum calls.
  <!--We need more information here -->
