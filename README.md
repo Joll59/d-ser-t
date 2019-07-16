@@ -24,7 +24,8 @@ __Packages are maintained using `lerna` at the top level__
 
 ### Deployment :shipit:
 
-> `npm publish` alias for `lerna publish --from-package`
+> `lerna version` bump versions.
+>`npm publish` alias for `lerna publish --from-package`
 
 ### Contributing :electric_plug:
 
