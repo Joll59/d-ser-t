@@ -23,11 +23,7 @@ This CLI requires Microsoft speech service, a directory of audio files and a cor
 
 `npm install d-ser-t-cli`
 
-
-### Calls to the Custom speech service is limited to 20 Maximum calls.
- <!--We need more information here -->
-
-## Flags needed to run CLI. <Pass these Flags in> 
+### Flags used by CLI.
 | flag  | alias  | value  |
 |---|---|---|
 | -s | subscription-key | Microsoft Speech Subscription Key |
@@ -40,8 +36,25 @@ This CLI requires Microsoft speech service, a directory of audio files and a cor
 | -c | concurrent-calls | concurrent service calls [defaults to 1] |
 | Conflicts --> -f : (-d & -t) |   | Providing a singular file to transcribe, results in console log of transcription from service |
 
-## Running
-```
-Sample
+
+
+### Notable Dependency
+[`d-ser-t-service`](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-service)
+
+- creating a [transcription file](https://github.com/Joll59/d-ser-t/blob/master/packages/d-ser-t-service/README.md#creation-of-transcriptionstxt-file)
+- [recording audio](https://github.com/Joll59/d-ser-t/blob/master/packages/d-ser-t-service/README.md#creating-your-audio-datafiles)
+
+### Running
+```powershell
+## individual file
 npm run d-ser-t -- -s [string] -r [string] -f [string]
+
+## audio directory with transcription file
+npm run d-ser-t -- -s [string] -r [string] -d [string] -t [string]
 ```
+
+### Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
+
+### Versioning
+We use [SemVer](https://semver.org/) for versioning.
