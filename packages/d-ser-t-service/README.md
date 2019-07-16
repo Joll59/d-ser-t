@@ -1,34 +1,31 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+[![Build Status](https://dev.azure.com/yolajide/d-ser-t-pipeline/_apis/build/status/Joll59.d-ser-t?branchName=master)](https://dev.azure.com/yolajide/d-ser-t-pipeline/_build/latest?definitionId=1&branchName=master)
 
-# Speech Recognition Testing
-This project tests speech recognition . It takes sample audio and expected transcriptions, and tests whether or not there is proper transcription of the audio file in real time.
+# Dynamic Sentence Error Rate Testing Service: D-SER-T-SERVICE
+This project quantifies speech audio transcription in near real time, by taking sample audio with expected transcriptions and outputting WER & SER for all utterances.
 
-## Using the project
+## Getting started
+These instructions will get you started using the service. For development / contributing see Contributing.
 
-This project requires Microsoft speech service, audio files and a corresponding transcriptions.txt file.
-
-## Values needed to run test harness.
-- Microsoft speech subscription key.
-- Speech service region  
-    Optional Parameters
-    - endpoint-id; necessary to use custom speech service
-    - Concurrent calls; generally < 20.
+### Prerequisites
+* Node.js
+* Microsoft speech service subscription key.
+* Speech service region
+  * Conditional Parameters
+    - endpoint-id; _necessary to use custom speech_
+    - Concurrent calls; _generally < 20_
     - audio-directory
     - transcription-file
     - output-file
     - audio-file
 
-## Running this test Harness
-
-### First Install
+### Installing
 
 Install the project from npm
 
 ```npm install d-ser-t-service```
 
 ### Import into Codebase.
-
-If writing with TypeScript you can import it with `import`. If not, `require`.
 
 ```js
 // with import
@@ -40,31 +37,61 @@ const CustomSpeechTestHarness = require('d-ser-t-service').CustomSpeechTestHarne
 
 ### Pass values into the Test Harness
 
-Create an instance of the test harness and pass the appropriate values as noted above.
+Create an instance of the test harness and pass the appropriate values as noted below.
 
 ```js
 const testHarness = new CustomSpeechTestHarness(
-  audioDirectory='path/to/audio/directory',
-  concurrency='number of concurrent calls, ≥ 1',
-  crisEndpointId='Custom Speech Endpoint ID',
-  serviceRegion='Speech service region, e.g. westus',
-  transcriptionFile='path/to/existing/transcription/file',
-  audioFile="optional; use if there's a single file to transcribe",
-  outFile='optional; defaults to ./test_results.json'
+  {
+    audioDirectory='path/to/audio/directory',
+    concurrency='number of concurrent calls, ≥ 1',
+    crisEndpointId='Custom Speech Endpoint ID',
+    serviceRegion='Speech service region, e.g. westus',
+    transcriptionFile='path/to/existing/transcription/file.txt',
+    audioFile="optional; use if there's a single file to transcribe",
+    outFile='optional; defaults to ./test_results.json'
+  }
 );
 ```
 
-### Calls to the Custom speech service is limited to 20 Maximum calls.
- <!--We need more information here -->
+### Call methods which satisfy your scenario
 
-### Note: if transcription Text File is edited in VSCODE, VSCODE adds a new line to end of all files, this will affect how tests are ran. Turn off that feature before saving.
+```js
+/* Single file recognition, no transcription.txt file necessary
+results outputs to terminal.*/
+testHarness.singleFileTranscribe();
+/* Multiple file recognition with a transcription.txt file and an audio directory.
+results stored in `test_results.json` by default. */
+testHarness.multipleFileTranscription();
+```
 
-## Creating your Audio Data/Files
+### Results stored in JSON format.
+Testing stores test results in JSON format which is stored in `../test_results.json` by default, storage location can be changed with a flag.
+
+```JSON
+sample test_results.json
+{
+  metaData: {
+    "transcriptionFile": "<path to transcription>.txt",
+    "sentenceErrorRate": "<ratio of occurence of an error in recognition> range 0 - 1",
+    "averageWordErrorRate": "<average distribution of error in each recognition> range 0 - 1",
+    "totalTestingTime": "<total transcription time>"
+  },
+  results: [
+    {
+      "actualTranscription": "what the speech service return",
+      "expectedTranscription": "what should the speech service return",
+      "wordErrorRate": 0.167 /* word error rate range 0 - 1 */
+    }
+  ]
+}
+```
+
+### Creating your Audio Data/Files
 
 First, we must create the audio files that we wish to test, along with their expected transcriptions.
 Audio must be `.wav` files sampled at `16kHz`. My recommended approach for generating test audio is using Audacity to record `wav` files.
 
-## Using [audacity](https://www.audacityteam.org/), to create audio files for transcription.
+#### Using [audacity](https://www.audacityteam.org/), to create audio files for transcription.
 
 1. Install Audacity (free and cross-platform)
 2. Set your recording settings
@@ -101,16 +128,23 @@ Audio must be `.wav` files sampled at `16kHz`. My recommended approach for gener
    * Press Export
    * Click OK
 
-## Creation of transcriptions.txt file.
+### Creation of transcriptions.txt file.
+> Note: if transcription Text File is edited in VSCODE, VSCODE optionally adds a new line to end of all files, this will affect how tests are ran. Disable feature before saving.
 
 As you create your audio files, keep track of the expected transcriptions in a text file called ```transcriptions.txt```. The structure for `.txt` file is the same structure used for training a custom acoustic model. Each line of the transcription file should have the name of an audio file, followed by the corresponding transcription. The file name and transcription should be separated by a tab (\t).
 
 Important: TXT files should be encoded as UTF-8 BOM and not contain any UTF-8 characters above U+00A1 in the Unicode characters table. Typically –, ‘, ‚, “ etc. This harness tries to address this by cleaning your data.
 
-### Results stored in JSON format.
-Testing stores test results in JSON format which is stored in `./test_results.json` by default, can be changed with a flag
+### Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
 
-## Version Support
+### Versioning
+We use [SemVer](https://semver.org/) for versioning.
+
+### Authors
+* **Katie Prochilo**
+* **Vishesh Oberoi**
+
+### Version Support
 
 * Node.js [LTS](https://github.com/nodejs/LTS#lts-schedule) `>= 10`
-* git `>= 2`

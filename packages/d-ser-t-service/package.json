@@ -44,7 +44,8 @@
     "ts-jest": "^24.0.2"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
+    "clean": "del-cli lib tsconfig.tsbuildinfo node_modules",
     "test": "jest --colors --verbose --config jest.json --rootDir . --passWithNoTests"
   },
   "gitHead": "d28b5afec325253aaea5dcaee00cbfef083e4655"
