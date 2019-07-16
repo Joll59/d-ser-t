@@ -53,7 +53,7 @@ export class TranscriptionAnalyzerBase implements ITranscriptionAnalyzer {
      * The STT service will **sometimes** return commas, periods, question
      * marks, and more. This method is meant to further process the input
      */
-    public cleanActualTranscription = (actualTranscription: string): string => {
+    public cleanActualTranscription = (actualTranscription: string, expectedTranscription: string): string => {
         return this.cleanTranscription(actualTranscription);
     };
 
