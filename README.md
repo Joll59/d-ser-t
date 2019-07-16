@@ -7,7 +7,8 @@
 This is the monorepo containing both the [Dynamic Sentence Error Rate Testing Service](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-service),`d-ser-t-service`, and its accompanying [CLI](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-cli), `d-ser-t-cli`. What can I say, I am awesome at naming things. :grin:
 
 
-# Getting Started.
+# Getting Started
+
 * install
     - `git clone git@github.com:Joll59/d-ser-t.git`
     - `cd d-ser-t`
@@ -21,19 +22,20 @@ You are ready for local development, explore `package.json` for all available sc
 
 __Packages are maintained using `lerna` at the top level__
 
-#### [Contributing](CONTRIBUTING.md) :electric_plug:
+### Deployment :shipit:
 
-## Deployment :shipit:
----
 > `npm publish` alias for `lerna publish --from-package`
 
-### Contributing
+### Contributing :electric_plug:
+
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
 
 ### Versioning
+
 We use [SemVer](https://semver.org/) for versioning.
 
 # License
+
 Licensed under the MIT License
 
 See sources for licenses of dependencies.
