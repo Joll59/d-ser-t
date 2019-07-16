@@ -22,6 +22,7 @@ This CLI requires Microsoft speech service, a directory of audio files and a cor
 ### Install
 
 `npm install d-ser-t-cli`
+> globally install with `npm install -g d-ser-t-cli`
 
 ### Flags used by CLI.
 | flag  | alias  | value  |
@@ -51,6 +52,10 @@ npm run d-ser-t -- -s [string] -r [string] -f [string]
 
 ## audio directory with transcription file
 npm run d-ser-t -- -s [string] -r [string] -d [string] -t [string]
+
+## if globally installed;
+d-ser-t -s [string] -r [string] -f [string]
+d-ser-t -s [string] -r [string] -d [string] -t [string]
 ```
 
 ### Contributing
