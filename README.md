@@ -1,29 +1,37 @@
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
-[![Contribute](:shipit:)](CONTRIBUTING.md)
 
 # Introduction
 
-This is the monorepo containing both the [Dynamic Sentence Error Rate Testing Service](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-service) and its accompanying [CLI](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-cli).
-
+This is the monorepo containing both the [Dynamic Sentence Error Rate Testing Service](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-service),`d-ser-t-service`, and its accompanying [CLI](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-cli), `d-ser-t-cli`. What can I say, I am awesome at naming things. :grin:
 
 
 # Getting Started.
-
-## Install
-- From root of repository:
+* install
     - `git clone git@github.com:Joll59/d-ser-t.git`
     - `cd d-ser-t`
-    - `npm install`  :electric_plug:
+    - `npm install`
+        - this installs all dependencies for all packages.
+* Instructions for running the packages individually:
+    * Running d-ser-t via cli with [d-ser-t-cli](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-cli)
+    * Utilizing d-ser-t-service [d-ser-t-service](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-service)
 
-__At this point you have access to both packages. Packages are maintained using `lerna` at the top level__
-explore `package.json` to see available scripts
+You are ready for local development, explore `package.json` for all available scripts.
 
-# Contributing
+__Packages are maintained using `lerna` at the top level__
 
-## Deployment/Upload :heavy_check_mark:
-> `npm publish` which runs `lerna publish --from-package`.
+#### [Contributing](CONTRIBUTING.md) :electric_plug:
+
+## Deployment :shipit:
+---
+> `npm publish` alias for `lerna publish --from-package`
+
+### Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
+
+### Versioning
+We use [SemVer](https://semver.org/) for versioning.
 
 # License
 Licensed under the MIT License
