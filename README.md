@@ -20,15 +20,22 @@ This is the monorepo containing both the [Dynamic Sentence Error Rate Testing Se
 
 You are ready for local development, explore `package.json` for all available scripts.
 
-__Packages are maintained using `lerna` at the top level__
+__Packages maintained with `lerna` at the root__
 
-### Deployment :shipit:
-
-> `npm publish` alias for `lerna publish --from-package`
 
 ### Contributing :electric_plug:
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
+
+### Deployment :shipit:
+
+> Current GitHub master branch policy will prevent publishing from master
+
+Suggested publishing process:
+ - Last action in significant PR is to run `lerna version` to bump version.  
+    -  Checkout into a `git co -b Publishing`  
+    - `lerna changed --include-merged-tags` to verify tags  
+    - `npm run publish`
 
 ### Versioning
 
