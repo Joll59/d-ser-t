@@ -1,6 +1,6 @@
 {
   "name": "d-ser-t-cli",
-  "version": "1.1.3-alpha.1",
+  "version": "1.1.3-alpha.3",
   "description": "Package for running d-ser-t from the command line",
   "license": "MIT",
   "author": "Yomi (@jolly59), Katie (@KatieProchilo), Nick (@nhuntwalker)",
@@ -32,7 +32,7 @@
     "speech-recognition"
   ],
   "dependencies": {
-    "d-ser-t-service": "^1.1.3-alpha.0",
+    "d-ser-t-service": "^1.1.3-alpha.2",
     "yargs": "13.2.4"
   },
   "devDependencies": {
@@ -46,5 +46,5 @@
     "clean": "del-cli lib tsconfig.tsbuildinfo node_modules",
     "d-ser-t": "npx d-ser-t"
   },
-  "gitHead": "cd1ca2cf4caf6675b03fb1255010e92a5adf3b70"
+  "gitHead": "d28b5afec325253aaea5dcaee00cbfef083e4655"
 }
