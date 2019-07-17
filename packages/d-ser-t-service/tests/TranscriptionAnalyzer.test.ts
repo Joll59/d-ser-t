@@ -37,7 +37,7 @@ describe('TranscriptionAnalyzer',() => {
         });
 
         it("Replaces commas, periods, and question marks with an empty string", () => {
-            expect(transcriptAnalyzer.cleanActualTranscription('this,is a. test?', "this is a test"))
+            expect(transcriptAnalyzer.cleanActualTranscription("this, is a. test?", "this is a test"))
             .toStrictEqual("this is a test")
         })
 
