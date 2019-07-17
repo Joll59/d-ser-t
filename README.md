@@ -29,13 +29,10 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and 
 
 ### Deployment :shipit:
 
-> Current GitHub master branch policy will prevent publishing from master
-
 Suggested publishing process:
- - Last action in significant PR is to run `lerna version` to bump version.  
-    -  Checkout into a `git co -b Publishing`  
-    - `lerna changed --include-merged-tags` to verify tags  
-    - `npm run publish`
+ - Last action in significant PR is to run `lerna version` to bump version.
+    - `npm run publish` which runs `lerna publish --from-package` 
+    -  Alternatively you can `lerna publish --include-merged-tags`
 
 ### Versioning
 
