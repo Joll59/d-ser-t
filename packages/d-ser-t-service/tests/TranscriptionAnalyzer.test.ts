@@ -1,6 +1,4 @@
-import {
-    TranscriptionAnalyzerCI
-} from '../src/TranscriptionAnalyzerCI';
+import { TranscriptionAnalyzerCI } from '../src/TranscriptionAnalyzerCI';
 import { TranscriptionAnalyzer } from '../src/TranscriptionAnalyzer';
 import { TranscriptionAnalyzerBase } from '../src/TranscriptionAnalyzerBase';
 
@@ -47,27 +45,27 @@ describe('TranscriptionAnalyzer',() => {
 })
 
 describe('TranscriptionAnalyzerBase', () => {
-    class MockTranscriptioAnalyzer extends TranscriptionAnalyzerBase {
+    class TestBaseTranscriptionAnalyzer extends TranscriptionAnalyzerBase {
     }
 
-    const mockTranscriptionAnalyzer = new MockTranscriptioAnalyzer();
+    const testBaseTranscriptionAnalyzer = new TestBaseTranscriptionAnalyzer();
     describe('validateExpectedTranscription', () => {
         it('Throws an error when transcription is invalid', () => {
             expect(() => {
-                mockTranscriptionAnalyzer.validateExpectedTranscription('I\'am not, ready')
+                testBaseTranscriptionAnalyzer.validateExpectedTranscription('I\'am not, ready')
             }).toThrowError(SyntaxError);
         });
 
         it('Not Throw an error when transcription is valid', () => {
             expect(() => {
-                mockTranscriptionAnalyzer.validateExpectedTranscription("i'am not ready")
+                testBaseTranscriptionAnalyzer.validateExpectedTranscription("i'am not ready")
             }).not.toThrowError(SyntaxError);
         });
     });
 
     describe('cleanActualTranscription', () => {
         it('Does NOT replace hyphens with space', () => {
-            expect(mockTranscriptionAnalyzer.cleanActualTranscription('test-harness', 'test-harness'))
+            expect(testBaseTranscriptionAnalyzer.cleanActualTranscription('test-harness', 'test-harness'))
             .not.toEqual('test harness');
         });
     });
@@ -75,20 +73,12 @@ describe('TranscriptionAnalyzerBase', () => {
     describe('cleanTranscription', () => {
 
         it('Lowercases strings', () => {
-            expect(mockTranscriptionAnalyzer.cleanActualTranscription("THIS IS SPARTA", 'this is sparta'))
+            expect(testBaseTranscriptionAnalyzer.cleanActualTranscription("THIS IS SPARTA", 'this is sparta'))
             .toStrictEqual('this is sparta');
         });
         it('Replaces OKAY with ok',() => {
-            expect(mockTranscriptionAnalyzer.cleanTranscription('okay I want In'))
+            expect(testBaseTranscriptionAnalyzer.cleanTranscription('okay I want In'))
             .toStrictEqual('ok i want in')
         })
     });
-    describe('analyzeActualTranscription', () => {
-        it('documents Unhandled characters and outputs to a file ', () => {
-
-            mockTranscriptionAnalyzer.pushUnhandledOutput = jest.fn();
-            mockTranscriptionAnalyzer.analyzeActualTranscription('nuh-huh');
-            expect(mockTranscriptionAnalyzer.pushUnhandledOutput).toHaveBeenCalled();
-        });
-    });
-});
+})
