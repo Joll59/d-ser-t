@@ -1,5 +1,6 @@
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+[![npm version](https://badge.fury.io/js/d-ser-t-cli.svg)](https://badge.fury.io/js/d-ser-t-cli)
 
 # D-SER-T-CLI
 
