@@ -1,5 +1,6 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 [![Build Status](https://dev.azure.com/yolajide/d-ser-t-pipeline/_apis/build/status/Joll59.d-ser-t?branchName=master)](https://dev.azure.com/yolajide/d-ser-t-pipeline/_build/latest?definitionId=1&branchName=master)
+[![npm version](https://badge.fury.io/js/d-ser-t-service.svg)](https://badge.fury.io/js/d-ser-t-service)
 
 # Dynamic Sentence Error Rate Testing Service: D-SER-T-SERVICE
 This project quantifies speech audio transcription in near real time, by taking sample audio with expected transcriptions and outputting WER & SER for all utterances.
