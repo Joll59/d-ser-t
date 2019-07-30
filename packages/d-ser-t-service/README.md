@@ -6,7 +6,7 @@
 This project quantifies speech audio transcription in near real time, by taking sample audio with expected transcriptions and outputting WER & SER for all utterances.
 
 ## Getting started
-These instructions will get you started using the service. For development / contributing see Contributing.
+These instructions will get you started using the service. For development / contributing see [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ### Prerequisites
 * Node.js
