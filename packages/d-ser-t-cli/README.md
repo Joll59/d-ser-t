@@ -60,7 +60,7 @@ d-ser-t -s [string] -r [string] -d [string] -t [string]
 ```
 
 ### Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](../../CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
 
 ### Versioning
 We use [SemVer](https://semver.org/) for versioning.
