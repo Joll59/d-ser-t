@@ -1,3 +1,16 @@
+# Contributing
+
+Welcome to `d-ser-t`.
+
+## Table of Contents
+
+* [How to contribute to d-ser-t](#How-to-contribute-to-d-ser-t)
+* [Building and Testing](#Building-and-Testing)
+* [Code Style](#Code-Style)
+   * [Imports](#Imports)
+   * [Line Length](#Line-Length)
+   * [Naming](#Naming)
+
 ## How to contribute to d-ser-t
 
 #### **Did you find a bug?**
@@ -42,3 +55,32 @@ Changes that are cosmetic in nature and do not add anything substantial to the s
 d-ser-t Team
 
 [email]: <alajide@gmail.com>
+
+## Code Style
+
+### Imports
+
+Import statements should be at the top of the file. They are organized into blocks in the following order:
+1. Public npm packages.
+2. Local modules in other directories.
+3. Local modules in the current directory.
+
+Within a block, imports statements are arranged alphabetically by package name or director path.
+
+Within an import, symbols are listed alphabetically.
+
+### Line Length
+
+Each line of code or comments should be <= 80 characters.
+
+### Naming
+
+* **Abbreviations**</br>Abbreviations should not be used in any names unless they are common and readable.
+
+* **Classes**</br>Names are `PascalCase`.
+
+* **Functions, Member Functions**</br>Names are `camelCase`. Prefer private members whenever possible.
+
+* **Variables, Member Variables**</br>Names are `camelCase`. Prefer const variables whenever possible. Prefer private and readonly for member variables whenever possible.
+
+* **Interfaces**</br>Names are `PascalCase`. Use the `I` prefix for interfaces that are like abstract base classes, but not interfaces that are POJO structs. For example, `TranscriptionAnalyzerBase` implements `ITranscriptionAnalyzer`, but the `TestResult` interface is used as a type and will not have the `I` prefix.
