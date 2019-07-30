@@ -4,7 +4,7 @@
 
 # Introduction
 
-This is the monorepo containing both the [Dynamic Sentence Error Rate Testing Service](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-service),`d-ser-t-service`, and its accompanying [CLI](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-cli), `d-ser-t-cli`. What can I say, I am awesome at naming things. :grin:
+This is the monorepo containing both the [Dynamic Sentence Error Rate Testing Service](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-service), `d-ser-t-service`, and its accompanying [CLI](https://github.com/Joll59/d-ser-t/tree/master/packages/d-ser-t-cli), `d-ser-t-cli`. What can I say, I am awesome at naming things. :grin:
 
 
 # Getting Started
@@ -31,7 +31,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and 
 
 Suggested publishing process:
  - Last action in significant PR is to run `lerna version` to bump version.
-    - `npm run publish` which runs `lerna publish --from-package` 
+    - `npm run publish` which runs `lerna publish --from-package`
     -  Alternatively you can `lerna publish --include-merged-tags`
 
 ### Versioning
