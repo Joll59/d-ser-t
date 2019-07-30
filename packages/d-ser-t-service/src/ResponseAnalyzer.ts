@@ -1,9 +1,8 @@
-
 import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.speech/ServiceMessages/DetailedSpeechPhrase';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
-import { TestResult } from './types';
 import { ITranscriptionAnalyzer } from './interfaces/ITranscriptionAnalyzer';
+import { TestResult } from './types';
 
 export class ResponseAnalyzer {
     private readonly transcriptAnalyzer: ITranscriptionAnalyzer;
@@ -28,16 +27,21 @@ export class ResponseAnalyzer {
 
             // Clean the transcription of specific patterns that are sometimes
             // returned from the STT service.
-            actualTranscription = this.transcriptAnalyzer.
-                cleanActualTranscription(actualTranscription, expectedTranscription);
+            actualTranscription = this.transcriptAnalyzer.cleanActualTranscription(
+                actualTranscription,
+                expectedTranscription
+            );
 
             // Check if the transcription contains special characters that the
             // system does not currently account for.
-            this.transcriptAnalyzer.
-                analyzeActualTranscription(actualTranscription);
+            this.transcriptAnalyzer.analyzeActualTranscription(
+                actualTranscription
+            );
 
             const wordErrorRate = calculateWER(
-                actualTranscription, expectedTranscription);
+                actualTranscription,
+                expectedTranscription
+            );
 
             console.log(`Actual Response: "${actualTranscription}"`);
             console.log(`Expected Response: "${expectedTranscription}"`);
@@ -46,22 +50,25 @@ export class ResponseAnalyzer {
             const result: TestResult = {
                 actualTranscription,
                 expectedTranscription,
-                wordErrorRate
+                wordErrorRate,
             };
 
             return result;
         } catch (error) {
             throw Error(error);
         }
-    }
+    };
+
     /**
      * Sum function for totaling up values with a reducer
      */
     reducerSum = (total: number, currentNum: number) => total + currentNum;
+
     /**
-     * Sentence Error Rate (SER) is a measure of perfect transcriptions between 0
-     * and 1. An SER of 0 would mean every recording was transcribed perfectly, and
-     * an SER of 1 would mean no recordings were transcribed perfectly.
+     * Sentence Error Rate (SER) is a measure of perfect transcriptions between
+     * 0 and 1. An SER of 0 would mean every recording was transcribed
+     * perfectly, and an SER of 1 would mean no recordings were transcribed
+     * perfectly.
      */
     calculateSER = (results: TestResult[]): string => {
         let incorrectTranscriptions = 0;
@@ -74,5 +81,5 @@ export class ResponseAnalyzer {
 
         const totalTranscriptions = results.length;
         return (incorrectTranscriptions / totalTranscriptions).toPrecision(3);
-    }
+    };
 }

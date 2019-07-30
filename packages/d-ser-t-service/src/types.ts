@@ -6,6 +6,7 @@
 export interface CleanUpConfig {
     replaceExpressions: { [key: string]: string };
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // TranscriptionAnalyzer
@@ -41,7 +42,7 @@ export interface TestResult {
     actualTranscription: string;
     expectedTranscription: string;
     wordErrorRate: number;
-};
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //

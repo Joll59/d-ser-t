@@ -1,7 +1,5 @@
 import * as fs from 'fs';
-import {
-    PullAudioInputStreamCallback,
-} from 'microsoft-cognitiveservices-speech-sdk';
+import { PullAudioInputStreamCallback } from 'microsoft-cognitiveservices-speech-sdk';
 
 export class MultiFilePullStream extends PullAudioInputStreamCallback {
     private currentFile!: Buffer;
@@ -20,25 +18,35 @@ export class MultiFilePullStream extends PullAudioInputStreamCallback {
         }
 
         // Read the next set of bytes from the file.
-        const bytesLeftInFile: number = this.currentFile.byteLength - this.currentOffset;
-        const bytesToSend: number = Math.min(bytesLeftInFile, dataBuffer.byteLength);
+        const bytesLeftInFile: number =
+            this.currentFile.byteLength - this.currentOffset;
+        const bytesToSend: number = Math.min(
+            bytesLeftInFile,
+            dataBuffer.byteLength
+        );
 
         const copyArray = new Uint8Array(dataBuffer);
-        copyArray.set(new Uint8Array(this.currentFile
-            .slice(this.currentOffset, bytesToSend + this.currentOffset)));
+        copyArray.set(
+            new Uint8Array(
+                this.currentFile.slice(
+                    this.currentOffset,
+                    bytesToSend + this.currentOffset
+                )
+            )
+        );
 
         this.currentOffset += bytesToSend;
 
         return bytesToSend;
-    }
+    };
 
     public close = (): void => {
         this.isStreamClosed = true;
-    }
+    };
 
     public setFile = (fileName: string): void => {
         // Obtain and open the file.
         this.currentFile = fs.readFileSync(fileName);
         this.currentOffset = 0;
-    }
+    };
 }
