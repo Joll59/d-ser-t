@@ -1,13 +1,17 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 [![Build Status](https://dev.azure.com/yolajide/d-ser-t-pipeline/_apis/build/status/Joll59.d-ser-t?branchName=master)](https://dev.azure.com/yolajide/d-ser-t-pipeline/_build/latest?definitionId=1&branchName=master)
+[![npm version](https://badge.fury.io/js/d-ser-t-service.svg)](https://badge.fury.io/js/d-ser-t-service)
 
 # Dynamic Sentence Error Rate Testing Service: D-SER-T-SERVICE
+
 This project quantifies speech audio transcription in near real time, by taking sample audio with expected transcriptions and outputting WER & SER for all utterances.
 
 ## Getting started
-These instructions will get you started using the service. For development / contributing see Contributing.
+
+These instructions will get you started using the service. For development / contributing see [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ### Prerequisites
+
 * Node.js
 * Microsoft speech service subscription key.
 * Speech service region
@@ -78,9 +82,9 @@ sample test_results.json
   },
   results: [
     {
-      "actualTranscription": "what the speech service return",
-      "expectedTranscription": "what should the speech service return",
-      "wordErrorRate": 0.167 /* word error rate range 0 - 1 */
+      "actualTranscription": "Actual recognized output from the speech service.",
+      "expectedTranscription": "Expected output from the speech service.",
+      "wordErrorRate": 0.167
     }
   ]
 }
@@ -129,6 +133,7 @@ Audio must be `.wav` files sampled at `16kHz`. My recommended approach for gener
    * Click OK
 
 ### Creation of transcriptions.txt file.
+
 > Note: if transcription Text File is edited in VSCODE, VSCODE optionally adds a new line to end of all files, this will affect how tests are ran. Disable feature before saving.
 
 As you create your audio files, keep track of the expected transcriptions in a text file called ```transcriptions.txt```. The structure for `.txt` file is the same structure used for training a custom acoustic model. Each line of the transcription file should have the name of an audio file, followed by the corresponding transcription. The file name and transcription should be separated by a tab (\t).
@@ -136,14 +141,18 @@ As you create your audio files, keep track of the expected transcriptions in a t
 Important: TXT files should be encoded as UTF-8 BOM and not contain any UTF-8 characters above U+00A1 in the Unicode characters table. Typically –, ‘, ‚, “ etc. This harness tries to address this by cleaning your data.
 
 ### Contributing
+
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
 
 ### Versioning
+
 We use [SemVer](https://semver.org/) for versioning.
 
 ### Authors
+
 * **Katie Prochilo**
 * **Vishesh Oberoi**
+* **Yomi Lajide**
 
 ### Version Support
 

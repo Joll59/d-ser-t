@@ -1,5 +1,6 @@
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+[![npm version](https://badge.fury.io/js/d-ser-t-cli.svg)](https://badge.fury.io/js/d-ser-t-cli)
 
 # D-SER-T-CLI
 
@@ -59,7 +60,7 @@ d-ser-t -s [string] -r [string] -d [string] -t [string]
 ```
 
 ### Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](../../CONTRIBUTING.md) for details on contributing, and the process for submitting pull requests to us.
 
 ### Versioning
 We use [SemVer](https://semver.org/) for versioning.
