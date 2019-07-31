@@ -43,10 +43,21 @@ describe("ResponseAnalyzer", ()=>{
 
     describe('calculateSER', () => {
         const ser = calculateSERMock([FakeTestResults])
-        it('Calculates & Returns Sentence Error Rate', () => {
+        const wrongSer=calculateSERMock([ {
+            actualTranscription: 'hi',
+            expectedTranscription: 'bye',
+            wordErrorRate: 1.0
+        }]);
+        it('Calculates Sentence error rate', () => {
             expect(ser)
             .toEqual("0.00");
         });
+
+        it('returns accurate sentence error rate', () =>{
+            expect(wrongSer)
+            .toEqual("1.00");
+        });
+
     });
 
     describe('reducerSum', () => {
