@@ -22,12 +22,12 @@ export class CustomSpeechTestHarness {
     private transcriptAnalyzer!: ITranscriptionAnalyzer;
     private responseAnalyzer!: ResponseAnalyzer;
 
-
     public constructor(harnessConfig: HarnessConfig) {
         this.audioDirectory = harnessConfig.audioDirectory;
         this.concurrency = harnessConfig.concurrentCalls;
         this.crisEndpointId = harnessConfig.endpointId;
-        this.outFile = harnessConfig.outFile || path.join('.', 'test_results.json');
+        this.outFile =
+            harnessConfig.outFile || path.join(".", "test_results.json");
         this.serviceRegion = harnessConfig.region;
         this.singleFile = harnessConfig.audioFile;
         this.subscriptionKey = harnessConfig.subscriptionKey;
@@ -52,7 +52,8 @@ export class CustomSpeechTestHarness {
     public async singleFileTranscription() {
         this.setTranscriptionService();
         if (this.transcriptionService && this.singleFile) {
-            await this.transcriptionService.singleFileTranscribe(this.singleFile)
+            await this.transcriptionService
+                .singleFileTranscribe(this.singleFile)
                 .then(resp => console.log(resp.text))
                 .catch(err => console.warn(err))
                 .finally(() => process.exit(1));
@@ -61,27 +62,38 @@ export class CustomSpeechTestHarness {
 
     public checkConcurrency() {
         if (!!this.concurrency === false) {
-            this.concurrency = '1';
-            const warnMsg = `\nSetting concurrent calls to 1, you can set concurrent calls to service with "-c".\n`
+            this.concurrency = "1";
+            const warnMsg = `\nSetting concurrent calls to 1, you can set concurrent calls to service with "-c".\n`;
             console.warn(warnMsg);
         }
     }
 
     public validateAndCleanTranscription(parsedData: TestData) {
         for (const testDatum of parsedData) {
-            testDatum.transcription = this.transcriptAnalyzer.cleanTranscription(testDatum.transcription);
-            this.transcriptAnalyzer.validateExpectedTranscription(testDatum.transcription);
+            testDatum.transcription = this.transcriptAnalyzer.cleanTranscription(
+                testDatum.transcription
+            );
+            this.transcriptAnalyzer.validateExpectedTranscription(
+                testDatum.transcription
+            );
         }
     }
 
     public async multipleFileTranscription() {
         this.setTranscriptionService();
         this.setLocalServices();
-        if (this.transcriptionService && this.transcriptionFile && this.audioDirectory) {
+        if (
+            this.transcriptionService &&
+            this.transcriptionFile &&
+            this.audioDirectory
+        ) {
             const startTime = process.hrtime();
             this.checkConcurrency();
 
-            const parsedData: TestData = this.localFileService.createTestData(this.transcriptionFile, this.audioDirectory);
+            const parsedData: TestData = this.localFileService.createTestData(
+                this.transcriptionFile,
+                this.audioDirectory
+            );
             this.validateAndCleanTranscription(parsedData);
 
             await this.transcriptionService.batchTranscribe(parsedData, parseInt(this.concurrency!))
