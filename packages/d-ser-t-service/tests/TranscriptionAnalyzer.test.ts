@@ -24,10 +24,10 @@ describe('TranscriptionAnalyzerCI', () => {
                 )
             ).toEqual('alright this is a test');
         });
-        it('should handle \'s', () => {
+        it("should handle 's", () => {
             expect(
                 transcriptAnalyzerCI.cleanActualTranscription(
-                    'all right, it \'s a test?',
+                    "all right, it 's a test?",
                     'alright its a test'
                 )
             ).toEqual('alright its a test');
@@ -46,9 +46,9 @@ describe('TranscriptionAnalyzer', () => {
             ).not.toEqual('test harness');
         });
 
-        it('fix addresses with \'s errors', () => {
+        it("fix addresses with 's errors", () => {
             expect(
-                transcriptAnalyzer.cleanActualTranscription('item \'s', 'items')
+                transcriptAnalyzer.cleanActualTranscription("item 's", 'items')
             ).toStrictEqual('items');
         });
 
@@ -71,7 +71,7 @@ describe('TranscriptionAnalyzerBase', () => {
         it('Throws an error when transcription is invalid', () => {
             expect(() => {
                 testBaseTranscriptionAnalyzer.validateExpectedTranscription(
-                    'I\'am not, ready'
+                    "I'am not, ready"
                 );
             }).toThrowError(SyntaxError);
         });
@@ -79,7 +79,7 @@ describe('TranscriptionAnalyzerBase', () => {
         it('Not Throw an error when transcription is valid', () => {
             expect(() => {
                 testBaseTranscriptionAnalyzer.validateExpectedTranscription(
-                    'i\'am not ready'
+                    "i'am not ready"
                 );
             }).not.toThrowError(SyntaxError);
         });
