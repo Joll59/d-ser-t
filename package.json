@@ -33,6 +33,7 @@
         "build": "npm run lint && lerna run build",
         "check": "lerna run check",
         "clean": "lerna run --parallel clean && del-cli node_modules",
-        "fix": "lerna run fix"
+        "fix": "lerna run fix",
+        "test": "lerna run test"
     }
 }

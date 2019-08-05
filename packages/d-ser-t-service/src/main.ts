@@ -32,6 +32,7 @@ export class CustomSpeechTestHarness {
         this.audioDirectory = harnessConfig.audioDirectory;
         this.concurrency = harnessConfig.concurrentCalls;
         this.crisEndpointId = harnessConfig.endpointId;
+        this.exceptions = harnessConfig.exceptions;
         this.outFile =
             harnessConfig.outFile || path.join('.', 'test_results.json');
         this.serviceRegion = harnessConfig.region;
@@ -156,9 +157,9 @@ export class CustomSpeechTestHarness {
 
             this.outFile
                 ? this.localFileService.writeToTextFile(this.outFile, {
-                      metaData,
-                      results,
-                  })
+                    metaData,
+                    results,
+                })
                 : console.warn('Output File not generated');
             console.log(`Runtime: ${totalTestingTime}`);
         }
