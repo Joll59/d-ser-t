@@ -15,16 +15,16 @@ export class TranscriptionAnalyzerCI extends TranscriptionAnalyzerBase {
         expectedTranscription: string
     ): string => {
         let result: string = this.cleanTranscription(actualTranscription);
-        let config: CleanUpConfig = <CleanUpConfig>(
+        const config: CleanUpConfig = (
             Utils.readJSONFileSync(this.configFile)
-        );
+        ) as CleanUpConfig;
 
-        for (let key in config.replaceExpressions) {
-            let value = config.replaceExpressions[key];
+        for (const key in config.replaceExpressions) {
+            const value = config.replaceExpressions[key];
             const regextStr = Utils.extractRegExPattern(key);
 
             if (regextStr) {
-                let regex: RegExp = new RegExp(regextStr, 'g');
+                const regex: RegExp = new RegExp(regextStr, 'g');
                 result = result.replace(regex, value);
                 continue;
             }

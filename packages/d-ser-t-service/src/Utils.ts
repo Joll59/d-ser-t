@@ -8,7 +8,7 @@ export default class Utils {
      * Reads a JSON file and returns the data as a JSON object. If no file has
      * been created, an empty JSON object is returned instead.
      */
-    static readJSONFileSync = (filePath: string): object => {
+    public static readJSONFileSync = (filePath: string): object => {
         let json: object = {};
         try {
             const data = fs.readFileSync(
@@ -28,7 +28,7 @@ export default class Utils {
      * Overwrite the contents of some JSON file, or add content to a new JSON
      * file.
      */
-    static writeJSONFileSync = (
+    public static writeJSONFileSync = (
         filePath: string,
         data: UnhandledCharacters
     ): void => {
@@ -44,7 +44,7 @@ export default class Utils {
      * @returns regex pattern or undefined if none found
      * @param input string
      */
-    static extractRegExPattern = (input: string): string | undefined => {
+    public static extractRegExPattern = (input: string): string | undefined => {
         if (input.length < 2) {
             console.warn(`${input} is not a regex pattern`);
         }

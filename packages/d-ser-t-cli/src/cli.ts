@@ -2,6 +2,7 @@ import * as argv from 'yargs';
 
 import { start } from './main';
 
+// tslint:disable-next-line: no-unused-expression
 argv
     .scriptName('d-ser-t')
     .options({
@@ -77,18 +78,19 @@ argv
     .command(
         ['$0'],
         'Minimal command to run the service: -r [string] -s [string] -f [string]',
+        // tslint:disable-next-line: no-empty
         (): any => {},
-        argv => {
+        (param) => {
             const values = {
-                audioDirectory: argv.audioDirectory as string,
-                audioFile: argv.audioFile as string,
-                concurrentCalls: argv.concurrentCalls as string,
-                transcriptionFile: argv.transcriptionFile as string,
-                subscriptionKey: argv.subscriptionKey as string,
-                endpointId: argv.endpointId as string,
-                outFile: argv.outFile as string,
-                region: argv.region as string,
-                exceptions: argv.exceptions as string,
+                audioDirectory: param.audioDirectory as string,
+                audioFile: param.audioFile as string,
+                concurrentCalls: param.concurrentCalls as string,
+                transcriptionFile: param.transcriptionFile as string,
+                subscriptionKey: param.subscriptionKey as string,
+                endpointId: param.endpointId as string,
+                outFile: param.outFile as string,
+                region: param.region as string,
+                exceptions: param.exceptions as string,
             };
             start(values);
         }

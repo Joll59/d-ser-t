@@ -46,6 +46,7 @@
     },
     "scripts": {
         "build": "tsc --build && npm run check",
+        "lint":"tslint -p . -c tslint.json",
         "check": "prettier --check \"src/*.ts\" \"tests/*.ts\"",
         "clean": "del-cli lib tsconfig.tsbuildinfo node_modules",
         "fix": "prettier --write \"src/*.ts\" \"tests/*.ts\"",

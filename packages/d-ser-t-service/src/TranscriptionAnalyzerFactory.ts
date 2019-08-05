@@ -3,7 +3,7 @@ import { TranscriptionAnalyzer } from './TranscriptionAnalyzer';
 import { TranscriptionAnalyzerCI } from './TranscriptionAnalyzerCI';
 
 export default class TranscriptionAnalyzerFactory {
-    static createTranscriptionAnalyzer = (
+    public static createTranscriptionAnalyzer = (
         exceptionList?: string
     ): ITranscriptionAnalyzer => {
         if (exceptionList) {

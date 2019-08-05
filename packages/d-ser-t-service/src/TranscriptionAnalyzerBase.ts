@@ -1,4 +1,4 @@
-const colors = require('colors');
+import colors from 'colors';
 
 import Utils from './Utils';
 
@@ -141,7 +141,7 @@ export class TranscriptionAnalyzerBase implements ITranscriptionAnalyzer {
 
                     // Check if the transcription matches any transcription
                     // already added.
-                    let transcriptIndex: number = transcriptions.indexOf(
+                    const transcriptIndex: number = transcriptions.indexOf(
                         actual
                     );
 
