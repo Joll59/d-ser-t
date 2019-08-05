@@ -274,5 +274,4 @@ export class TranscriptionService {
             );
         });
     };
-
 }

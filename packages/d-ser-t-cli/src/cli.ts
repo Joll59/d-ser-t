@@ -80,7 +80,7 @@ argv
         'Minimal command to run the service: -r [string] -s [string] -f [string]',
         // tslint:disable-next-line: no-empty
         (): any => {},
-        (param) => {
+        param => {
             const values = {
                 audioDirectory: param.audioDirectory as string,
                 audioFile: param.audioFile as string,

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TestData } from './types';
+import { TestData } from './index';
 
 export class TranscriptionFileService {
     public validateFile = (filepath: string): string => {
@@ -33,7 +33,10 @@ export class TranscriptionFileService {
         return fs.readFileSync(filepath, 'utf8');
     };
 
-    public parseTextFileContent = (content: string, folderpath: string): TestData => {
+    public parseTextFileContent = (
+        content: string,
+        folderpath: string
+    ): TestData => {
         return content.split(/\r?\n/).map(item => {
             const split = item.split('\t');
             const filepath: string = !!path.extname(split[0]).substr(1)
@@ -50,7 +53,10 @@ export class TranscriptionFileService {
      * @param path A path to a .txt file.
      * @param folderPath Audio folder path.
      */
-    public createTestData = (filepath: string, folderpath: string): TestData => {
+    public createTestData = (
+        filepath: string,
+        folderpath: string
+    ): TestData => {
         folderpath = this.validateFolder(folderpath);
         filepath = this.validateFile(filepath);
         const filecontent = this.retrieveFileContent(filepath);

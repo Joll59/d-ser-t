@@ -1,4 +1,4 @@
-import { DetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.speech/ServiceMessages/DetailedSpeechPhrase';
+import { IDetailedSpeechPhrase } from 'microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.speech/ServiceMessages/DetailedSpeechPhrase';
 import { wordErrorRate as calculateWER } from 'word-error-rate';
 
 import { ITranscriptionAnalyzer } from './interfaces/ITranscriptionAnalyzer';
@@ -20,7 +20,7 @@ export class ResponseAnalyzer {
      */
     public handleResponse = (
         expectedTranscription: string,
-        response: DetailedSpeechPhrase
+        response: IDetailedSpeechPhrase
     ): TestResult => {
         try {
             let actualTranscription = response.NBest[0].Lexical;
@@ -43,9 +43,9 @@ export class ResponseAnalyzer {
                 expectedTranscription
             );
 
-            console.log(`Actual Response: "${actualTranscription}"`);
-            console.log(`Expected Response: "${expectedTranscription}"`);
-            console.log(`Word Error Rate: ${wordErrorRate}\n`);
+            // console.log(`Actual Response: "${actualTranscription}"`);
+            // console.log(`Expected Response: "${expectedTranscription}"`);
+            // console.log(`Word Error Rate: ${wordErrorRate}\n`);
 
             const result: TestResult = {
                 actualTranscription,
@@ -62,7 +62,8 @@ export class ResponseAnalyzer {
     /**
      * Sum function for totaling up values with a reducer
      */
-    public reducerSum = (total: number, currentNum: number) => total + currentNum;
+    public reducerSum = (total: number, currentNum: number) =>
+        total + currentNum;
 
     /**
      * Sentence Error Rate (SER) is a measure of perfect transcriptions between

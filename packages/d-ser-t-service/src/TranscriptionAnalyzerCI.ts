@@ -15,10 +15,11 @@ export class TranscriptionAnalyzerCI extends TranscriptionAnalyzerBase {
         expectedTranscription: string
     ): string => {
         let result: string = this.cleanTranscription(actualTranscription);
-        const config: CleanUpConfig = (
-            Utils.readJSONFileSync(this.configFile)
+        const config: CleanUpConfig = Utils.readJSONFileSync(
+            this.configFile
         ) as CleanUpConfig;
 
+        // tslint:disable-next-line: forin
         for (const key in config.replaceExpressions) {
             const value = config.replaceExpressions[key];
             const regextStr = Utils.extractRegExPattern(key);

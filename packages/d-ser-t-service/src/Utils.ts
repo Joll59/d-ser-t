@@ -18,8 +18,6 @@ export default class Utils {
             json = JSON.parse(data);
         } catch {
             console.log(`Could not open ${filePath} for the STT service . . .`);
-        } finally {
-            console.log('Creation Success!!');
         }
         return json;
     };
