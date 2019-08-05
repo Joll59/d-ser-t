@@ -10,17 +10,21 @@ export class TranscriptionAnalyzerCI extends TranscriptionAnalyzerBase {
         this.configFile = exceptions;
     }
 
-    public cleanActualTranscription = (actualTranscription: string, expectedTranscription: string): string => {
-        let result: string = this.cleanTranscription(actualTranscription)
-        let config: CleanUpConfig = <CleanUpConfig>Utils.readJSONFileSync(this.configFile);
+    public cleanActualTranscription = (
+        actualTranscription: string,
+        expectedTranscription: string
+    ): string => {
+        let result: string = this.cleanTranscription(actualTranscription);
+        let config: CleanUpConfig = <CleanUpConfig>(
+            Utils.readJSONFileSync(this.configFile)
+        );
 
         for (let key in config.replaceExpressions) {
-
             let value = config.replaceExpressions[key];
             const regextStr = Utils.extractRegExPattern(key);
 
             if (regextStr) {
-                let regex: RegExp = new RegExp(regextStr, "g");
+                let regex: RegExp = new RegExp(regextStr, 'g');
                 result = result.replace(regex, value);
                 continue;
             }
@@ -31,5 +35,4 @@ export class TranscriptionAnalyzerCI extends TranscriptionAnalyzerBase {
         }
         return result;
     };
-
 }

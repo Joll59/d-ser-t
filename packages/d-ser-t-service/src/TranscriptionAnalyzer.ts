@@ -1,7 +1,6 @@
 import { TranscriptionAnalyzerBase } from './TranscriptionAnalyzerBase';
 
 export class TranscriptionAnalyzer extends TranscriptionAnalyzerBase {
-
     constructor() {
         super();
     }
@@ -18,12 +17,18 @@ export class TranscriptionAnalyzer extends TranscriptionAnalyzerBase {
      * would have to assume no typos were made. Instead, we expect the human
      * completing the transcription file to do so correctly.
      */
-    public cleanActualTranscription = (actualTranscription: string, expectedTranscription: string): string => {
-        return this.cleanTranscription(actualTranscription)
-            // Replace commas, periods, and question marks with an empty string.
-            .replace(/,|\.|\?/g, ``)
-            // Plural words are sometimes returned with " 's" at the end. Replace
-            // the space and apostrophe with "s".
-            .replace(/\s's\b/g, `s`);
+    public cleanActualTranscription = (
+        actualTranscription: string,
+        expectedTranscription: string
+    ): string => {
+        return (
+            this.cleanTranscription(actualTranscription)
+                // Replace commas, periods, and question marks with an empty
+                // string.
+                .replace(/,|\.|\?/g, ``)
+                // Plural words are sometimes returned with " 's" at the end.
+                // Replace the space and apostrophe with "s".
+                .replace(/\s's\b/g, `s`)
+        );
     };
 }
