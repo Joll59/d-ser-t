@@ -3,7 +3,7 @@
 
 type PublicInterfaceOf<Class> = {
     [Member in Exclude<keyof Class, []>]: Class[Member];
-}
+};
 
 // TODO Decide to test private methods or not.
 /* Need to figure out how/if I should test private Methods
@@ -16,8 +16,8 @@ const dummyConfig: TranscriptionServiceConfig = {
 const TestSTTService = new TranscriptionService(dummyConfig);
 TestSTTService.batchTranscribe(['https://www.google.com'],2); */
 
-describe('TranscriptionService', ()=>{
-    it('Testing Mocks', ()=>{
+describe('TranscriptionService', () => {
+    it('Testing Mocks', () => {
         expect(true).toEqual(true);
-    })
-})
+    });
+});

@@ -33,6 +33,7 @@
         "build": "lerna run build",
         "check": "lerna run check",
         "clean": "lerna run --parallel clean",
-        "fix": "lerna run fix"
+        "fix": "lerna run fix",
+        "test": "lerna run test"
     }
 }

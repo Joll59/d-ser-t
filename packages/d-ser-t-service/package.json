@@ -45,7 +45,7 @@
         "ts-jest": "^24.0.2"
     },
     "scripts": {
-        "build": "tsc --build && npm run check",
+        "build": "tsc --build && npm run fix",
         "check": "prettier --check \"src/*.ts\" \"tests/*.ts\"",
         "clean": "del-cli lib tsconfig.tsbuildinfo node_modules",
         "fix": "prettier --write \"src/*.ts\" \"tests/*.ts\"",
