@@ -33,6 +33,7 @@ Suggested publishing process:
  - Last action in significant PR is to run `lerna version` to bump version.
     - `npm run publish` which runs `lerna publish --from-package`
     -  Alternatively you can `lerna publish --include-merged-tags`
+    -  To update the top level package on `npm.js`: purely visual, does not serve a function, `npm publish` after bumping version number in top level `package.json`
 
 ### Versioning
 

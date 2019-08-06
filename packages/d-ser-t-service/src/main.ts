@@ -157,9 +157,9 @@ export class CustomSpeechTestHarness {
 
             this.outFile
                 ? this.localFileService.writeToTextFile(this.outFile, {
-                    metaData,
-                    results,
-                })
+                      metaData,
+                      results,
+                  })
                 : console.warn('Output File not generated');
             console.log(`Runtime: ${totalTestingTime}`);
         }
