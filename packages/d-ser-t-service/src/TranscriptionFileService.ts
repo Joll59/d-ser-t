@@ -4,7 +4,7 @@ import * as path from 'path';
 import { TestData } from './index';
 
 export class TranscriptionFileService {
-    validateFile = (filepath: string): string => {
+    public validateFile = (filepath: string): string => {
         if (filepath === undefined) {
             throw Error('Transcription file path not provided');
         }
@@ -15,7 +15,7 @@ export class TranscriptionFileService {
         return path.normalize(filepath);
     };
 
-    validateFolder = (folderpath: string): string => {
+    public validateFolder = (folderpath: string): string => {
         if (folderpath === undefined) {
             throw Error('Audio folder path not provided');
         }
@@ -29,14 +29,17 @@ export class TranscriptionFileService {
         return (folderpath = path.normalize(folderpath));
     };
 
-    retrieveFileContent = (filepath: string): string => {
+    public retrieveFileContent = (filepath: string): string => {
         return fs.readFileSync(filepath, 'utf8');
     };
 
-    parseTextFileContent = (content: string, folderpath: string): TestData => {
+    public parseTextFileContent = (
+        content: string,
+        folderpath: string
+    ): TestData => {
         return content.split(/\r?\n/).map(item => {
-            let split = item.split('\t');
-            let filepath: string = !!path.extname(split[0]).substr(1)
+            const split = item.split('\t');
+            const filepath: string = !!path.extname(split[0]).substr(1)
                 ? path.normalize(split[0])
                 : path.normalize(split[0].concat('.wav'));
             return {
@@ -50,7 +53,10 @@ export class TranscriptionFileService {
      * @param path A path to a .txt file.
      * @param folderPath Audio folder path.
      */
-    createTestData = (filepath: string, folderpath: string): TestData => {
+    public createTestData = (
+        filepath: string,
+        folderpath: string
+    ): TestData => {
         folderpath = this.validateFolder(folderpath);
         filepath = this.validateFile(filepath);
         const filecontent = this.retrieveFileContent(filepath);
@@ -61,9 +67,9 @@ export class TranscriptionFileService {
      * @param filePath path to save file.
      * @param data data to be written to file.
      */
-    writeToTextFile = (
+    public writeToTextFile = (
         filePath: string,
-        data: Object | Array<Object>
+        data: object | object[]
     ): void => {
         try {
             !!path.extname(filePath).substr(1)

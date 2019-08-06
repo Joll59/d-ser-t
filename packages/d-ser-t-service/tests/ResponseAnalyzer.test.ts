@@ -1,9 +1,9 @@
-import { ResponseAnalyzer, TranscriptionAnalyzer } from '../src/index';
 import {
+    IDetailedSpeechPhrase,
     IPhrase,
     RecognitionStatus,
-    IDetailedSpeechPhrase,
 } from 'microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.speech/Exports';
+import { ResponseAnalyzer, TranscriptionAnalyzer } from '../src/index';
 
 const transcriptAnalyzer = new TranscriptionAnalyzer();
 
@@ -19,10 +19,10 @@ const FakeTestResults = {
 
 const phrase = {
     Confidence: 0.9,
-    Lexical: 'this is only a sample',
-    ITN: 'this is only a sample',
-    MaskedITN: 'this is only a sample',
     Display: 'this is only a sample',
+    ITN: 'this is only a sample',
+    Lexical: 'this is only a sample',
+    MaskedITN: 'this is only a sample',
 };
 
 const FakeNBest: IPhrase[] = [phrase];

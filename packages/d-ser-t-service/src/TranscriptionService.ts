@@ -22,12 +22,12 @@ enum EndpointVariant {
 SpeechRecognizer.enableTelemetry(false);
 
 export class TranscriptionService {
-    private crisEndpointID: string | undefined;
-    public resultArray: {
+    public resultArray: Array<{
         data: SpeechRecognitionResult;
         transcription?: string;
         file?: string;
-    }[] = [];
+    }> = [];
+    private crisEndpointID: string | undefined;
     private serviceRegion: string;
     private speechConfig: SpeechConfig;
     private subscriptionKey: string;
@@ -54,6 +54,92 @@ export class TranscriptionService {
         this.speechConfig.speechRecognitionLanguage = recognitionLanguage;
         this.speechConfig.outputFormat = OutputFormat.Detailed;
     }
+
+    public singleFileTranscribe = async (
+        filePath: string
+    ): Promise<SpeechRecognitionResult> => {
+        if (!fs.lstatSync(filePath).isFile() || filePath === undefined) {
+            throw Error(`File Path provided is not a file or is undefined.`);
+        }
+
+        const audioConfig = this.createAudioConfig(filePath);
+        const recognizer = new SpeechRecognizer(this.speechConfig, audioConfig);
+
+        try {
+            return await this.continuousRecognize(recognizer);
+        } catch (error) {
+            throw Error(error);
+        } finally {
+            recognizer.close();
+            audioConfig.close();
+            this.speechConfig.close();
+        }
+    };
+
+    public batchTranscribe = (
+        testData: TestData | fs.PathLike[],
+        concurrentCalls: number
+    ) => {
+        const totalFiles = testData.length;
+
+        // The maximum number of files to be transcribed by each recognizer.
+        const maxFilesPerRecognizer = Math.ceil(totalFiles / concurrentCalls);
+
+        // Each recognizer will have `maxFilesPerRecognizer` number of files.
+        // The possible exception is the last recognizer which will have between
+        // 1 and `maxFilesPerRecognizer` files.
+        const totalRecognizers = Math.ceil(totalFiles / maxFilesPerRecognizer);
+
+        // Recognizers and the respective files they will transcribe.
+        const processArray: Array<{
+            recognizer: SpeechRecognizer;
+            stream: MultiFilePullStream;
+            filesArray: TestData | fs.PathLike[];
+        }> = [];
+
+        for (let index = 0; index < totalRecognizers; index++) {
+            const stream = new MultiFilePullStream();
+            const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(
+                stream
+            );
+            const audioConfig: AudioConfig = AudioConfig.fromStreamInput(
+                pullStream
+            );
+
+            let filesArray = testData;
+
+            if (maxFilesPerRecognizer <= totalFiles) {
+                filesArray = testData.splice(0, maxFilesPerRecognizer);
+            }
+
+            // Push a new recognizer with the audio files and transcriptions
+            // that recognizer will process.
+            processArray.push({
+                recognizer: new SpeechRecognizer(
+                    this.speechConfig,
+                    audioConfig
+                ),
+                stream,
+                filesArray,
+            });
+        }
+
+        return Promise.all(
+            processArray.map(({ recognizer, stream, filesArray }, index) =>
+                this.internalRecognizer(recognizer, stream, filesArray, index)
+            )
+        )
+            .catch((error: Error) => {
+                throw Error(error.message);
+            })
+            .finally(() => {
+                processArray.forEach(({ recognizer }, index) => {
+                    console.info('Closing recognizer:', index);
+                    recognizer.stopContinuousRecognitionAsync();
+                    recognizer.close();
+                });
+            });
+    };
 
     private createAudioConfig = (path: fs.PathLike): AudioConfig => {
         return AudioConfig.fromStreamInput(this.createFileStream(path));
@@ -187,91 +273,5 @@ export class TranscriptionService {
                     dataArray[start].toString()
             );
         });
-    };
-
-    public batchTranscribe = (
-        testData: TestData | fs.PathLike[],
-        concurrentCalls: number
-    ) => {
-        const totalFiles = testData.length;
-
-        // The maximum number of files to be transcribed by each recognizer.
-        const maxFilesPerRecognizer = Math.ceil(totalFiles / concurrentCalls);
-
-        // Each recognizer will have `maxFilesPerRecognizer` number of files.
-        // The possible exception is the last recognizer which will have between
-        // 1 and `maxFilesPerRecognizer` files.
-        const totalRecognizers = Math.ceil(totalFiles / maxFilesPerRecognizer);
-
-        // Recognizers and the respective files they will transcribe.
-        const processArray: {
-            recognizer: SpeechRecognizer;
-            stream: MultiFilePullStream;
-            filesArray: TestData | fs.PathLike[];
-        }[] = [];
-
-        for (let index = 0; index < totalRecognizers; index++) {
-            const stream = new MultiFilePullStream();
-            const pullStream: PullAudioInputStream = AudioInputStream.createPullStream(
-                stream
-            );
-            const audioConfig: AudioConfig = AudioConfig.fromStreamInput(
-                pullStream
-            );
-
-            let filesArray = testData;
-
-            if (maxFilesPerRecognizer <= totalFiles) {
-                filesArray = testData.splice(0, maxFilesPerRecognizer);
-            }
-
-            // Push a new recognizer with the audio files and transcriptions
-            // that recognizer will process.
-            processArray.push({
-                recognizer: new SpeechRecognizer(
-                    this.speechConfig,
-                    audioConfig
-                ),
-                stream,
-                filesArray,
-            });
-        }
-
-        return Promise.all(
-            processArray.map(({ recognizer, stream, filesArray }, index) =>
-                this.internalRecognizer(recognizer, stream, filesArray, index)
-            )
-        )
-            .catch((error: Error) => {
-                throw Error(error.message);
-            })
-            .finally(() => {
-                processArray.forEach(({ recognizer }, index) => {
-                    console.info('Closing recognizer:', index);
-                    recognizer.stopContinuousRecognitionAsync();
-                    recognizer.close();
-                });
-            });
-    };
-
-    public singleFileTranscribe = async (
-        filePath: string
-    ): Promise<SpeechRecognitionResult> => {
-        if (!fs.lstatSync(filePath).isFile() || filePath === undefined) {
-            throw Error(`File Path provided is not a file or is undefined.`);
-        }
-
-        const audioConfig = this.createAudioConfig(filePath);
-        const recognizer = new SpeechRecognizer(this.speechConfig, audioConfig);
-
-        try {
-            return await this.continuousRecognize(recognizer);
-        } catch (error) {
-            throw Error(error);
-        } finally {
-            recognizer.close();
-            audioConfig.close();
-            this.speechConfig.close();
-        }
     };
 }

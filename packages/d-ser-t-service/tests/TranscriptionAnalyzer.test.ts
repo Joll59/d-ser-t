@@ -1,6 +1,6 @@
-import { TranscriptionAnalyzerCI } from '../src/TranscriptionAnalyzerCI';
 import { TranscriptionAnalyzer } from '../src/TranscriptionAnalyzer';
 import { TranscriptionAnalyzerBase } from '../src/TranscriptionAnalyzerBase';
+import { TranscriptionAnalyzerCI } from '../src/TranscriptionAnalyzerCI';
 
 const configFile: string = `../CiCleanUpConfig.json`;
 const transcriptAnalyzerCI = new TranscriptionAnalyzerCI(configFile);

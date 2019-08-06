@@ -18,7 +18,7 @@ export class ResponseAnalyzer {
      * @returns a TestResult object - the `actualTranscription`,
      * `expectedTranscription`, and `wordErrorRate` for any one recording.
      */
-    handleResponse = (
+    public handleResponse = (
         expectedTranscription: string,
         response: IDetailedSpeechPhrase
     ): TestResult => {
@@ -62,7 +62,8 @@ export class ResponseAnalyzer {
     /**
      * Sum function for totaling up values with a reducer
      */
-    reducerSum = (total: number, currentNum: number) => total + currentNum;
+    public reducerSum = (total: number, currentNum: number) =>
+        total + currentNum;
 
     /**
      * Sentence Error Rate (SER) is a measure of perfect transcriptions between
@@ -70,7 +71,7 @@ export class ResponseAnalyzer {
      * perfectly, and an SER of 1 would mean no recordings were transcribed
      * perfectly.
      */
-    calculateSER = (results: TestResult[]): string => {
+    public calculateSER = (results: TestResult[]): string => {
         let incorrectTranscriptions = 0;
 
         for (const result of results) {

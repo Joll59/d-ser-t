@@ -108,7 +108,7 @@ export class CustomSpeechTestHarness {
 
             await this.transcriptionService.batchTranscribe(
                 parsedData,
-                parseInt(this.concurrency!)
+                parseInt(this.concurrency!, 10)
             );
             // Time it took to parse, validate, and batch transcribe all the
             // audio and transcription files.
@@ -157,10 +157,10 @@ export class CustomSpeechTestHarness {
 
             this.outFile
                 ? this.localFileService.writeToTextFile(this.outFile, {
-                      metaData,
-                      results,
-                  })
-                : null;
+                    metaData,
+                    results,
+                })
+                : console.warn('Output File not generated');
             console.log(`Runtime: ${totalTestingTime}`);
         }
     }
@@ -171,13 +171,13 @@ export class CustomSpeechTestHarness {
             this.checkConcurrency();
             await this.transcriptionService.batchTranscribe(
                 files,
-                parseInt(this.concurrency!)
+                parseInt(this.concurrency!, 10)
             );
-            const results: {
+            const results: Array<{
                 index: number;
                 file?: string;
                 transcription: string;
-            }[] = this.transcriptionService!.resultArray.map((item, index) => ({
+            }> = this.transcriptionService!.resultArray.map((item, index) => ({
                 index,
                 file: item.file,
                 transcription: JSON.parse(item.data.json).NBest[0].Lexical,

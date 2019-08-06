@@ -1,6 +1,6 @@
 {
     "name": "d-ser-t",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Composite package housing d-ser-t-service and d-ser-t-cli",
     "license": "MIT",
     "author": "Yomi (@jolly59) Katie (@KatieProchilo), Nick (@nhuntwalker)",
@@ -21,18 +21,19 @@
         "@types/node": "^12.0.0",
         "del-cli": "^2.0.0",
         "lerna": "^3.15.0",
-        "npm-run-all": "^4.1.5",
-        "typescript": "^3.5.1",
-        "ts-node": "^8.1.0"
+        "ts-node": "^8.1.0",
+        "tslint": "^5.18.0",
+        "tslint-config-prettier": "^1.18.0",
+        "typescript": "^3.5.1"
     },
     "scripts": {
         "publish": "lerna publish from-package",
+        "lint": "tslint -p . -c tslint.json",
         "prepublishOnly": "npm install",
-        "postinstall": "npm-run-all bootstrap build",
-        "bootstrap": "lerna bootstrap",
-        "build": "lerna run build",
+        "postinstall": "lerna bootstrap && npm run build",
+        "build": "npm run lint && lerna run build",
         "check": "lerna run check",
-        "clean": "lerna run --parallel clean",
+        "clean": "lerna run --parallel clean && del-cli node_modules",
         "fix": "lerna run fix",
         "test": "lerna run test"
     }
