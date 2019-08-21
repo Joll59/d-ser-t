@@ -53,7 +53,7 @@ argv
         },
         outFile: {
             alias: 'o',
-            description: 'Where to save the test results',
+            description: 'Where to save the test results in json format',
             type: 'string',
             requiresArg: true,
         },
@@ -67,6 +67,12 @@ argv
         exceptions: {
             alias: 'x',
             description: 'An exception file for transcribed words',
+            type: 'string',
+            requiresArg: true,
+        },
+        junitXmlOutput: {
+            alias: 'j',
+            description: 'Where to save the test results in xml format',
             type: 'string',
             requiresArg: true,
         },
@@ -91,6 +97,7 @@ argv
                 outFile: param.outFile as string,
                 region: param.region as string,
                 exceptions: param.exceptions as string,
+                junitXmlOutput: param.exceptions as string
             };
             start(values);
         }

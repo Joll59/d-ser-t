@@ -70,4 +70,5 @@ export interface HarnessConfig {
     subscriptionKey: string;
     transcriptionFile?: string;
     exceptions?: string;
+    junitXmlOutput?: string;
 }

@@ -18,6 +18,7 @@ export class CustomSpeechTestHarness {
     private concurrency?: string;
     private crisEndpointId?: string;
     private exceptions?: string;
+    private junitXmlOutput?: string;
     private localFileService!: TranscriptionFileService;
     private outFile: string;
     private responseAnalyzer!: ResponseAnalyzer;
@@ -33,6 +34,8 @@ export class CustomSpeechTestHarness {
         this.concurrency = harnessConfig.concurrentCalls;
         this.crisEndpointId = harnessConfig.endpointId;
         this.exceptions = harnessConfig.exceptions;
+        this.junitXmlOutput = 
+            harnessConfig.junitXmlOutput || path.join('.', 'test_results.xml');
         this.outFile =
             harnessConfig.outFile || path.join('.', 'test_results.json');
         this.serviceRegion = harnessConfig.region;
@@ -162,6 +165,9 @@ export class CustomSpeechTestHarness {
                 })
                 : console.warn('Output File not generated');
             console.log(`Runtime: ${totalTestingTime}`);
+
+            // Output JUnit XML file containing test results
+            
         }
     }
 
