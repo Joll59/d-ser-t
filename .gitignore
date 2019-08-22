@@ -3,5 +3,5 @@ lerna-debug.log
 npm-debug.log
 packages/*/lib
 .vscode
-test_results.json
+test_results.*
 unhandledSTTOutput.json

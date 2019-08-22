@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+// @ts-ignore
+import * as XMLWriter from 'xml-writer';
 import { ITranscriptionAnalyzer } from './interfaces/ITranscriptionAnalyzer';
 import { ResponseAnalyzer } from './ResponseAnalyzer';
 import TranscriptionAnalyzerFactory from './TranscriptionAnalyzerFactory';
@@ -9,16 +11,18 @@ import { TranscriptionService } from './TranscriptionService';
 import {
     HarnessConfig,
     TestData,
+    TestMetaData,
     TestResult,
     TranscriptionServiceConfig,
 } from './types';
+import { XmlWriterService } from './XmlWriterService';
 
 export class CustomSpeechTestHarness {
     private audioDirectory?: string;
     private concurrency?: string;
     private crisEndpointId?: string;
     private exceptions?: string;
-    private junitXmlOutput?: string;
+    // private junitXmlOutput: string;
     private localFileService!: TranscriptionFileService;
     private outFile: string;
     private responseAnalyzer!: ResponseAnalyzer;
@@ -28,14 +32,14 @@ export class CustomSpeechTestHarness {
     private transcriptAnalyzer!: ITranscriptionAnalyzer;
     private transcriptionFile?: string;
     private transcriptionService!: TranscriptionService;
+    private xmlWriterService!: XmlWriterService;
 
     public constructor(harnessConfig: HarnessConfig) {
         this.audioDirectory = harnessConfig.audioDirectory;
         this.concurrency = harnessConfig.concurrentCalls;
         this.crisEndpointId = harnessConfig.endpointId;
         this.exceptions = harnessConfig.exceptions;
-        this.junitXmlOutput = 
-            harnessConfig.junitXmlOutput || path.join('.', 'test_results.xml');
+        // this.junitXmlOutput = path.join('.', 'test_results.xml');   // TODO change based on flag input
         this.outFile =
             harnessConfig.outFile || path.join('.', 'test_results.json');
         this.serviceRegion = harnessConfig.region;
@@ -60,6 +64,7 @@ export class CustomSpeechTestHarness {
             this.exceptions
         );
         this.responseAnalyzer = new ResponseAnalyzer(this.transcriptAnalyzer);
+        this.xmlWriterService = new XmlWriterService();
     }
 
     public async singleFileTranscription() {
@@ -151,23 +156,29 @@ export class CustomSpeechTestHarness {
             console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
 
             const totalTestingTime = `${endTime[0]} seconds`;
-            const metaData = {
+            const metaData: TestMetaData = {
                 transcriptionFile: this.transcriptionFile,
                 sentenceErrorRate,
                 averageWordErrorRate,
                 totalTestingTime,
             };
 
+            // Output JUnit XML file containing test results
+            console.log('Writing to XML');
+            this.xmlWriterService.writeToXmlFile(
+                path.join('.', 'test_results.xml'),
+                metaData,
+                results
+            );
+            console.log('Finished writing to XML');
+
             this.outFile
                 ? this.localFileService.writeToTextFile(this.outFile, {
-                    metaData,
-                    results,
-                })
+                      metaData,
+                      results,
+                  })
                 : console.warn('Output File not generated');
             console.log(`Runtime: ${totalTestingTime}`);
-
-            // Output JUnit XML file containing test results
-            
         }
     }
 
