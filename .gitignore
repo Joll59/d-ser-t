@@ -5,3 +5,4 @@ packages/*/lib
 .vscode
 test_results.*
 unhandledSTTOutput.json
+test_results/
