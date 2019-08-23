@@ -1,11 +1,12 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import * as builder from 'xmlbuilder';
 import { TestMetaData, TestResult } from './types';
 
 export class XmlWriterService {
     /**
      * Counts number of failures (defined as a result with wordErrorRate > 0).
-     * 
+     *
      * @param results Results of a test run
      */
     public countNumFailures = (results: TestResult[]): number => {
@@ -20,7 +21,7 @@ export class XmlWriterService {
 
     /**
      * Extracts testing time from metadata in number form.
-     * 
+     *
      * @param metadata Metadata of a test run
      */
     public getNumericalTime = (metadata: TestMetaData): number => {
@@ -102,11 +103,18 @@ export class XmlWriterService {
         timestamp: string
     ): void => {
         try {
-            const xmlresults = this.toJunitXml(metadata, results, timestamp);
-
-            fs.writeFileSync(filePath, xmlresults, 'utf8');
-
-            console.info(`Finished writing to ${filePath}`);
+            if (path.extname(String(filePath)).substr(1) !== 'xml') {
+                console.warn('Invalid input - not a .xml file');
+                return;
+            } else {
+                const xmlresults = this.toJunitXml(
+                    metadata,
+                    results,
+                    timestamp
+                );
+                fs.writeFileSync(filePath, xmlresults, 'utf8');
+                console.info(`Finished writing to ${filePath}`);
+            }
         } catch (error) {
             throw Error(error);
         }
