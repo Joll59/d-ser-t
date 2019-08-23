@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-// @ts-ignore
-import * as XMLWriter from 'xml-writer';
 import { ITranscriptionAnalyzer } from './interfaces/ITranscriptionAnalyzer';
 import { ResponseAnalyzer } from './ResponseAnalyzer';
 import TranscriptionAnalyzerFactory from './TranscriptionAnalyzerFactory';

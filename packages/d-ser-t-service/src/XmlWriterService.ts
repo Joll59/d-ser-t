@@ -82,7 +82,7 @@ export class XmlWriterService {
     /**
      * Writes the test results and top-level metrics in JUnit XML format
      * at the specified filepath.
-     * 
+     *
      * @param filePath Path to a .xml file
      * @param metadata Metadata for the test run
      * @param results Results of the test run
