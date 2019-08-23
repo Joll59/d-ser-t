@@ -4,6 +4,8 @@ import { TestMetaData, TestResult } from './types';
 
 export class XmlWriterService {
     /**
+     * Counts number of failures (defined as a result with wordErrorRate > 0).
+     * 
      * @param results Results of a test run
      */
     public countNumFailures = (results: TestResult[]): number => {
@@ -17,6 +19,8 @@ export class XmlWriterService {
     };
 
     /**
+     * Extracts testing time from metadata in number form.
+     * 
      * @param metadata Metadata of a test run
      */
     public getNumericalTime = (metadata: TestMetaData): number => {
@@ -64,7 +68,7 @@ export class XmlWriterService {
                 .ele('testcase')
                 .att('classname', `test-${index + 1}`)
                 .att('name', `test-${index + 1}`)
-                .att('time', 'TODO')
+                .att('time', 'n/a')
                 .att('expected', tc.expectedTranscription);
 
             if (tc.wordErrorRate > 0) {
