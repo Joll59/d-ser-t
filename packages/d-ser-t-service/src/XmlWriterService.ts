@@ -1,11 +1,10 @@
 import * as fs from 'fs';
-// @ts-ignore
-import * as XMLWriter from 'xml-writer';
+import * as builder from 'xmlbuilder';
 import { TestMetaData, TestResult } from './types';
 
 export class XmlWriterService {
     /**
-     * TODO
+     * @param results Results of a test run
      */
     public countNumFailures = (results: TestResult[]): number => {
         let count = 0;
@@ -18,68 +17,75 @@ export class XmlWriterService {
     };
 
     /**
-     * TODO
+     * @param metadata Metadata of a test run
      */
     public getNumericalTime = (metadata: TestMetaData): number => {
         return parseInt(metadata.totalTestingTime, 10);
     };
 
     /**
-     * TODO
+     * Uses the xmlbuilder module to generate a string containing test results and the
+     * relevant metrics in JUnit XML format for a single run.
+     *
+     * @param metadata Metadata for the test run
+     * @param results Results of the test run
      */
-    public writeAllResults = (
-        xw: XMLWriter,
+    public toJunitXml = (
         metadata: TestMetaData,
         results: TestResult[]
-    ): void => {
+    ): string => {
         const numTests = results.length;
         const numFailures = this.countNumFailures(results);
         const testingTime = this.getNumericalTime(metadata);
 
-        xw.startDocument('1.0', 'UTF-8')
-            .startElement('testsuites')
-            .writeAttribute('name', 'CRIS STT tests')
-            .writeAttribute('tests', numTests)
-            .writeAttribute('failures', numFailures)
-            .writeAttribute('time', testingTime)
-            .writeAttribute(
-                'average sentence error rate',
-                metadata.sentenceErrorRate
-            );
+        const testsuites = builder
+            .create('testsuites', { encoding: 'utf-8' })
+            .att('name', 'CRIS STT tests')
+            .att('tests', numTests)
+            .att('failures', numFailures)
+            .att('time', testingTime)
+            .att('avg_SER', metadata.sentenceErrorRate);
 
-        xw.startElement('testsuite')
-            .writeAttribute('name', metadata.transcriptionFile)
-            .writeAttribute('errors', 0)
-            .writeAttribute('failures', numFailures)
-            .writeAttribute('skipped', 0)
-            .writeAttribute('timestamp', 'TODO')
-            .writeAttribute('time', testingTime)
-            .writeAttribute('tests', numTests)
-            .writeAttribute('Sentence Error Rate', metadata.sentenceErrorRate);
+        const testsuite = testsuites
+            .ele('testsuite')
+            .att('name', metadata.transcriptionFile)
+            .att('errors', 0)
+            .att('failures', numFailures)
+            .att('skipped', 0)
+            .att('timestamp', 'TODO')
+            .att('time', testingTime)
+            .att('tests', numTests)
+            .att('SER', metadata.sentenceErrorRate);
 
-        results.forEach((testcase, index) => {
-            xw.startElement('testcase')
-                .writeAttribute('classname', `test-${index}`)
-                .writeAttribute('name', `test-${index}`)
-                .writeAttribute('time', 'TODO')
-                .writeAttribute('Expected', testcase.expectedTranscription);
+        results.forEach((tc, index) => {
+            const testcase = testsuite
+                .ele('testcase')
+                .att('classname', `test-${index + 1}`)
+                .att('name', `test-${index + 1}`)
+                .att('time', 'TODO')
+                .att('expected', tc.expectedTranscription);
 
-            if (testcase.wordErrorRate > 0) {
-                xw.startElement('failure')
-                    .writeAttribute('Actual', testcase.actualTranscription)
-                    .writeAttribute('Word Error Rate', testcase.wordErrorRate)
-                    .endElement('failure');
+            if (tc.wordErrorRate > 0) {
+                testcase
+                    .ele('failure')
+                    .att('actual', tc.actualTranscription)
+                    .att('WER', tc.wordErrorRate);
             }
-
-            xw.endElement('testcase');
+            testcase.end({ pretty: true });
         });
+        testsuite.end({ pretty: true });
+        const finalXml = testsuites.end({ pretty: true });
 
-        xw.endElement('testsuites');
-        xw.endDocument();
+        return finalXml.toString();
     };
 
     /**
-     * TODO
+     * Writes the test results and top-level metrics in JUnit XML format
+     * at the specified filepath.
+     * 
+     * @param filePath Path to a .xml file
+     * @param metadata Metadata for the test run
+     * @param results Results of the test run
      */
     public writeToXmlFile = (
         filePath: string,
@@ -87,24 +93,11 @@ export class XmlWriterService {
         results: TestResult[]
     ): void => {
         try {
-            console.info(
-                `Writing test results in JUnit XML format to ${filePath}`
-            );
-            // Set up file stream and XMLWriter
-            const ws = fs.createWriteStream(filePath);
-            function writer(str: string, encoding: string): void {
-                ws.write(str, encoding);
-            }
-            const xmlwriter = new XMLWriter(true, writer);
+            const xmlresults = this.toJunitXml(metadata, results);
 
-            // Write to XML file
-            this.writeAllResults(xmlwriter, metadata, results);
+            fs.writeFileSync(filePath, xmlresults, 'utf8');
 
-            ws.end();
-
-            console.info(
-                `Finished writing test results in JUnit XML format to ${filePath}`
-            );
+            console.info(`Finished writing to ${filePath}`);
         } catch (error) {
             throw Error(error);
         }

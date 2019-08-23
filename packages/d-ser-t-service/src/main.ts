@@ -163,22 +163,20 @@ export class CustomSpeechTestHarness {
                 totalTestingTime,
             };
 
-            // Output JUnit XML file containing test results
-            console.log('Writing to XML');
-            this.xmlWriterService.writeToXmlFile(
-                path.join('.', 'test_results.xml'),
-                metaData,
-                results
-            );
-            console.log('Finished writing to XML');
-
             this.outFile
                 ? this.localFileService.writeToTextFile(this.outFile, {
                       metaData,
                       results,
                   })
-                : console.warn('Output File not generated');
+                : console.warn('JSON Output File not generated');
             console.log(`Runtime: ${totalTestingTime}`);
+
+            // Output JUnit XML file containing test results
+            this.xmlWriterService.writeToXmlFile(
+                path.join('.', 'test_results.xml'),
+                metaData,
+                results
+            );
         }
     }
 
