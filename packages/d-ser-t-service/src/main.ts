@@ -13,6 +13,7 @@ import {
     TestResult,
     TranscriptionServiceConfig,
 } from './types';
+import Utils from './Utils';
 import { XmlWriterService } from './XmlWriterService';
 
 export class CustomSpeechTestHarness {
@@ -168,14 +169,19 @@ export class CustomSpeechTestHarness {
                       results,
                   })
                 : console.warn('JSON Output File not generated');
-            console.log(`Runtime: ${totalTestingTime}`);
 
-            // Output JUnit XML file containing test results
-            this.xmlWriterService.writeToXmlFile(
-                this.junitXmlOutput,
-                metaData,
-                results
-            );
+            const timestamp = Utils.getCurrentTimestamp();
+
+            this.junitXmlOutput
+                ? this.xmlWriterService.writeToXmlFile(
+                      this.junitXmlOutput,
+                      metaData,
+                      results,
+                      timestamp
+                  )
+                : console.warn('XML Output File not generated');
+
+            console.log(`Runtime: ${totalTestingTime}`);
         }
     }
 

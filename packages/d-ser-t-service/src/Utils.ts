@@ -39,6 +39,7 @@ export default class Utils {
     /**
      * Extract regex pattern. /\\s's\\b/g" --> \\s's\\b. If no regex pattern
      * exists, return undefined.
+     *
      * @returns regex pattern or undefined if none found
      * @param input string
      */
@@ -55,4 +56,42 @@ export default class Utils {
         }
         return undefined;
     };
+
+    /**
+     * Gets current timestamp and returns a formatted string.
+     */
+    public static getCurrentTimestamp(): string {
+        const now: Date = new Date();
+        const date: string[] = [
+            String(now.getUTCFullYear()),
+            String(now.getUTCMonth() + 1),
+            String(now.getUTCDate()),
+        ];
+        const time: string[] = [
+            String(now.getUTCHours()),
+            String(now.getUTCMinutes()),
+            String(now.getUTCSeconds()),
+        ];
+
+        this.zeroPrefix(date);
+        this.zeroPrefix(time);
+
+        return [date.join('-'), time.join(':')].join(' ');
+    }
+
+    /**
+     * Add a "0" in front of single-digit values in an array (for timestamp
+     * formatting).
+     *
+     * @param arr Array of elements to modify
+     */
+    public static zeroPrefix(arr: string[]): string[] {
+        arr.forEach((elem, i) => {
+            if (Number(elem) < 10) {
+                arr[i] = '0' + elem;
+            }
+        });
+
+        return arr;
+    }
 }

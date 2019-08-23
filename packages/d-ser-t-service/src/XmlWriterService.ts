@@ -29,10 +29,12 @@ export class XmlWriterService {
      *
      * @param metadata Metadata for the test run
      * @param results Results of the test run
+     * @param timestamp Time that the tests were run
      */
     public toJunitXml = (
         metadata: TestMetaData,
-        results: TestResult[]
+        results: TestResult[],
+        timestamp: string
     ): string => {
         const numTests = results.length;
         const numFailures = this.countNumFailures(results);
@@ -52,7 +54,7 @@ export class XmlWriterService {
             .att('errors', 0)
             .att('failures', numFailures)
             .att('skipped', 0)
-            .att('timestamp', 'TODO')
+            .att('timestamp', timestamp)
             .att('time', testingTime)
             .att('tests', numTests)
             .att('SER', metadata.sentenceErrorRate);
@@ -69,7 +71,8 @@ export class XmlWriterService {
                 testcase
                     .ele('failure')
                     .att('actual', tc.actualTranscription)
-                    .att('WER', tc.wordErrorRate);
+                    .att('WER', tc.wordErrorRate)
+                    .end({ pretty: true });
             }
             testcase.end({ pretty: true });
         });
@@ -86,14 +89,16 @@ export class XmlWriterService {
      * @param filePath Path to a .xml file
      * @param metadata Metadata for the test run
      * @param results Results of the test run
+     * @param timestamp Time that the tests were run
      */
     public writeToXmlFile = (
         filePath: string,
         metadata: TestMetaData,
-        results: TestResult[]
+        results: TestResult[],
+        timestamp: string
     ): void => {
         try {
-            const xmlresults = this.toJunitXml(metadata, results);
+            const xmlresults = this.toJunitXml(metadata, results, timestamp);
 
             fs.writeFileSync(filePath, xmlresults, 'utf8');
 
