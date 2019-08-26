@@ -87,7 +87,7 @@ export default class Utils {
      */
     public static zeroPrefix(arr: string[]): string[] {
         arr.forEach((elem, i) => {
-            if (Number(elem) < 10) {
+            if (Number(elem) < 10 && Number(elem) >= 0) {
                 arr[i] = '0' + elem;
             }
         });
