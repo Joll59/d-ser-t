@@ -29,6 +29,14 @@ const mockTimestamp = '2019-01-01 00:00:00';
 
 const xws = new XmlWriterService();
 
+afterAll(() => {
+    try {
+        fs.unlinkSync(mockFilePath);
+    } catch (err) {
+        console.error(err);
+    }
+});
+
 describe('XMLWriterService', () => {
     describe('countNumFailures', () => {
         it('returns the correct number of failures', () => {

@@ -6,4 +6,3 @@ lib/
 test_results.json
 unhandledSTTOutput.json
 tsconfig.tsbuildinfo
-fake_test_results.xml
