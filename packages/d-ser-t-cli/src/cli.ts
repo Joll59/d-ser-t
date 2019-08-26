@@ -53,7 +53,7 @@ argv
         },
         outFile: {
             alias: 'o',
-            description: 'Where to save the test results in json format',
+            description: 'Where to save the test results in .json or .xml format',
             type: 'string',
             requiresArg: true,
         },

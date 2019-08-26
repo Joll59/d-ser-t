@@ -52,7 +52,6 @@ export class CustomSpeechTestHarness {
             const warnMsg = `\nOutput file types other than .json or .xml are unsupported - using .json by default.\n`;
             console.warn(warnMsg);
             this.outFile = 'test_results/test_results.json';
-            // path.join('', 'test_results/test_results.json');
         }
     }
 
