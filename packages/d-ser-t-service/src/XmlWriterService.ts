@@ -104,7 +104,7 @@ export class XmlWriterService {
     ): void => {
         try {
             if (path.extname(String(filePath)).substr(1) !== 'xml') {
-                console.warn('Invalid input - not a .xml file');
+                throw Error('Invalid input - filePath must end with .xml');
                 return;
             } else {
                 const xmlresults = this.toJunitXml(
