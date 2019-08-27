@@ -51,7 +51,14 @@ export class CustomSpeechTestHarness {
         } else {
             const warnMsg = `\nOutput file types other than .json or .xml are unsupported - using .json by default.\n`;
             console.warn(warnMsg);
-            this.outFile = 'test_results/test_results.json';
+            const defaultDir = 'test_results/';
+            if (!fs.existsSync(defaultDir)) {
+                fs.mkdirSync(defaultDir);
+                console.log(
+                    'Creating default directory test_results for test output.\n'
+                );
+            }
+            this.outFile = defaultDir + '/test_results.json';
         }
     }
 
@@ -174,23 +181,18 @@ export class CustomSpeechTestHarness {
             console.log('Output file type: ' + outputFileType);
 
             if (outputFileType === 'json') {
-                this.outFile
-                    ? this.localFileService.writeToTextFile(this.outFile, {
-                          metaData,
-                          results,
-                      })
-                    : console.warn('JSON Output File not generated');
+                this.localFileService.writeToTextFile(this.outFile, {
+                    metaData,
+                    results,
+                });
             } else if (outputFileType === 'xml') {
                 const timestamp = Utils.getCurrentTimestamp();
-
-                this.outFile
-                    ? this.xmlWriterService.writeToXmlFile(
-                          this.outFile,
-                          metaData,
-                          results,
-                          timestamp
-                      )
-                    : console.warn('XML Output File not generated');
+                this.xmlWriterService.writeToXmlFile(
+                    this.outFile,
+                    metaData,
+                    results,
+                    timestamp
+                );
             }
 
             console.log(`Runtime: ${totalTestingTime}`);
