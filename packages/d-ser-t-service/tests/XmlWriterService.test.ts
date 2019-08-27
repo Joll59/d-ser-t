@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { isNumber } from 'util';
-import { XmlWriterService } from '../src/index';
 import { TestMetaData, TestResult } from '../src/types';
+import { XmlWriterService } from '../src/XmlWriterService';
 
 const mockMetaData: TestMetaData = {
     transcriptionFile: 'test_transcription_file.txt',

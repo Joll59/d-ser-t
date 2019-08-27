@@ -4,4 +4,3 @@ export * from './TranscriptionAnalyzer';
 export * from './TranscriptionFileService';
 export * from './TranscriptionService';
 export * from './types';
-export * from './XMLWriterService';
