@@ -51,7 +51,7 @@ export class CustomSpeechTestHarness {
         } else {
             const warnMsg = `\nOutput file types other than .json or .xml are unsupported - using .json by default.\n`;
             console.warn(warnMsg);
-            const defaultDir = 'test_results/';
+            const defaultDir = './test_results/';
             if (!fs.existsSync(defaultDir)) {
                 fs.mkdirSync(defaultDir);
                 console.log(
