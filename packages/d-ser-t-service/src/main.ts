@@ -9,9 +9,12 @@ import { TranscriptionService } from './TranscriptionService';
 import {
     HarnessConfig,
     TestData,
+    TestMetaData,
     TestResult,
     TranscriptionServiceConfig,
 } from './types';
+import Utils from './Utils';
+import { XmlWriterService } from './XmlWriterService';
 
 export class CustomSpeechTestHarness {
     private audioDirectory?: string;
@@ -27,18 +30,36 @@ export class CustomSpeechTestHarness {
     private transcriptAnalyzer!: ITranscriptionAnalyzer;
     private transcriptionFile?: string;
     private transcriptionService!: TranscriptionService;
+    private xmlWriterService!: XmlWriterService;
 
     public constructor(harnessConfig: HarnessConfig) {
         this.audioDirectory = harnessConfig.audioDirectory;
         this.concurrency = harnessConfig.concurrentCalls;
         this.crisEndpointId = harnessConfig.endpointId;
         this.exceptions = harnessConfig.exceptions;
-        this.outFile =
-            harnessConfig.outFile || path.join('.', 'test_results.json');
         this.serviceRegion = harnessConfig.region;
         this.singleFile = harnessConfig.audioFile;
         this.subscriptionKey = harnessConfig.subscriptionKey;
         this.transcriptionFile = harnessConfig.transcriptionFile;
+
+        if (
+            ['json', 'xml'].includes(
+                path.extname(String(harnessConfig.outFile)).substr(1)
+            )
+        ) {
+            this.outFile = String(harnessConfig.outFile);
+        } else {
+            const warnMsg = `\nOutput file types other than .json or .xml are unsupported - using .json by default.\n`;
+            console.warn(warnMsg);
+            const defaultDir = './test_results/';
+            if (!fs.existsSync(defaultDir)) {
+                fs.mkdirSync(defaultDir);
+                console.log(
+                    'Creating default directory test_results for test output.\n'
+                );
+            }
+            this.outFile = defaultDir + '/test_results.json';
+        }
     }
 
     public setTranscriptionService() {
@@ -57,6 +78,7 @@ export class CustomSpeechTestHarness {
             this.exceptions
         );
         this.responseAnalyzer = new ResponseAnalyzer(this.transcriptAnalyzer);
+        this.xmlWriterService = new XmlWriterService();
     }
 
     public async singleFileTranscription() {
@@ -148,19 +170,31 @@ export class CustomSpeechTestHarness {
             console.log(`Average Word Error Rate: ${averageWordErrorRate}`);
 
             const totalTestingTime = `${endTime[0]} seconds`;
-            const metaData = {
+            const metaData: TestMetaData = {
                 transcriptionFile: this.transcriptionFile,
                 sentenceErrorRate,
                 averageWordErrorRate,
                 totalTestingTime,
             };
 
-            this.outFile
-                ? this.localFileService.writeToTextFile(this.outFile, {
+            const outputFileType = path.extname(String(this.outFile)).substr(1);
+            console.log('Output file type: ' + outputFileType);
+
+            if (outputFileType === 'json') {
+                this.localFileService.writeToTextFile(this.outFile, {
                     metaData,
                     results,
-                })
-                : console.warn('Output File not generated');
+                });
+            } else if (outputFileType === 'xml') {
+                const timestamp = Utils.getCurrentTimestamp();
+                this.xmlWriterService.writeToXmlFile(
+                    this.outFile,
+                    metaData,
+                    results,
+                    timestamp
+                );
+            }
+
             console.log(`Runtime: ${totalTestingTime}`);
         }
     }

@@ -28,7 +28,7 @@ export interface UnhandledWord {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// TranscriptionFileService
+// TranscriptionFileService and XmlWriterService
 //
 ///////////////////////////////////////////////////////////////////////////////
 export interface TestDatum {
@@ -42,6 +42,13 @@ export interface TestResult {
     actualTranscription: string;
     expectedTranscription: string;
     wordErrorRate: number;
+}
+
+export interface TestMetaData {
+    transcriptionFile: string;
+    sentenceErrorRate: string;
+    averageWordErrorRate: string;
+    totalTestingTime: string;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

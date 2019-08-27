@@ -34,7 +34,7 @@ This CLI requires Microsoft speech service, a directory of audio files and a cor
 | -e | endpoint-Id [ optional ]  | Custom Speech Endpoint ID |
 | -t | transcription-file [ optional ]  | Transcription File Path, `.txt` file |
 | -f | audio-file [ optional ]  | singular audio file `.wav` for console logging Speech Transcription ~~-t~~, ~~-d~~|
-| -o | out-file [ optional ] | test output file: saves JSON Array [ defaults to `./test_results.json` ] |
+| -o | out-file [ optional ] | test output file: location to save test results, only `.json` and `.xml` formats supported [ defaults to `./test_results.json` ] |
 | -c | concurrent-calls | concurrent service calls [defaults to 1] |
 | Conflicts --> -f : (-d & -t) |   | Providing a singular file to transcribe, results in console log of transcription from service |
 

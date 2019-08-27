@@ -69,7 +69,7 @@ testHarness.multipleFileTranscription();
 ```
 
 ### Results stored in JSON format.
-Testing stores test results in JSON format which is stored in `../test_results.json` by default, storage location can be changed with a flag.
+Testing stores test results in JSON format which is stored in `../test_results/test_results.json` by default, storage location can be changed with a flag.
 
 ```JSON
 sample test_results.json
