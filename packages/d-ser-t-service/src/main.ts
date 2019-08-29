@@ -78,7 +78,7 @@ export class CustomSpeechTestHarness {
         );
         this.responseAnalyzer = new ResponseAnalyzer(this.transcriptAnalyzer);
         this.xmlWriterService = new XmlWriterService();
-        this.defineOutFile(String(this.outFile));
+        this.outFile = this.defineOutFile(String(this.outFile));
     }
 
     public async singleFileTranscription() {
