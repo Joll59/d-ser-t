@@ -37,17 +37,16 @@ export class CustomSpeechTestHarness {
         this.concurrency = harnessConfig.concurrentCalls;
         this.crisEndpointId = harnessConfig.endpointId;
         this.exceptions = harnessConfig.exceptions;
+        this.outFile = this.defineOutFile(String(harnessConfig.outFile));
         this.serviceRegion = harnessConfig.region;
         this.singleFile = harnessConfig.audioFile;
         this.subscriptionKey = harnessConfig.subscriptionKey;
         this.transcriptionFile = harnessConfig.transcriptionFile;
+    }
 
-        if (
-            ['json', 'xml'].includes(
-                path.extname(String(harnessConfig.outFile)).substr(1)
-            )
-        ) {
-            this.outFile = String(harnessConfig.outFile);
+    public defineOutFile(filename: string): string {
+        if (['json', 'xml'].includes(path.extname(filename).substr(1))) {
+            return filename;
         } else {
             const warnMsg = `\nOutput file types other than .json or .xml are unsupported - using .json by default.\n`;
             console.warn(warnMsg);
@@ -58,7 +57,7 @@ export class CustomSpeechTestHarness {
                     'Creating default directory test_results for test output.\n'
                 );
             }
-            this.outFile = defaultDir + '/test_results.json';
+            return defaultDir + '/test_results.json';
         }
     }
 

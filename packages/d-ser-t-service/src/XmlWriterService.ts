@@ -67,10 +67,11 @@ export class XmlWriterService {
             .att('avg_WER', metadata.averageWordErrorRate);
 
         results.forEach((tc, index) => {
+            const filename = path.parse(metadata.transcriptionFile).base;
             const testcase = testsuite
                 .ele('testcase')
                 .att('classname', `test-${index + 1}`)
-                .att('name', `test-${index + 1}`)
+                .att('name', filename)
                 .att('time', 'n/a')
                 .att('expected', tc.expectedTranscription);
 
