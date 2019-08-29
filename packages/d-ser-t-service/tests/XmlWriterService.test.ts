@@ -58,8 +58,8 @@ describe('XMLWriterService', () => {
     describe('toJUnitXml', () => {
         const expected =
             `<?xml version="1.0" encoding="utf-8"?>\n` +
-            `<testsuites name="CRIS STT tests" tests="2" failures="1" time="10" avg_SER="0.5">\n` +
-            `  <testsuite name="test_transcription_file.txt" errors="0" failures="1" skipped="0" timestamp="2019-01-01 00:00:00" time="10" tests="2" SER="0.5">\n` +
+            `<testsuites name="CRIS STT tests" tests="2" failures="1" time="10" avg_SER="0.5" avg_WER="0.5">\n` +
+            `  <testsuite name="test_transcription_file.txt" errors="0" failures="1" skipped="0" timestamp="2019-01-01 00:00:00" time="10" tests="2" SER="0.5" avg_WER="0.5">\n` +
             `    <testcase classname="test-1" name="test-1" time="n/a" expected="alright">\n` +
             `      <failure actual="all right" WER="1"/>\n` +
             `    </testcase>\n` +
