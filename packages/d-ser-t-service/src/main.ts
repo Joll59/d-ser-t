@@ -37,7 +37,7 @@ export class CustomSpeechTestHarness {
         this.concurrency = harnessConfig.concurrentCalls;
         this.crisEndpointId = harnessConfig.endpointId;
         this.exceptions = harnessConfig.exceptions;
-        this.outFile = this.defineOutFile(String(harnessConfig.outFile));
+        this.outFile = harnessConfig.outFile as string;
         this.serviceRegion = harnessConfig.region;
         this.singleFile = harnessConfig.audioFile;
         this.subscriptionKey = harnessConfig.subscriptionKey;
@@ -78,6 +78,7 @@ export class CustomSpeechTestHarness {
         );
         this.responseAnalyzer = new ResponseAnalyzer(this.transcriptAnalyzer);
         this.xmlWriterService = new XmlWriterService();
+        this.defineOutFile(String(this.outFile));
     }
 
     public async singleFileTranscription() {
