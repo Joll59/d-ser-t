@@ -44,6 +44,7 @@ export class XmlWriterService {
         const numTests = results.length;
         const numFailures = this.countNumFailures(results);
         const testingTime = this.getNumericalTime(metadata);
+        let sumWER = 0;
 
         const testsuites = builder
             .create('testsuites', { encoding: 'utf-8' })
@@ -51,7 +52,8 @@ export class XmlWriterService {
             .att('tests', numTests)
             .att('failures', numFailures)
             .att('time', testingTime)
-            .att('avg_SER', metadata.sentenceErrorRate);
+            .att('avg_SER', metadata.sentenceErrorRate)
+            .att('avg_WER');
 
         const testsuite = testsuites
             .ele('testsuite')
@@ -72,6 +74,8 @@ export class XmlWriterService {
                 .att('time', 'n/a')
                 .att('expected', tc.expectedTranscription);
 
+            sumWER += tc.wordErrorRate;
+
             if (tc.wordErrorRate > 0) {
                 testcase
                     .ele('failure')
@@ -81,7 +85,12 @@ export class XmlWriterService {
             }
             testcase.end({ pretty: true });
         });
+        const avgWER = sumWER / numTests;
+
+        testsuite.att('avg_WER', avgWER);
         testsuite.end({ pretty: true });
+
+        testsuites.att('avg_WER', avgWER);
         const finalXml = testsuites.end({ pretty: true });
 
         return finalXml.toString();
