@@ -1,6 +1,6 @@
 {
     "name": "d-ser-t-cli",
-    "version": "1.2.1",
+    "version": "1.2.2-alpha.0",
     "description": "Package for running d-ser-t from the command line",
     "license": "MIT",
     "author": "Yomi (@jolly59), Katie (@KatieProchilo), Nick (@nhuntwalker)",
@@ -32,7 +32,7 @@
         "speech-recognition"
     ],
     "dependencies": {
-        "d-ser-t-service": "^1.2.1",
+        "d-ser-t-service": "^1.2.2",
         "yargs": "13.2.4"
     },
     "devDependencies": {
