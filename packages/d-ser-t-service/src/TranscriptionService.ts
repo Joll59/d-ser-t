@@ -251,10 +251,11 @@ export class TranscriptionService {
                             `New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`
                         );
                         stream.setFile(
-                            (dataArray[currentFileIndex++] as TestDatum)
+                            (dataArray[currentFileIndex] as TestDatum)
                                 .recording ||
-                                dataArray[currentFileIndex++].toString()
+                                dataArray[currentFileIndex].toString()
                         );
+                        currentFileIndex++;
                     }
                 }
             };
