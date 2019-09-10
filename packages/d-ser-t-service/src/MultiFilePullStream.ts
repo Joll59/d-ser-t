@@ -13,7 +13,9 @@ export class MultiFilePullStream extends PullAudioInputStreamCallback {
         }
 
         if (this.currentOffset >= this.currentFile.byteLength) {
-            // The file has been fully read. Send silence back.
+            // This will fill with silence UNTIL a new file is set
+            const copyArray = new Uint16Array(dataBuffer);
+            copyArray.fill(0);
             return dataBuffer.byteLength;
         }
 

@@ -207,7 +207,13 @@ export class TranscriptionService {
         recognizerID?: number
     ): Promise<void> => {
         return new Promise<void>((resolve, reject) => {
-            let currentFileIndex = 0;
+            const startIndex = 0;
+            let currentFileIndex = startIndex;
+
+            // Insert the first file into the buffer.
+            stream.setFile(
+                (dataArray[startIndex] as TestDatum).recording || dataArray[startIndex].toString()
+            );
 
             recognizer.canceled = (r, e) => {
                 if (e.errorDetails !== undefined) {
@@ -221,23 +227,22 @@ export class TranscriptionService {
                 // send the same stream back for any null response from Speech API
                 // where there are no utterances returned
                 if (!JSON.parse(e.result.json).NBest && currentFileIndex >= 0) {
+                    // NOTE: This doesn't seem to get called in any of my test cases
                     stream.setFile(
-                        (dataArray[currentFileIndex - 1] as TestDatum)
-                            .recording ||
-                            dataArray[currentFileIndex - 1].toString()
+                        (dataArray[currentFileIndex - 1] as TestDatum).recording
+                        || dataArray[currentFileIndex - 1].toString()
                     );
                 } else {
                     // push response into the resultArray
                     this.resultArray.push({
                         data: e.result,
-                        transcription: (dataArray[
-                            currentFileIndex - 1
-                        ] as TestDatum).transcription,
-                        file: !(dataArray[currentFileIndex - 1] as TestDatum)
-                            .transcription
-                            ? dataArray[currentFileIndex - 1].toString()
+                        transcription: (dataArray[currentFileIndex] as TestDatum).transcription,
+                        file: !(dataArray[currentFileIndex] as TestDatum).transcription
+                            ? dataArray[currentFileIndex].toString()
                             : undefined,
                     });
+
+                    currentFileIndex++;
 
                     if (currentFileIndex >= dataArray.length) {
                         // if last response, close stream
@@ -246,14 +251,15 @@ export class TranscriptionService {
                         );
                         stream.close();
                     } else {
+                        
                         // Increment file counter, pass next file to stream.
                         console.info(
                             `New file into stream, ${currentFileIndex}/${dataArray.length}, recognizer: ${recognizerID}`
                         );
+
                         stream.setFile(
-                            (dataArray[currentFileIndex++] as TestDatum)
-                                .recording ||
-                                dataArray[currentFileIndex++].toString()
+                            (dataArray[currentFileIndex] as TestDatum).recording
+                            || dataArray[currentFileIndex].toString()
                         );
                     }
                 }
@@ -261,16 +267,8 @@ export class TranscriptionService {
 
             // Start stream.
             recognizer.startContinuousRecognitionAsync(
-                () => console.info(`Starting Recognizer ${recognizerID} . . .`),
+                () => console.info(`Starting Recognizer ${recognizerID} with ${dataArray.length} files`),
                 error => console.error(`${recognizerID} error:`, error)
-            );
-
-            // Insert the first file into the buffer.
-            const start = currentFileIndex;
-            currentFileIndex += 1;
-            stream.setFile(
-                (dataArray[start] as TestDatum).recording ||
-                    dataArray[start].toString()
             );
         });
     };
