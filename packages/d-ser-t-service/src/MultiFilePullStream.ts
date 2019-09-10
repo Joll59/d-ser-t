@@ -12,8 +12,12 @@ export class MultiFilePullStream extends PullAudioInputStreamCallback {
             return 0;
         }
 
+        const copyArray = new Uint8Array(dataBuffer);
+
         if (this.currentOffset >= this.currentFile.byteLength) {
+
             // The file has been fully read. Send silence back.
+            copyArray.fill(0);
             return dataBuffer.byteLength;
         }
 
@@ -25,7 +29,6 @@ export class MultiFilePullStream extends PullAudioInputStreamCallback {
             dataBuffer.byteLength
         );
 
-        const copyArray = new Uint8Array(dataBuffer);
         copyArray.set(
             new Uint8Array(
                 this.currentFile.slice(
