@@ -38,7 +38,7 @@ afterAll(() => {
 });
 
 describe('XMLWriterService', () => {
-    describe('countNumFailures', () => {
+    describe('getFailureCount', () => {
         it('returns the correct number of failures', () => {
             const numFailures = xws.getFailureCount(mockResults);
             expect(numFailures).toEqual(1);
@@ -48,8 +48,8 @@ describe('XMLWriterService', () => {
     describe('toJUnitXml', () => {
         const expected =
             `<?xml version="1.0" encoding="utf-8"?>\n` +
-            `<testsuites name="CRIS STT tests" tests="2" failures="1" time="10" SER="0.5" AWER="0.5">\n` +
-            `  <testsuite name="test_transcription_file.txt" tests="2" failures="1" time="10" timestamp="2019-01-01 00:00:00" errors="0" skipped="0" SER="0.5" AWER="0.5">\n` +
+            `<testsuites SER="0.5" AWER="0.5" name="CRIS STT tests" tests="2" failures="1" time="10">\n` +
+            `  <testsuite SER="0.5" AWER="0.5" name="test_transcription_file.txt" tests="2" failures="1" time="10" timestamp="2019-01-01 00:00:00" errors="0" skipped="0">\n` +
             `    <testcase classname="test-1" WER="1" expected="alright" name="N/A" time="N/A">\n` +
             `      <failure actual="all right"/>\n` +
             `    </testcase>\n` +
