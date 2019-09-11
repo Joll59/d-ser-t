@@ -41,17 +41,20 @@ export class XmlWriterService {
 
         const testsuites = builder
             .create('testsuites', { encoding: 'utf-8' })
+            // d-ser-t-specific attributes.
+            .att('SER', metadata.sentenceErrorRate)
+            .att('AWER', metadata.averageWordErrorRate)
             // JUNIT attributes.
             .att('name', 'CRIS STT tests')
             .att('tests', testCount)
             .att('failures', failureCount)
-            .att('time', totalTestingTime)
-            // d-ser-t-specific attributes.
-            .att('SER', metadata.sentenceErrorRate)
-            .att('AWER', metadata.averageWordErrorRate);
+            .att('time', totalTestingTime);
 
         const testsuite = testsuites
             .ele('testsuite')
+            // d-ser-t-specific attributes.
+            .att('SER', metadata.sentenceErrorRate)
+            .att('AWER', metadata.averageWordErrorRate)
             // JUNIT attributes.
             .att('name', metadata.transcriptionFile)
             .att('tests', testCount)
@@ -59,10 +62,7 @@ export class XmlWriterService {
             .att('time', totalTestingTime)
             .att('timestamp', timestamp)
             .att('errors', 0)
-            .att('skipped', 0)
-            // d-ser-t-specific attributes.
-            .att('SER', metadata.sentenceErrorRate)
-            .att('AWER', metadata.averageWordErrorRate);
+            .att('skipped', 0);
 
         results.forEach((result, index) => {
             const testcase = testsuite
