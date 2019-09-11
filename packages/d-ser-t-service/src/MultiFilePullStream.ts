@@ -52,4 +52,8 @@ export class MultiFilePullStream extends PullAudioInputStreamCallback {
         this.currentFile = fs.readFileSync(fileName);
         this.currentOffset = 0;
     };
+
+    public finishedSendingFile = (): boolean => {
+        return this.currentOffset >= this.currentFile.byteLength;
+    }
 }
