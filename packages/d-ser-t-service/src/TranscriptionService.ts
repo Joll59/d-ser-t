@@ -227,6 +227,13 @@ export class TranscriptionService {
                             dataArray[currentFileIndex - 1].toString()
                     );
                 } else {
+
+                    if (e.result.text === "" && !stream.finishedSendingFile()) {
+                        // If we get a no-text recognition back and we haven't finished sending the file
+                        // then skip this result and wait for another one
+                        return;
+                    }
+
                     // push response into the resultArray
                     this.resultArray.push({
                         data: e.result,
