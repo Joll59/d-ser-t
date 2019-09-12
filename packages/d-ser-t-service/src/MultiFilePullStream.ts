@@ -54,5 +54,5 @@ export class MultiFilePullStream extends PullAudioInputStreamCallback {
 
     public finishedSendingFile = (): boolean => {
         return this.currentOffset >= this.currentFile.byteLength;
-    }
+    };
 }
